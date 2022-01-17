@@ -8,18 +8,22 @@ import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import LandingPage from './pages/LandingPage';
+import Gallery from './pages/Gallery';
 
 const App = () => {
   return (
-    <Layout>
-      <Container>
+      <Container fluid>
         <Routes>
-          <Route path="/" element={<Home />} exact />
+          <Route path="/" element={<LandingPage />} exact />
           <Route path="/about" element={<About />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/team" element={<Home jumpto={"teamElement"} />} />
+          <Route path="/roadmap" element={<Home jumpto={"roadmapElement"} />} />
           <Route element={<NotFound />} />
         </Routes>
       </Container>
-    </Layout>
   );
 };
 
