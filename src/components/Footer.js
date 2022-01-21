@@ -8,9 +8,10 @@ const Footer = () => {
   return (
     <>
       <footer className='text-center text-capitalize footerDiv'  style={{"marginTop": "50px", "paddingTop": "24px", "paddingBottom":"20px"}}>
-        <Container>
+        <Container fluid>
           <Row>
-            <Col className="text-left">
+
+            <Col className="text-left" md={{span:4, offset:1}} sm={6}>
               <div className="emailForm">
                 <Form className='d-flex align-items-end'>
                   <Form.Group controlId="formBasicEmail">
@@ -23,17 +24,21 @@ const Footer = () => {
                   </button>
                 </Form>
               </div>
-
             </Col>
-            <Col>
+
+            <Col  md={{span:3}} className="d-none d-md-block">
               <Image src="logo.png" width="150px" className="d-block mx-auto img-fluid"/>
             </Col>
-            <Col className="text-end">
+
+            <Col  md={3} sm={6}>
+              <div style={{display: 'flex'}} className="justify-content-end">
               <SocialLogos />
-              <div style={{"paddingBottom": "10px", "paddingTop": "10px"}} className="copywright">
-              © 2022 MTC CLUB
+
               </div>
-              <div style={{"paddingBottom": "10px"}}>
+              <div style={{"paddingBottom": "10px", "paddingTop": "10px"}} className="copywright text-end">
+                © 2022 MTC CLUB
+              </div>
+              <div style={{"paddingBottom": "10px"}} className="text-end">
                 <a className="purpleText" href="terms.html">Terms</a>
               </div>
             </Col>

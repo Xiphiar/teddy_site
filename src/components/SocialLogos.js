@@ -8,7 +8,7 @@ import redditLogo from '../assets/reddit.svg';
 
 const SocialLogos = () => {
   return (
-    <Nav className="justify-content-end align-items-center">
+    <Nav className="justify-content-center align-items-center">
         <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={instagramLogo} /></a>
         <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={twitterLogo} /></a>
         <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={redditLogo} /></a>

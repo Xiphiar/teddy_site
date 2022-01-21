@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Nav, Container } from "react-bootstrap";
+import { Nav, Container, Row, Col } from "react-bootstrap";
 import Image from 'react-bootstrap/Image'
 import SocialLogos from './SocialLogos.js'
 
@@ -7,38 +7,48 @@ import { Link as ScrollLink, DirectLink, Element, Events, animateScroll as scrol
 
 const Menu = () => {
   return (
-    <Container>
-      <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-5">
-        <Image src="logo.png" />
-        <Nav>
-          <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 teddyNavBar" style={{"paddingRight":"20px"}}>
-            <li style={{"paddingTop":"3px", "paddingRight":"40px"}}>
-              <Link to="/mint" className="nav-link px-2 link-secondary">
+    <Container style={{paddingTop: "30px", paddingBottom: "10px"}}>
+      <Row>
+
+
+        <Col className="text-center" md={{span:2, offset:0}} sm={{span:12}} style={{paddingBottom: "20px"}}>
+          <Image src="logo.png"/>
+        </Col>
+        <Col md={{span: "6", offset: 2}} xs={{span:12, offset:0}}  style={{paddingBottom: "20px"}}>
+          <Row className="align-items-center justify-content-end" style={{height: "100%"}}>
+          <Col className="text-center d-none d-md-block">
+            <Link to="/mint" className="nav-link px-2 link-secondary">
               <button type="button" className="btn btn-outline-primary me-2 navMintButton teddyButton">
                 MINT A TEDDY
               </button>
-              </Link>
-            </li>
-            <li style={{"paddingTop":"5px", "paddingRight":"40px"}}>
-              <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="roadmapElement" spy={true} smooth={true} duration={500} >
-                OUR PLAN
-              </ScrollLink>
-            </li>
-            <li style={{"paddingTop":"5px", "paddingRight":"40px"}}>
-              <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="teamElement" spy={true} smooth={true} duration={500} >
-                TEAM
-              </ScrollLink>
-            </li>
-            <li style={{"paddingTop":"5px", "paddingRight":"40px"}}>
-              <Link to="/gallery" className="nav-link px-2 teddyNavLink">
-                SHOWCASE
-              </Link>
-            </li>
-          </ul>
-          <SocialLogos style={{"paddingLeft":"20px"}}/>
-        </Nav>
+            </Link>
+          </Col>
+          <Col className="text-center">
+            <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="roadmapElement" spy={true} smooth={true} duration={500} >
+              OUR PLAN
+            </ScrollLink>
+          </Col>
+          <Col className="text-center">
+            <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="teamElement" spy={true} smooth={true} duration={500} >
+              TEAM
+            </ScrollLink>
+          </Col>
+          <Col className="text-center">
+            <Link to="/gallery" className="nav-link px-2 teddyNavLink">
+              SHOWCASE
+            </Link>
+          </Col>
+          </Row>
+        </Col>
         
-      </header>
+        <Col md={2} xs={12}   style={{paddingBottom: "20px"}}>
+          <div style={{height: "100%", display: "flex"}} className="align-items-center justify-content-center">
+          <SocialLogos style={{"paddingLeft":"20px"}}/>
+
+          </div>
+        </Col>
+        </Row>    
+
     </Container>
   );
 };

@@ -54,11 +54,14 @@ class Home extends React.Component {
 
     return (
       <Layout>
-      <div>
+      <div style={{width: "100%"}}>
         <Meta title={pageTitle}/>
         <Container>
           <Row>
+            <Col xs={12}>
             <Image src="homeBanner.png" fluid={true}/>
+
+            </Col>
           </Row>
         </Container>
         <Padding size={30}/>

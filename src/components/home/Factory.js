@@ -4,9 +4,12 @@ import Image from 'react-bootstrap/Image'
 const Factory = () => {
   return (
     <Container>
+      <Row>
+      <h1>“The Teddy Factory” perks</h1>
+
+      </Row>
       <Row className="align-items-center">
         <Col md={{ span: 9}}>
-          <h1 style={{"paddingBottom":"16px"}}>“The Teddy Factory” perks</h1>
           <p>
             Midnight Teddys are now undergoing a Evolutionary Revolution!!
             <br/>Select 3 Midnight Teddys of your choosing to burn in "Mount Doom" to create a single hybrid Midnight Teddy that combines all your favorite traits. This hybrid Teddy will be given a *customized* name chosen by the creator that will be stored on-chain forever!

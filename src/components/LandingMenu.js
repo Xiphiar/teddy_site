@@ -1,24 +1,27 @@
 import { Link } from "react-router-dom";
-import { Nav, Container, Col } from "react-bootstrap";
+import { Nav, Container, Col, Row } from "react-bootstrap";
 import Image from 'react-bootstrap/Image'
 
 import SocialLogos from './SocialLogos.js'
 
 const Menu = () => {
   return (
-    <Container>
+    <Container style={{paddingTop: "10px", paddingBottom: "20px"}}>
+      <Row className="justify-content-end">
 
-      <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
-        <Col>
+
+        <Col className="text-center" md={{span:4, offset:0}} sm={{span:6}}>
+          <Image src="logo.png"/>
         </Col>
-        <Col md="auto">
-          <Image src="logo.png" />
-        </Col>
-        <Col>
         
-        <SocialLogos />
+        <Col md={4} xs={6}>
+          <div style={{height: "100%", display: "flex"}} className="align-items-center justify-content-end">
+          <SocialLogos style={{"paddingLeft":"20px"}}/>
+
+          </div>
         </Col>
-      </header>
+        </Row>    
+
     </Container>
   );
 };

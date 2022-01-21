@@ -23,7 +23,7 @@ const Roadmap = () => {
       </Row>
       <Row className="align-items-center" style={{"paddingTop":"20px"}}>
 
-        <Col md={{ span: 8}} style={{"paddingLeft":"0"}}>
+        <Col md={{ span: 8}} style={{"paddingLeft":"0"}} xs={12}>
           <RoadmapItem number={"1"} text={item1}/>
           <RoadmapItem number={"2"} text={item2}/>
           <RoadmapItem number={"3"} text={item3}/>
