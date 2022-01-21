@@ -43,7 +43,7 @@ const Menu = () => {
         
         <Col md={2} xs={12}   style={{paddingBottom: "20px"}}>
           <div style={{height: "100%", display: "flex"}} className="align-items-center justify-content-center">
-          <SocialLogos style={{"paddingLeft":"20px"}}/>
+          <SocialLogos white={true} style={{"paddingLeft":"20px"}}/>
 
           </div>
         </Col>
