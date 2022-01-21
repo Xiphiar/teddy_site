@@ -35,10 +35,10 @@ const Footer = () => {
               <SocialLogos />
 
               </div>
-              <div style={{"paddingBottom": "10px", "paddingTop": "10px"}} className="copywright text-end">
+              <div style={{"paddingTop": "10px"}} className="copywright text-end">
                 © 2022 MTC CLUB
               </div>
-              <div style={{"paddingBottom": "10px"}} className="text-end">
+              <div style={{"paddingBottom": "10px"}} className="text-end termsLink">
                 <a className="purpleText" href="terms.html">Terms</a>
               </div>
             </Col>

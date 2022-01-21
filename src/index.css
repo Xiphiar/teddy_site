@@ -202,12 +202,16 @@ main {
 .copywright {
   font-family: Poppins;
   font-style: normal;
-  font-size: 14px;
+  font-size: 16px;
+}
+
+.termsLink {
+  color: #C152F5;
+  font-size: 16px;
 }
 
 .purpleText {
   color: #C152F5;
-
 }
 
 .footnote {
