@@ -7,11 +7,12 @@ const Specs = () => {
       <Row className="d-md-none">
         <h1>The specs</h1>
       </Row>
-      <Row className="align-items-center">
+      <Row className="align-items-top">
         <Col lg={6} md={6} sm={12}>
           <Image src="specsteddy.png" fluid={true}/>
         </Col>
         <Col lg={6} md={6} sm={12}>
+          <div style={{height:"5%"}} className="d-none d-md-block"/>
           <h1 className="d-none d-md-block">The specs</h1>
           <p>
             Each Midnight Teddy is unique and programmatically generated from over 120 possible traits, including expression, headwear, clothing, and more. All Teddys are bad-ass, but some are rarer than others.

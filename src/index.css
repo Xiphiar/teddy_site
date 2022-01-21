@@ -224,6 +224,20 @@ main {
 .mintRow {
   min-height: 333px;
   background-color: #2D2C2C;
+  background-image:
+      radial-gradient(
+          circle at right,
+          #000000,
+          #2D2C2C 20%,
+          transparent 40%
+
+      ),
+      radial-gradient(
+          circle at left,
+          #000000,
+          #2D2C2C 20%,
+          transparent 40%
+      );
 }
 
 .roadmapEllipse {
