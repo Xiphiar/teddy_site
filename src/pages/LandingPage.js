@@ -70,9 +70,9 @@ class Home extends React.Component {
   A new Virus had arisen. They called it “RSV (right click save)”. This evil virus would allow duplicates to appear without permission.
   <br /><br/>
   News quickly spread.<br />
-  It was discovered that the NGMI clans designed and distributed tthe virus spreading duplicates to new worlds claiming them their own.
+  It was discovered that the NGMI clans designed and distributed the virus spreading duplicates to new worlds claiming them their own.
   <br /><br/>
-  The Midnight Teddy Clan & a handful of others quickly hid in the depths of a Secret Network where they knew they were safe.<br />
+  The Midnight Teddy's & a handful of others quickly hid in the depths of a Secret Network where they knew they were safe.<br />
   Those that stayed on the old Networks were not so fortunate, they fell victim to the “Right click save Virus” 
   <br /><br/>
   Forced to hide their true identities to the public in fear of falling victim, the teddy’s formed a Secret Society where they could be themselves once more. 
