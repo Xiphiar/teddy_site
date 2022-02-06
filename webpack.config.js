@@ -11,7 +11,9 @@ const PENUMBRA_DIRECTORY = path.join(
 module.exports = {
     entry: './src/index.js',
     output: {
-        filename: 'main.js',
+        //filename: 'main.js',
+        filename: '[hash].js',
+        chunkFilename: '[chunkhash].js',
         path: path.resolve(__dirname, 'dist'),
     },
   plugins: [

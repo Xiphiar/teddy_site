@@ -28,17 +28,22 @@ const Team = () => {
           <Member name="Europe Forest Bear" title="Designer"/>
         </Col>
         <Col md={{ span: "auto", offset: 1}} xs={{ span: 4, offset: 2}} className="align-items-end" style={{padding: "0px"}}>
-            <Image src="team1.png" style={{width:"200px", padding:"0"}} fluid={true}/>
+            <a href="https://altermail.live"><Image src="alter.png" style={{width:"200px", padding:"0"}} fluid={true}/></a>
         </Col>
         <Col md={{span:"auto"}} xs={{ span: 4}} className="align-items-end" style={{padding: "0px"}}>
-            <Image src="team1.png" style={{width:"200px", padding:"0"}} fluid={true}/>
+            <Image src="papabear.png" style={{width:"200px", padding:"0"}} fluid={true}/>
         </Col>
         <Col md={{span:"auto", offset:0}} xs={{ span: 4, offset: 2}} className="align-items-end" style={{padding: "0px"}}>
-            <Image src="team1.png" style={{width:"200px", padding:"0"}} fluid={true}/>
+            <a href="https://trivium.network"><Image src="trivium.jpg" style={{width:"200px", padding:"0"}} fluid={true} title="Trivium Node"/></a>
         </Col>
         <Col md={{span:"auto"}} xs={{ span: 4}} className="align-items-end" style={{padding: "0px"}}>
-            <Image src="team1.png" style={{width:"200px", padding:"0"}} fluid={true}/>
+            <Image src="designer.png" style={{width:"200px", padding:"0"}} fluid={true}/>
         </Col>
+      </Row>
+      <Row style={{paddingTop:"40px", paddingBottom:"40px", fontSize: "16px"}}>
+        <span>
+          We’ve been working hard over the course of the last 6 months bringing this project to life, we hope that you all love it as much as we do!
+        </span>
       </Row>
     </Container>
   )

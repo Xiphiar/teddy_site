@@ -10,17 +10,26 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import LandingPage from './pages/LandingPage';
 import Gallery from './pages/Gallery';
+import MintPage from './pages/Mint';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
       <Container fluid>
+        <ToastContainer theme="colored"/>
         <Routes>
           <Route path="/" element={<LandingPage />} exact />
-          <Route path="/about" element={<About />} />
-          <Route path="/gallery" element={<Gallery />} />
           <Route path="/home" element={<Home />} />
           <Route path="/team" element={<Home jumpto={"teamElement"} />} />
           <Route path="/roadmap" element={<Home jumpto={"roadmapElement"} />} />
+          <Route path="/about" element={<Home jumpto={"roadmapElement"} />} />
+
+        {/*}
+          <Route path="/mint" element={<MintPage />} />
+          <Route path="/gallery" element={<Gallery />} />
+        */}
           <Route element={<NotFound />} />
         </Routes>
       </Container>

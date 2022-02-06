@@ -4,12 +4,12 @@ import Image from 'react-bootstrap/Image'
 
 import twitterLogo from '../assets/twitter.svg';
 import telegramLogo from '../assets/telegram.svg';
-import instagramLogo from '../assets/instagram.svg';
+import discordLogo from '../assets/discord.svg';
 import redditLogo from '../assets/reddit.svg';
 
 import twitterWhite from '../assets/twitter_white.svg';
 import telegramWhite from '../assets/telegram_white.svg';
-import instagramWhite from '../assets/instagram_white.svg';
+import discordWhite from '../assets/discord_white.svg';
 import redditWhite from '../assets/reddit_white.svg';
 
 //const SocialLogos = () => {
@@ -24,11 +24,13 @@ class SocialLogos extends React.Component {
 
   render(){
     return (
-      <Nav className="justify-content-center align-items-center">
-          <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? instagramWhite : instagramLogo } /></a>
+      <Nav className="justify-content-end align-items-center" style={{width:"100%"}}>
           <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? twitterWhite : twitterLogo} /></a>
+          <a style={{ "paddingRight": "20px" }} href={`https://discord.gg/FxVJNWqu`}><Image src={this.props.white ? discordWhite : discordLogo } /></a>
+          {/*
           <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? redditWhite : redditLogo} /></a>
           <a href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? telegramWhite : telegramLogo } /></a>
+          */}
       </Nav>
     )
   }

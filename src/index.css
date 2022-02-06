@@ -21,6 +21,10 @@
                             'embedded-opentype', and 'svg' */
 }
 
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
+
 body {
   font-family: Poppins;
   font-weight: normal;
@@ -47,6 +51,7 @@ main {
   text-decoration: underline;
   transition: color 0.15s ease-in-out;
   color: #FFF;
+  cursor: pointer;
 }
 .clickHereText:hover {
   color: #C152F5;
@@ -64,6 +69,11 @@ main {
   color: #fff;
   background-color: #C152F5;
   border-color: #C152F5;
+}
+.teddyButton:disabled {
+  color: #FFF;
+  background-color: #512366;
+  border-color: #512366;
 }
 
 .enterButton {
@@ -158,6 +168,11 @@ main {
   color: #fff;
   background-color: #C152F5;
   border-color: #C152F5;
+}
+.rarityButton:disabled {
+  color: #FFF;
+  background-color: #512366;
+  border-color: #512366;
 }
 
 
@@ -273,7 +288,7 @@ main {
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-
+  cursor: pointer;
   color: #FFFFFF;
 }
 .teddyNavLink:hover{

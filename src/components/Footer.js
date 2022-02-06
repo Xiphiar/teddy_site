@@ -12,6 +12,7 @@ const Footer = () => {
           <Row>
 
             <Col className="text-left" md={{span:4, offset:1}} sm={6}>
+              {/*}
               <div className="emailForm">
                 <Form className='d-flex align-items-end'>
                   <Form.Group controlId="formBasicEmail">
@@ -24,6 +25,7 @@ const Footer = () => {
                   </button>
                 </Form>
               </div>
+            */}
             </Col>
 
             <Col  md={{span:3}} className="d-none d-md-block">
@@ -38,9 +40,11 @@ const Footer = () => {
               <div style={{"paddingTop": "10px"}} className="copywright text-end">
                 © 2022 MTC CLUB
               </div>
+              {/*}
               <div style={{"paddingBottom": "10px"}} className="text-end termsLink">
                 <a className="purpleText" href="terms.html">Terms</a>
               </div>
+          */}
             </Col>
           </Row>
         </Container>

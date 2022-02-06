@@ -1,7 +1,34 @@
 import { Container, Row, Col } from 'react-bootstrap'
 import { Link } from "react-router-dom";
+import Countdown from 'react-countdown';
 
-const MintRow = () => {
+
+  // Renderer callback with condition
+  const renderer = ({ days, hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      return (
+        <Link to="/mint">
+          <button type="button" className="btn btn-primary me-2 mintButton teddyButton">
+            MINT A TEDDY
+          </button>
+        </Link>
+      );
+    } else {
+      // Render a countdown
+      return(
+        <button type="button" disabled={true} className="btn btn-primary me-2 mintButton teddyButton">
+          <span>{days}D {hours}H {minutes}M {seconds}S</span>
+        </button>
+      );
+    }
+  };
+
+const MintRow = ({handleMint}) => {
+
+
+  let date = new Date('2022-02-26T14:00:00')
+  console.log(date)
   return (
     <Container fluid>
       <Row className="mintRow justify-content-center align-items-center text-center">
@@ -11,11 +38,7 @@ const MintRow = () => {
             <h1 className="fairTitle">Fair distribution and price</h1>
           </div>
 
-          <Link to="/mint">
-            <button type="button" className="btn btn-primary me-2 mintButton teddyButton">
-              MINTING SOON
-            </button>
-          </Link>
+          <Countdown date={date } renderer={renderer} />
         </div>
       </Row>
     </Container>

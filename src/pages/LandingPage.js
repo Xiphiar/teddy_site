@@ -4,7 +4,7 @@ import Meta from '../components/Meta'
 import { Link } from "react-router-dom";
 import LandingLayout from '../layout/LandingLayout'
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import bgimage from '../assets/entry2.jpg'
+import bgimage from '../assets/mtc_animated_compressed.GIF'
 import React from 'react';
 
 const descText1 = `
@@ -60,7 +60,7 @@ class Home extends React.Component {
             <Row>
               <Col md={{ span: 10, offset: 1 }}>
               <p className="storyText">A Long time ago in the depths of Metaverse, Midnight Teddy’s, Rabbits , Punks, Apes and many others lived amongst one another in harmony.
-  All of their traits, attributes and differences were accepted and loved by one another and on show for everyone to see.
+  <br/>All of their traits, attributes and differences were accepted and loved by one another and on show for everyone to see.
   <br /><br/>
   Until one day something changed..&nbsp;&nbsp;&nbsp;
   {!this.state.expand ? <a onClick={this.expand} className='clickHereText'>CLICK HERE TO CONTINUE TO READ</a>

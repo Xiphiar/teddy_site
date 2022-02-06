@@ -48,18 +48,19 @@ class Home extends React.Component {
     }
   }
 
+
   render() {
-    const pageTitle = 'Home'
-    const pageDescription = 'welcome to react bootstrap template'
+    const pageTitle = 'Midnight Teddy Club'
 
     return (
       <Layout>
       <div style={{width: "100%"}}>
+        
         <Meta title={pageTitle}/>
         <Container>
           <Row>
             <Col xs={12}>
-            <Image src="homeBanner.png" fluid={true}/>
+            <Image src="club_banner.jpg" fluid={true}/>
 
             </Col>
           </Row>
