@@ -190,7 +190,7 @@ class MintPage extends React.Component {
 
   render () {
     // page content
-    const pageTitle = 'Home'
+    const pageTitle = 'Midnight Teddy Club Mint'
     return (
       <Layout>
       <div>

@@ -7,7 +7,7 @@ import Layout from "../layout/Layout";
 
 const About = () => {
   // page content
-  const pageTitle = 'About'
+  const pageTitle = 'Midnight Teddy Club'
   const pageDescription = 'welcome to react bootstrap template'
 
   return (

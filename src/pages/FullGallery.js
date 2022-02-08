@@ -207,7 +207,7 @@ class Gallery extends React.Component {
 
   render () {
     // page content
-    const pageTitle = 'Home'
+    const pageTitle = 'Midnight Teddy Club'
     const { base, burnt, owned, sort } = this.state;
     const customStyles = {
       option: (provided, state) => ({
