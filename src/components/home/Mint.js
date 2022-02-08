@@ -26,15 +26,13 @@ import Countdown from 'react-countdown';
 
 const MintRow = ({handleMint}) => {
 
-
-  let date = new Date('2022-02-26T14:00:00')
-  console.log(date)
+  let date = new Date(Date.UTC(2022, 1, 26, 14))
   return (
     <Container fluid>
       <Row className="mintRow justify-content-center align-items-center text-center">
         <div style={{display: "inline-block"}}>
           <div style={{"paddingBottom": "32px"}}>
-            <h6 className="priceTitle">Each of the mint will cost <b>21 sSCRT</b></h6>
+            <h6 className="priceTitle">Each mint will cost <b>21 sSCRT</b></h6>
             <h1 className="fairTitle">Fair distribution and price</h1>
           </div>
 
