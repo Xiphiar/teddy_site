@@ -20,11 +20,11 @@
   /* other formats include: 'woff2', 'truetype, 'opentype',
                             'embedded-opentype', and 'svg' */
 }
-
+/*
 img {
   image-rendering: -webkit-optimize-contrast;
 }
-
+*/
 body {
   font-family: Poppins;
   font-weight: normal;
