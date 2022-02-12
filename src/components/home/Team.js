@@ -37,7 +37,7 @@ const Team = () => {
             <a href="https://trivium.network"><Image src="trivium.jpg" style={{padding:"0"}} fluid={true} title="Trivium Node"/></a>
         </Col>
         <Col lg={{span:2}} xs={{ span: 4}} className="align-items-end" style={{padding: "0px"}}>
-            <Image src="designer.png" style={{padding:"0"}} fluid={true}/>
+            <a href="https://www.artstation.com/ashcrow001"><Image src="designer.png" style={{padding:"0"}} fluid={true}/></a>
         </Col>
       </Row>
       <Row style={{paddingTop:"40px", paddingBottom:"40px", fontSize: "16px"}}>
