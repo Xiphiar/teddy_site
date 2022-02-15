@@ -26,7 +26,7 @@ class SocialLogos extends React.Component {
     return (
       <Nav className="justify-content-end align-items-center" style={{width:"100%"}}>
           <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? twitterWhite : twitterLogo} /></a>
-          <a style={{ "paddingRight": "20px" }} href={`https://discord.gg/FxVJNWqu`}><Image src={this.props.white ? discordWhite : discordLogo } /></a>
+          <a style={{ "paddingRight": "20px" }} href={`https://discord.gg/QuYrXZTx33`}><Image src={this.props.white ? discordWhite : discordLogo } /></a>
           {/*
           <a style={{ "paddingRight": "20px" }} href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? redditWhite : redditLogo} /></a>
           <a href={`https://twitter.com/MidnightTedClub`}><Image src={this.props.white ? telegramWhite : telegramLogo } /></a>
