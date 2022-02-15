@@ -26,10 +26,10 @@ const App = () => {
           <Route path="/roadmap" element={<Home jumpto={"roadmapElement"} />} />
           <Route path="/about" element={<Home jumpto={"roadmapElement"} />} />
 
-        {/*}
+        
           <Route path="/mint" element={<MintPage />} />
           <Route path="/gallery" element={<Gallery />} />
-        */}
+        
           <Route element={<NotFound />} />
         </Routes>
       </Container>

@@ -137,7 +137,7 @@ class Gallery extends React.Component {
       show: true,
       clicked: data
     })
-    console.log(this.state)
+    this.queryData(data);
   }
 
   handleHide = () => {
@@ -206,8 +206,41 @@ class Gallery extends React.Component {
     let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, permitQuery, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
     console.log(data);
     this.setState({tokenList: data.token_list.tokens});
-
   }
+
+  queryData = async(id) => {
+    console.log("abc", id);
+    await this.getPermit();
+
+    let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
+    if (Boolean(process.env.REACT_APP_USE_TESTNET)){
+        chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
+    }
+
+    const query = {
+        nft_dossier: {
+          token_id: id,
+        }
+      }
+      
+      const permitQuery = {
+        with_permit: {
+          query: query,
+          permit: {
+            params: {
+              permit_name: permitName,
+              allowed_tokens: allowedTokens,
+              chain_id: chainId,
+              permissions: permissions,
+            },
+            signature: this.state.queryPermit,
+          },
+        },
+      };
+      console.log(permitQuery)
+      let res = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+      console.log(res);
+  } 
 
   render () {
     // page content

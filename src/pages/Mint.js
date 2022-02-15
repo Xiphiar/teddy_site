@@ -56,10 +56,12 @@ class MintPage extends React.Component {
     })
 
     //get SigningCosmWasmClient and store in state
-    let secretJs = await getSigningClient();
+    let {client, address} = await getSigningClient();
     this.setState({
-      secretJs: secretJs
+      secretJs: client,
+      address: address
     })
+    console.log(this.state);
 
     //message for the NFT contract
     const mintMsg = {
