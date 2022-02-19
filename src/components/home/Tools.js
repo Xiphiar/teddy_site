@@ -10,7 +10,7 @@ const Tools = () => {
         <Col md={{ span: 8}}>
           
           <p>
-            As Teddys are retired to “The club” Traits rarity changes keep track on your teddys rarity using our dynamic rairty tracker. 
+            As Teddys are retired to “The club”, trait rarity changes. Keep track on your teddy's rarity using our dynamic rarity tracker. 
           </p>
         </Col>
         <Col md={{ span: 4}} className="justify-content-md-center text-end">
