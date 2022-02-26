@@ -89,7 +89,7 @@ class Home extends React.Component {
           <Jumbotron style={{ backgroundImage: `url(${bgimage})`, backgroundSize: 'cover' }}>
               <Row>
                 <Col md={{ span: 10, offset: 1 }}>
-                  <Image src="entry2.jpg" fluid={true}/>
+                  <Image src="entry2.jpg" fluid/>
                 </Col>
               </Row>
               <div className='starter-template text-center mt-5'>
@@ -117,7 +117,7 @@ class Home extends React.Component {
           <Container style={{ backgroundImage: `url(${bgimage})`, backgroundSize: 'cover' }}>
             <Row>
               <Col md={{ span: 10, offset: 1 }}>
-                <Image src="entry2.jpg" fluid={true}/>
+                <Image src="entry2.jpg" fluid/>
               </Col>
             </Row>
             <div className='starter-template text-center mt-5'>

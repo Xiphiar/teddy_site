@@ -9,7 +9,7 @@ const Specs = () => {
       </Row>
       <Row className="align-items-top">
         <Col lg={6} md={6} sm={12}>
-          <Image src="2357.png" fluid={true}/>
+          <Image src="2357.png" fluid/>
         </Col>
         <Col lg={6} md={6} sm={12}>
           <div style={{height:"5%"}} className="d-none d-md-block"/>

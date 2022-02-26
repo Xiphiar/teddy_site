@@ -12,6 +12,7 @@ import { getPublicTeddyData, truncate } from '../utils/dataHelper'
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
+import clubBanner from '../assets/club_banner.jpg'
 
 // Layout
 import Layout from "../layout/Layout";
@@ -87,16 +88,19 @@ class TeddyTile extends React.Component {
 
   render(){
     return (
-      <a onClick={() => this.props.clickHandler(this.props.id, this.state.imageUrl)}>
-      <div className="backLink pointer" style={{paddingBottom: "15px"}} >
-        {this.state.loading ?
-          <i className="c-inline-spinner c-inline-spinner-white" />
-        :
-          <Image src={this.state.imageUrl} rounded  style={{width: "237px", minHeight: "228px"}}/>
-        }
-        <h5>Midnight Teddy #{this.props.id}</h5>
+      <div>
+        <a onClick={() => this.props.clickHandler(this.props.id, this.state.imageUrl)}>
+          <div className="backLink pointer" style={{paddingBottom: "15px"}} >
+            {this.state.loading ?
+              <i className="c-inline-spinner c-inline-spinner-white" />
+            :
+              <Image src={this.state.imageUrl} rounded  style={{width: "237px", minHeight: "228px"}}/>
+            }
+            <h5>Midnight Teddy #{this.props.id}</h5>
+          </div>
+        </a>
       </div>
-      </a>
+
     )
   }
 }
@@ -194,7 +198,6 @@ class Gallery extends React.Component {
 
     let returned = {client: null, address: null}
     if (!this.state.secretJs || !this.state.address) {
-      console.log("getting stuff")
       //get SigningCosmWasmClient and store in state
       returned = await getSigningClient();
       this.setState({
@@ -259,7 +262,7 @@ class Gallery extends React.Component {
           <Meta title={pageTitle}/>
           <Container>
             <Row>
-              <h1 class="homeTitle">Midnight Teddy Clubhouse</h1>
+              <h1 className="homeTitle">Midnight Teddy Clubhouse</h1>
             </Row>
             <Padding size={30}/>
             <TeddyCard owned={this.state.owned} handleBack={this.showGallery} id={this.state.clickedID} queryPermit={this.state.queryPermit} secretJs={this.state.secretJs}/>
@@ -273,12 +276,12 @@ class Gallery extends React.Component {
           <Meta title={pageTitle}/>
           <Container>
           <Row>
-            <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
+            <Image src={clubBanner} id='my-img2' fluid/>
           </Row>
           <Padding size={30}/>
             <Row>
               <Col>
-                <h1 class="homeTitle">Midnight Teddy Clubhouse</h1>
+                <h1 className="homeTitle">Midnight Teddy Clubhouse</h1>
               </Col>
               <Col xs={"auto"} className="text-center">
                 <h4>Lookup any Teddy</h4>
@@ -302,7 +305,7 @@ class Gallery extends React.Component {
               { this.state.tokenList.length ? 
                 <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
                   {this.state.tokenList.map(item => {
-                      return (<TeddyTile id={item}  clickHandler={this.handleClickTile}/>)
+                      return (<TeddyTile id={item}  clickHandler={this.handleClickTile} key={`teddy-tile-${item}`} />)
                   })}
                 </div>
               :
@@ -322,12 +325,12 @@ class Gallery extends React.Component {
         <Meta title={pageTitle}/>
         <Container>
         <Row>
-          <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
+          <Image src={clubBanner} id='my-img2' fluid/>
         </Row>
         <Padding size={30}/>
         
         <Row>
-          <h1 class="homeTitle">Midnight Teddy Clubhouse</h1>
+          <h1 className="homeTitle">Midnight Teddy Clubhouse</h1>
         </Row>
         <Padding size={30}/>
           

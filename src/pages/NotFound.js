@@ -3,6 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import Meta from '../components/Meta'
 import Image from 'react-bootstrap/Image'
 import Layout from "../layout/Layout";
+import clubBanner from '../assets/club_banner.jpg'
 
 const Padding = (size) => {
   console.log("SIZE",size)
@@ -18,12 +19,12 @@ const NotFound = () => {
       <Meta title={pageTitle}/>
       <Container>
           <Row>
-            <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
+            <Image src={clubBanner} id='my-img2' fluid/>
           </Row>
           <Padding size={30}/>
 
           <Row className="text-center" style={{paddingTop:`30px`}}>
-            <h1 class="homeTitle">Page Not Found</h1>
+            <h1 className="homeTitle">Page Not Found</h1>
           </Row>
         
           <Row className="justify-content-center">

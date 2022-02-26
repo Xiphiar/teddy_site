@@ -382,8 +382,8 @@ class TeddyCard extends React.Component {
                             <div className="anon-img-container">
                                 <img src={this.state.pubImage} alt={`Midnight Teddy ${this.state.id}`} key={`teddy-${this.state.id}`} />
                                 { this.state.encryptedImage.authentication ?
-                                    <div class="imgOverlay pulsate">
-                                        <div class="decrypt-spinner"/>
+                                    <div className="imgOverlay pulsate">
+                                        <div className="decrypt-spinner"/>
                                         <span className="overlayText">Decrypting...</span>
                                     </div>
                                 :
@@ -393,44 +393,44 @@ class TeddyCard extends React.Component {
                     :
                         <div className="anon-img-container">
                             <img key={`teddy-${this.state.id}`} />
-                            <div class="imgOverlay pulsate"><div class="decrypt-spinner"/></div>
+                            <div className="imgOverlay pulsate"><div className="decrypt-spinner"/></div>
                         </div>
                     }
 
                 <div className="anon-stats">
                     <Row className="justify-content-between">
-                    <Col xs={"auto"}>
-                        <h2 style={{display: "inline"}}>
-                            Midnight Teddy #{ this.state.id } {/*(Rank { rarityAnon.rank } / { totalAnonsCount })*/}
-                        </h2>
-                        <h1 style={{display: "inline"}}>
-                            <FontAwesomeIcon style={{paddingLeft: "5px"}} icon={faLink} className="pointer backLink" title="Copy Link" onClick={() => this.setUriHash(this.state.id)} />
-                        </h1>
-                    </Col>
+                        <Col xs={"auto"}>
+                            <h2 style={{display: "inline"}}>
+                                Midnight Teddy #{ this.state.id } {/*(Rank { rarityAnon.rank } / { totalAnonsCount })*/}
+                            </h2>
+                            <h1 style={{display: "inline"}}>
+                                <FontAwesomeIcon style={{paddingLeft: "5px"}} icon={faLink} className="pointer backLink" title="Copy Link" onClick={() => this.setUriHash(this.state.id)} />
+                            </h1>
+                        </Col>
 
-                    <div  style={{width: "auto"}} className="text-right">
-                        <h1>
-                            { this.state.encryptedImage.authentication && this.state.owned ?
-                                <div>
-                                    <img src="alterlogo.png" style={{marginRight: "20px", width: "40px"}} className="pointer alterLink" onClick={() => this.alterModal(true)} />
-                                    <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faArrowRightArrowLeft} className="pointer backLink" title="Swap Public and Private Data" onClick={() => this.swapModal(true)} />
-                                    <FontAwesomeIcon style={{marginRight: "10px"}} icon={faKey} className="pointer backLink" title="Authorize Viewers" onClick={() => this.authModal(true)} />
-                                </div>
-                            :
-                                null
-                            }
-
-                            { this.state.nft_dossier && !this.state.nft_dossier.private_metadata && !this.state.encryptedImage.authentication ?
-                                this.state.loadingUnlock ?
-                                    <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faSpinner} title="Trying to unlock private data..." spin/>                           
+                        <div  style={{width: "auto"}} className="text-right">
+                            <h1>
+                                { this.state.encryptedImage.authentication && this.state.owned ?
+                                    <div>
+                                        <img src="alterlogo.png" style={{marginRight: "20px", width: "40px"}} className="pointer alterLink" onClick={() => this.alterModal(true)} />
+                                        <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faArrowRightArrowLeft} className="pointer backLink" title="Swap Public and Private Data" onClick={() => this.swapModal(true)} />
+                                        <FontAwesomeIcon style={{marginRight: "10px"}} icon={faKey} className="pointer backLink" title="Authorize Viewers" onClick={() => this.authModal(true)} />
+                                    </div>
                                 :
-                                    <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faKey} className="pointer backLink" title="Unlock Private Data" onClick={() => this.unlockData()} />
-                            
-                            :
-                                null
-                            }
-                        </h1>
-                    </div>
+                                    null
+                                }
+
+                                { this.state.nft_dossier && !this.state.nft_dossier.private_metadata && !this.state.encryptedImage.authentication ?
+                                    this.state.loadingUnlock ?
+                                        <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faSpinner} title="Trying to unlock private data..." spin/>                           
+                                    :
+                                        <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faKey} className="pointer backLink" title="Unlock Private Data" onClick={() => this.unlockData()} />
+                                
+                                :
+                                    null
+                                }
+                            </h1>
+                        </div>
                     </Row>
 
                 

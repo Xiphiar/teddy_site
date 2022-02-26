@@ -94,7 +94,7 @@ class TeddyTile extends React.Component {
   render(){
     return (
       <a onClick={() => this.props.clickHandler(this.props.id, this.state.imageUrl)}>
-      <div style={{paddingBottom: "15px"}} >
+      <div style={{paddingBottom: "15px"}}>
         {this.state.loading ?
           <i className="c-inline-spinner c-inline-spinner-white" />
         :
@@ -200,7 +200,6 @@ class Gallery extends React.Component {
 
     let returned = {client: null, address: null}
     if (!this.state.secretJs || !this.state.address) {
-      console.log("getting stuff")
       //get SigningCosmWasmClient and store in state
       returned = await getSigningClient();
       this.setState({
@@ -241,7 +240,7 @@ class Gallery extends React.Component {
       <Layout>
       <div>
         <Meta title={pageTitle}/>
-        <h1 class="homeTitle">Gallery</h1>
+        <h1 className="homeTitle">Gallery</h1>
         { this.state.showTeddy ?
           <TeddyCard owned={this.state.owned} handleBack={this.showGallery} id={this.state.clickedID} queryPermit={this.state.queryPermit} secretJs={this.state.secretJs}/>
         :
@@ -263,7 +262,7 @@ class Gallery extends React.Component {
                   {this.state.tokenList.length ?
                       <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
                           {this.state.tokenList.map(item => {
-                              return (<TeddyTile id={item}  clickHandler={this.handleClickTile}/>)
+                              return (<TeddyTile id={item} clickHandler={this.handleClickTile} key={`teddy-tile-${item}`}/>)
                           })}
                       </div>
                   :

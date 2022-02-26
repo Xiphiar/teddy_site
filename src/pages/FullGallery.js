@@ -255,7 +255,7 @@ class Gallery extends React.Component {
         <Meta title={pageTitle}/>
         <Container>
           <Row>
-            <Image src="homeBanner.png" id='my-img' fluid={true}/>
+            <Image src="homeBanner.png" id='my-img' fluid/>
           </Row>
           {/*<Row>
             <img src={`data:image/png;base64,${this.state.testdata}`}/>

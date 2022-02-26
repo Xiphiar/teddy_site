@@ -15,7 +15,7 @@ const Tools = () => {
         </Col>
         <Col md={{ span: "auto"}} className="justify-content-md-center text-end">
           <div style={{textAlign: "left", zIndex:"5"}}>
-            <img src="trackerteddy.png" fluid={true}/>
+            <img src="trackerteddy.png" fluid/>
           </div>
           <button type="button" className="btn btn-primary me-2 rarityButton" disabled={true} style={{zIndex:"3"}}>
             COMING SOON

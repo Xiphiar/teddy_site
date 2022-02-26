@@ -16,6 +16,7 @@ import Feedback from 'react-bootstrap/esm/Feedback';
 
 import { toast } from 'react-toastify';
 import { CosmWasmClient } from 'secretjs';
+import clubBanner from '../assets/club_banner.jpg'
 
 
 class Padding extends React.Component {
@@ -59,7 +60,7 @@ class MintStatus extends React.Component {
   render(){
     return (
       this.state.loading ?
-        <div><span><i className="c-inline-spinner c-inline-spinner-white" /> Teddies are available.</span>&nbsp;&nbsp;<i class="fa fa-refresh fa-spin" style={{fontSize:"24px"}}></i></div> 
+        <div><span><i className="c-inline-spinner c-inline-spinner-white" /> Teddies are available.</span>&nbsp;&nbsp;<i className="fa fa-refresh fa-spin" style={{fontSize:"24px"}}></i></div> 
       :
         <div><span>{3030 - this.state.minted} Teddies are available.</span>&nbsp;&nbsp;<i style={{fontSize:"24px"}} className="fa pointer" onClick={()=>this.getMintCount()}>&#xf021;</i></div> 
     )
@@ -274,7 +275,7 @@ class MintPage extends React.Component {
         />
         <Container>
           <Row>
-            <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
+            <Image src={clubBanner} id='my-img2' fluid/>
           </Row>
           {/*<Row>
             <img src={`data:image/png;base64,${this.state.testdata}`}/>
@@ -311,7 +312,7 @@ class MintPage extends React.Component {
             </div>
             { this.state.loading ?
               <button type="button" onClick={this.handleMint} disabled={true} className="btn btn-primary me-2 mintButton teddyButton">
-                <i class="c-inline-spinner c-inline-spinner-white c-inline-spinner-lg " />
+                <i className="c-inline-spinner c-inline-spinner-white c-inline-spinner-lg " />
               </button>
 
             :

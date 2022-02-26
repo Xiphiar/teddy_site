@@ -86,7 +86,7 @@ const MultiMinted = ({ kvLogs }) => {
         <Container>
           <div className=''>
             <h2>You minted Midnight Teddy #{kvLogs[0].minted}</h2>
-            <Image src={kvLogs.priv_url} fluid={true}/>
+            <Image src={kvLogs.priv_url} fluid/>
           </div>
         </Container>
       )

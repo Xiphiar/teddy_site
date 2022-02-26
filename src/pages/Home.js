@@ -12,6 +12,7 @@ import Roadmap from "../components/home/Roadmap"
 import Factory from "../components/home/Factory"
 import Tools from "../components/home/Tools"
 import Team from "../components/home/Team"
+import clubBanner from '../assets/club_banner.jpg'
 
 // Layout
 import Layout from "../layout/Layout";
@@ -60,7 +61,7 @@ class Home extends React.Component {
         <Container>
           <Row>
             <Col xs={12}>
-            <Image src="club_banner.jpg" fluid={true}/>
+            <Image src={clubBanner} fluid/>
 
             </Col>
           </Row>
@@ -74,7 +75,7 @@ class Home extends React.Component {
         <Padding size={75}/>
         <Container>
           <Row>
-            <Image src="banner.png" fluid={true}/>
+            <Image src="banner.png" fluid/>
           </Row>
         </Container>
         

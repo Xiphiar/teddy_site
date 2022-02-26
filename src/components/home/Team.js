@@ -28,16 +28,16 @@ const Team = () => {
           <Member name="Teddy Knight / Slygood" title="Artist"/>
         </Col>
         <Col lg={{ span: 2, offset: 0}} xs={{ span: 4, offset: 2}} className="align-items-end" style={{padding: "0px"}}>
-            <a href="https://altermail.live"><Image src="alter.png" style={{padding:"0"}} fluid={true}/></a>
+            <a href="https://altermail.live"><Image src="alter.png" style={{padding:"0"}} fluid/></a>
         </Col>
         <Col lg={{span:2}} xs={{ span: 4}} className="align-items-end" style={{padding: "0px"}}>
-            <Image src="papabear.png" style={{padding:"0"}} fluid={true}/>
+            <Image src="papabear.png" style={{padding:"0"}} fluid/>
         </Col>
         <Col lg={{span:2, offset:0}} xs={{ span: 4, offset: 2}} className="align-items-end" style={{padding: "0px"}}>
-            <a href="https://trivium.network"><Image src="trivium.jpg" style={{padding:"0"}} fluid={true} title="Trivium Node"/></a>
+            <a href="https://trivium.network"><Image src="trivium.jpg" style={{padding:"0"}} fluid title="Trivium Node"/></a>
         </Col>
         <Col lg={{span:2}} xs={{ span: 4}} className="align-items-end" style={{padding: "0px"}}>
-            <a href="https://www.artstation.com/ashcrow001"><Image src="designer.png" style={{padding:"0"}} fluid={true}/></a>
+            <a href="https://www.artstation.com/ashcrow001"><Image src="designer.png" style={{padding:"0"}} fluid/></a>
         </Col>
       </Row>
       <Row style={{paddingTop:"40px", paddingBottom:"40px", fontSize: "16px"}}>
