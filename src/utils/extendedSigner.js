@@ -33,8 +33,40 @@ export class ExtendedSender extends SigningCosmWasmClient {
         return tx;
     }
 
+    asyncExecute = async (
+        contractAddress,
+        handleMsg,
+        memo = "",
+        transferAmount = null,
+        fee = null,
+        codeHash = null,
+      ) => {
+        let tx;
+
+        try {
+          tx = await this.execute(contractAddress, handleMsg, memo, transferAmount, fee, codeHash);
+        } catch (e) {
+          console.error(`failed to broadcast tx: ${e}`);
+          throw `failed to broadcast tx: ${e}`;
+        }
+        //tx.transactionHash
+        try {
+          await sleep(3000);
+          const res = await this.checkTx(tx.transactionHash)
+            
+          return {
+            ...res,
+            transactionHash: tx.transactionHash,
+          };
+
+        } catch (e) {
+          console.error(`failed to broadcast tx: ${e}`);
+          throw `failed to broadcast tx: ${e}`;
+        }
+    }
+
     //poll for if TX hash has been processed
-    checkTx = async(txHash, interval=500, retries=5) => {
+    checkTx = async(txHash, interval=6000, retries=10) => {
         try {
             await sleep(3000);
             let res = await retry(
@@ -62,7 +94,7 @@ export class ExtendedSender extends SigningCosmWasmClient {
 
         } catch (e) {
             console.error(`Timed out while waiting for transaction: ${e}`);
-            throw(`Timed out while waiting for transaction: ${e}`)
+            throw(`Timed out while waiting for transaction. Your transaction is probably processed, check the gallery.`)
             //let error = new CustomError(`Timed out while waiting for transaction`);
             //error.txHash = tx.transactionHash;
             //throw e;

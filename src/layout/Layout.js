@@ -2,10 +2,10 @@
 import Menu from "../components/Menu";
 import Footer from "../components/Footer";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, home }) => {
   return (
     <>
-      <Menu />
+      <Menu home={home}/>
       <main>{children}</main>
       <Footer />
     </>

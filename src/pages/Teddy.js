@@ -5,9 +5,9 @@ import Meta from '../components/Meta'
 import Image from 'react-bootstrap/Image'
 import { Nav, Container, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import TeddyInfo from '../components/gallery/teddyInfo'
-
-import InfiniteScroll from 'react-infinite-scroll-component';
+import TeddyInfo from '../components/gallery/teddyCardModal'
+import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
+import TeddyCard from '../components/gallery/teddyCard'
 
 import axios from "axios";
 
@@ -66,24 +66,7 @@ class Padding extends React.Component {
   }
 }
 
-class TeddyTile extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render(){
-    return (
-      <a onClick={this.props.clickHandler}>
-      <div style={{paddingBottom: "15px"}} >
-        <Image src="team1.png" rounded />
-        <h5>Midnight Teddy #{this.props.id}</h5>
-      </div>
-      </a>
-    )
-  }
-}
-
-class Gallery extends React.Component {
+class TeddyInfoPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -94,7 +77,9 @@ class Gallery extends React.Component {
       sortPlaceholder: "Number (Asc)",
       items: [],
       page: 1,
-      show: false
+      show: false,
+      queryPermit: {},
+      tokenList: []
     };
   }
 
@@ -135,6 +120,7 @@ class Gallery extends React.Component {
       show: true,
       clicked: data
     })
+    this.queryData(data);
   }
 
   handleHide = () => {
@@ -143,67 +129,104 @@ class Gallery extends React.Component {
     })
   }
 
-  refreshData = async() => {
-    let data = await this.queryBackendAll(1);
+  getPermit = async() => {
+    if (this.state.queryPermit.signature) {
+      return;
+    }
+
+    const signature = await getPermit(this.state.address);
     this.setState({
-      items: data,
-      page: 1
+      queryPermit: signature
     });
-    console.log(this.state);
+
+    return;
   }
 
-  fetchMoreData = async() => {
-    let newPage = this.state.page + 1;
-    let data = await this.queryBackendAll(newPage);
+  handleQuery = async() => {
+    //disable Mint button and show spinner
     this.setState({
-      items: this.state.items.concat(data),
-      page: newPage
-    });
-    /*
-    // a fake async api call like which sends
-    // 20 more records in 1.5 secs
-    setTimeout(() => {
+      loading: true
+    })
+    let returned = {client: null, address: null}
+    if (!this.state.secretJs || this.state.address) {
+      //get SigningCosmWasmClient and store in state
+      returned = await getSigningClient();
       this.setState({
-        items: this.state.items.concat(Array.from({ length: 20 }))
-      });
-    }, 1500);
-    */
-  };
+        secretJs: returned.client,
+        address: returned.address
+      })
+    }
 
-  handleSort = async(sort) => {
-    let data = await this.queryBackendAll(1, sort);
+    await this.getPermit();
 
-    this.setState({
-      sort, 
-      items: data,
-      page: 1
-    })
-    //await this.refreshData();
-  };
+    let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
+    if (process.env.REACT_APP_USE_TESTNET === "true"){
+        chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
+    }
 
-  handleBurnt = (burnt) => {
-    this.setState({ burnt }, () =>
-      console.log(`Option selected:`, this.state.burnt)
-    );
-  };
+    let query = {
+      tokens: {
+        owner: this.state.address,
+        limit: 200
+      }
+    }
+    
+    const permitQuery = {
+      with_permit: {
+        query: query,
+        permit: {
+          params: {
+            permit_name: permitName,
+            allowed_tokens: allowedTokens,
+            chain_id: chainId,
+            permissions: permissions,
+          },
+          signature: this.state.queryPermit,
+        },
+      },
+    };
+    console.log(permitQuery)
+    let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, permitQuery, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+    console.log(data);
+    this.setState({tokenList: data.token_list.tokens});
+  }
 
-  handleOwned = (owned) => {
-    this.setState({ owned }, () =>
-      console.log(`Option selected:`, this.state.owned)
-    );
-  };
+  queryData = async(id) => {
+    console.log("abc", id);
+    await this.getPermit();
 
-  handleBase = async(base) => {
-    let data = await this.queryBackendAll(1, this.state.sort, base);
+    let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
+    if (process.env.REACT_APP_USE_TESTNET === "true"){
+        chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
+    }
 
-    this.setState({
-      base, 
-      items: data,
-      page: 1
-    })
-  };
+    const query = {
+        nft_dossier: {
+          token_id: id,
+        }
+      }
+      
+      const permitQuery = {
+        with_permit: {
+          query: query,
+          permit: {
+            params: {
+              permit_name: permitName,
+              allowed_tokens: allowedTokens,
+              chain_id: chainId,
+              permissions: permissions,
+            },
+            signature: this.state.queryPermit,
+          },
+        },
+      };
+      console.log(permitQuery)
+      let res = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+      console.log(res);
+  } 
 
   render () {
+    console.log("fuckyou")
     // page content
     const pageTitle = 'Midnight Teddy Club'
     const { base, burnt, owned, sort } = this.state;
@@ -250,80 +273,17 @@ class Gallery extends React.Component {
     }
     return (
       <Layout>
-      <TeddyInfo show={this.state.show} hide={() => this.handleHide()} data={this.state.clicked}/>
       <div>
         <Meta title={pageTitle}/>
         <Container>
           <Row>
-            <Image src="homeBanner.png" id='my-img' fluid={true}/>
+          <TeddyCard />
           </Row>
-          {/*<Row>
-            <img src={`data:image/png;base64,${this.state.testdata}`}/>
-          </Row>*/}
         </Container>
-        <Padding size={30}/>
-        <Container>
-        <Row>
-          <Col md={3}>
-              <h6>Base Design</h6>
-              <Select
-                value={base}
-                onChange={this.handleBase}
-                options={baseOptions}
-                isMulti={true}
-                styles={customStyles}
-              />
-              <h6>Burnt</h6>
-              <Select
-                value={burnt}
-                onChange={this.handleBurnt}
-                options={burntOptions}
-                styles={customStyles}
-                isClearable={true}
-              />
-              <h6>Owned</h6>
-              <Select
-                value={owned}
-                onChange={this.handleOwned}
-                options={ownedOptions}
-                isMulti={false}
-                isClearable={true}
-                styles={customStyles}
-              />
-              <h6>Sort</h6>
-              <Select
-                value={sort}
-                //defaultValue={sort}
-                onChange={this.handleSort}
-                options={sortOptions}
-                styles={customStyles}
-                hideSelectedOptions={true}
-              />
-          </Col>
-          <Col md={9}>
-          <InfiniteScroll
-            dataLength={this.state.items.length} //This is important field to render the next data
-            next={this.fetchMoreData}
-            hasMore={true}
-            style={{display: 'flex', flexWrap: "wrap", justifyContent: "space-evenly"}}
-            loader={<h4>Loading...</h4>}
-            endMessage={
-              <p style={{ textAlign: 'center' }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            }
-          >
-          {this.state.items.map((i, index) => (
-            <TeddyTile id={i.id} clickHandler={() => this.handleClick(i)}/>
-          ))}
-          </InfiniteScroll>
-          </Col>
-        </Row>
-      </Container>
       </div>
       </Layout>
     )
   }
 }
 
-export default Gallery
+export default TeddyInfoPage

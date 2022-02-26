@@ -8,9 +8,9 @@ import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
 import { queryOwnedTokens } from "../utils/dataHelper";
 import TeddyCard from '../components/gallery/teddyCard';
-import { getPublicTeddyData } from '../utils/dataHelper'
+import { getPublicTeddyData, truncate } from '../utils/dataHelper'
 import { useParams } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 import axios from "axios";
 
 // Layout
@@ -43,10 +43,6 @@ const baseOptions = [
 const burntOptions = [
   { value: true, label: 'Only Burnt' },
   { value: false, label: 'Only Unburnt' }
-];
-
-const ownedOptions = [
-  { value: true, label: 'Only Owned' }
 ];
 
 const sortOptions = [
@@ -83,18 +79,16 @@ class TeddyTile extends React.Component {
 
   getData = async() => {
     const data = await getPublicTeddyData(this.props.id);
-    console.log(data);
     this.setState({
       imageUrl: data.pub_url,
       loading: false
     })
-    console.log(this.state)
   }
 
   render(){
     return (
       <a onClick={() => this.props.clickHandler(this.props.id, this.state.imageUrl)}>
-      <div style={{paddingBottom: "15px"}} >
+      <div className="backLink pointer" style={{paddingBottom: "15px"}} >
         {this.state.loading ?
           <i className="c-inline-spinner c-inline-spinner-white" />
         :
@@ -114,7 +108,6 @@ class Gallery extends React.Component {
       //sort: {value: 'numberasc', label: 'Number (Asc)'},
       //base: [],
       //burnt: false,
-      //owned: false,
       //sortPlaceholder: "Number (Asc)",
       loadingOwned: false,
       showTeddy: this.props.showTeddy || false,
@@ -124,6 +117,7 @@ class Gallery extends React.Component {
       page: 1,
       queryPermit: {},
       tokenList: [],
+      tokensLoaded: false,
       owned: false,
     };
   }
@@ -209,16 +203,39 @@ class Gallery extends React.Component {
       })
     }
 
-    await this.getPermit();
+    try {
+      await this.getPermit();
+    } catch(e) {
+      console.error(e)
+      this.setState({
+        loadingOwned: false
+      })
+      return;
+    }
 
     const data = await queryOwnedTokens(this.state.secretJs, this.state.address, this.state.queryPermit)
-
-    this.setState({
-      loadingOwned: false,
-      tokenList: data,
-      owned: true
-    });
-
+    if (data.length){
+      this.setState({
+        loadingOwned: false,
+        tokensLoaded: true,
+        tokenList: data,
+        owned: true
+      });
+    } else {
+      const truncatedAddress = truncate(this.state.address, 27, "...")
+      toast.error(`No teddies found for address ${truncatedAddress}`,{
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        
+      });
+      this.setState({
+        loadingOwned: false,
+      });
+    } 
   }
 
   handleLookupIDChange = (event) => {
@@ -236,51 +253,121 @@ class Gallery extends React.Component {
   render () {
     // page content
     const pageTitle = 'Midnight Teddy Club'
+    if (this.state.showTeddy){
+      return (
+        <Layout>
+          <Meta title={pageTitle}/>
+          <Container>
+            <Row>
+              <h1 class="homeTitle">Midnight Teddy Clubhouse</h1>
+            </Row>
+            <Padding size={30}/>
+            <TeddyCard owned={this.state.owned} handleBack={this.showGallery} id={this.state.clickedID} queryPermit={this.state.queryPermit} secretJs={this.state.secretJs}/>
+          </Container>
+        </Layout>
+        )
+    }
+    if (this.state.tokensLoaded){
+      return (
+        <Layout>
+          <Meta title={pageTitle}/>
+          <Container>
+          <Row>
+            <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
+          </Row>
+          <Padding size={30}/>
+            <Row>
+              <Col>
+                <h1 class="homeTitle">Midnight Teddy Clubhouse</h1>
+              </Col>
+              <Col xs={"auto"} className="text-center">
+                <h4>Lookup any Teddy</h4>
+                <div className="d-flex justify-content-center" style={{margin:"auto"}}>
+                  <label>
+                    ID:&nbsp;
+                    <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
+                  </label>
+                  <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
+                  </div>
+              </Col>
+            </Row>
 
+            <Padding size={30}/>
+
+            <Row className="justify-content-center" style={{paddingBottom: "20px"}}>
+
+            </Row>
+  
+            <Row className="justify-content-center">
+              { this.state.tokenList.length ? 
+                <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
+                  {this.state.tokenList.map(item => {
+                      return (<TeddyTile id={item}  clickHandler={this.handleClickTile}/>)
+                  })}
+                </div>
+              :
+                <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
+                  <h3>No Teddies Found 😔</h3>
+                </div>
+              }
+
+            </Row>
+
+          </Container>
+        </Layout>
+        )
+    } else {
     return (
       <Layout>
-      <div>
         <Meta title={pageTitle}/>
-        <h1 class="homeTitle">Gallery</h1>
-        { this.state.showTeddy ?
-          <TeddyCard owned={this.state.owned} handleBack={this.showGallery} id={this.state.clickedID} queryPermit={this.state.queryPermit} secretJs={this.state.secretJs}/>
-        :
-          <Container>
-              <Row className="justify-content-center" style={{paddingBottom: "20px"}}>
-                <Col xs={"auto"} className="text-center">
-                  <h4>Lookup any Teddy</h4>
-                  <div className="d-flex justify-content-center" style={{margin:"auto"}}>
-                    <label>
-                      ID:&nbsp;
-                      <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
-                    </label>
-                    <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
-                    </div>
-                </Col>
-              </Row>
+        <Container>
+        <Row>
+          <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
+        </Row>
+        <Padding size={30}/>
+        
+        <Row>
+          <h1 class="homeTitle">Midnight Teddy Clubhouse</h1>
+        </Row>
+        <Padding size={30}/>
+          
+            <Row>
+              <Col>
+                <h2>View Your Teddies</h2>
+                <p>View your owned teddies with Keplr Wallet. Click the button below to create a free viewing permit and view your teddies' private images and traits.</p>
 
-              <Row className="justify-content-center">
-                  {this.state.tokenList.length ?
-                      <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
-                          {this.state.tokenList.map(item => {
-                              return (<TeddyTile id={item}  clickHandler={this.handleClickTile}/>)
-                          })}
-                      </div>
+              </Col>
+
+              <Col>
+                <h2>Lookup any Teddy</h2>
+                <p>Enter a Teddy ID to view it's public traits.</p>
+
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+              <div className="text-center">
+                  { this.state.loadingOwned ?
+                    <Button className="keplrButton" disabled={true}  style={{width:"190px", height:"55px"}}><i className="c-inline-spinner c-inline-spinner-white" /></Button>
                   :
-                  <Col xs={"auto"} >
-                    { this.state.loadingOwned ?
-                      <Button className="keplrButton" disabled={true}><i className="c-inline-spinner c-inline-spinner-white" /></Button>
-                    :
-                      <Button className="keplrButton" onClick={() => this.queryOwned()}>Connect Keplr</Button>
-                    }
-                  </Col>
+                    <Button className="keplrButton" onClick={() => this.queryOwned()} style={{width:"190px", height:"55px"}}>Connect Keplr</Button>
                   }
-            </Row>   
-          </Container>
-        }
-      </div>
+                </div>
+              </Col>
+              <Col>
+              <div className="d-flex justify-content-center" style={{margin:"auto"}}>
+                  <label>
+                    ID:&nbsp;
+                    <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
+                  </label>
+                  <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
+                </div>
+              </Col>
+            </Row>
+      </Container>
       </Layout>
     )
+      }
   }
 }
 

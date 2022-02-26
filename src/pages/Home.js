@@ -53,7 +53,7 @@ class Home extends React.Component {
     const pageTitle = 'Midnight Teddy Club'
 
     return (
-      <Layout>
+      <Layout home={true}>
       <div style={{width: "100%"}}>
         
         <Meta title={pageTitle}/>

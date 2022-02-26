@@ -11,23 +11,57 @@ import ProcessingModal from '../components/mint/ProcessingModal'
 // Layout
 import Layout from "../layout/Layout";
 
-import { getSigningClient } from "../utils/keplrHelper";
+import { getSigningClient, getApiURL } from "../utils/keplrHelper";
 import Feedback from 'react-bootstrap/esm/Feedback';
 
 import { toast } from 'react-toastify';
-
-const backendUrl = "http://localhost:9176"
-
+import { CosmWasmClient } from 'secretjs';
 
 
 class Padding extends React.Component {
-  constructor(props) {
+  constructor(props) {  
     super(props);
   }
 
   render(){
     return (
       <div style={{height:`${this.props.size}px`}} />
+    )
+  }
+}
+
+class MintStatus extends React.Component {
+  constructor(props) {  
+    super(props);
+    this.state = {
+      queryJS: new CosmWasmClient(getApiURL()),
+      loading: true
+    };
+  }
+
+  componentDidMount = () => {
+    this.getMintCount();
+  }
+
+  getMintCount = async() => {
+    this.setState({loading: true})
+
+    const minted_query = {
+      num_tokens : {}
+    };
+
+    const data = await this.state.queryJS.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, minted_query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+    console.log(data)
+    this.setState({minted: parseInt(data.num_tokens.count), loading: false})
+    this.props.updater(parseInt(data.num_tokens.count))
+  }
+
+  render(){
+    return (
+      this.state.loading ?
+        <div><span><i className="c-inline-spinner c-inline-spinner-white" /> Teddies are available.</span>&nbsp;&nbsp;<i class="fa fa-refresh fa-spin" style={{fontSize:"24px"}}></i></div> 
+      :
+        <div><span>{3030 - this.state.minted} Teddies are available.</span>&nbsp;&nbsp;<i style={{fontSize:"24px"}} className="fa pointer" onClick={()=>this.getMintCount()}>&#xf021;</i></div> 
     )
   }
 }
@@ -44,10 +78,14 @@ class MintPage extends React.Component {
       tx: {},
       error: false,
       errorText: "",
-      complete: false
+      complete: false,
+      numMinted: null
     };
   }
 
+  updateAvailable = (amount) => {
+    //this.setState({numMinted: amount})
+  }
 
   handleMint = async() => {
     //disable Mint button and show spinner
@@ -55,13 +93,27 @@ class MintPage extends React.Component {
       loading: true
     })
 
+    if (!window.keplr){
+      toast.error("Please install Keplr Wallet extension.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      this.setState({
+        loading: false
+      })
+      return;
+    }
+
     //get SigningCosmWasmClient and store in state
     let {client, address} = await getSigningClient();
     this.setState({
       secretJs: client,
       address: address
     })
-    console.log(this.state);
 
     //message for the NFT contract
     const mintMsg = {
@@ -80,11 +132,11 @@ class MintPage extends React.Component {
     let asyncResponse;
     try{
 
+      //mint multiple with multiExecute
       if (this.state.number > 1){
         const fee = {
           gas: parseInt(process.env.REACT_APP_MINT_GAS) * parseInt(this.state.number),
         }
-        const tokenAddress = process.env.REACT_APP_TOKEN_ADDRESS
         let multiObj = {
           contractAddress: process.env.REACT_APP_TOKEN_ADDRESS,
           contractCodeHash: process.env.REACT_APP_TOKEN_CODE_HASH,
@@ -98,6 +150,7 @@ class MintPage extends React.Component {
           fee
         )
 
+      //mint single with regular execute
       } else {
         const fee = {
           gas: process.env.REACT_APP_MINT_GAS,
@@ -120,6 +173,7 @@ class MintPage extends React.Component {
 
       //catch and show error while posting TX
     } catch(error){
+      console.error(error);
       toast.error(error.toString(), {
         position: "top-right",
         autoClose: 5000,
@@ -150,23 +204,35 @@ class MintPage extends React.Component {
       txId: asyncResponse.transactionHash
     })
     
-    //poll endpoint for TX to know when it processes 10 times 1000ms delay 
-    const fullResponse = await this.state.secretJs.checkTx(asyncResponse.transactionHash, 1000, 10);
+    try {
+      //poll endpoint for TX to know when it processes 10 times 1000ms delay 
+      const fullResponse = await this.state.secretJs.checkTx(asyncResponse.transactionHash, 10000, 400);
+      console.log("*TX*", fullResponse)
+      //if tx failed show error in modal
+      if (fullResponse.code){
+        this.setState({
+          error: true,
+          tx: fullResponse
+        })
+        return;
+      }
 
-    //if tx failed show error in modal
-    if (fullResponse.code){
+      //show complete screen in modal.
       this.setState({
-        error: true,
+        complete: true,
         tx: fullResponse
       })
-      return;
+
+    } catch(e){
+      this.setState({
+        show: true,
+        error: true,
+        tx: {raw_log: e}
+      })
     }
 
-    //show complete screen in modal.
-    this.setState({
-      complete: true,
-      tx: fullResponse
-    })
+
+
   }
 
   handleHide = () => {
@@ -187,7 +253,7 @@ class MintPage extends React.Component {
 
 
   componentDidMount = async() => {
-    console.log("did Mount")
+    //console.log("did Mount")
   }
 
   render () {
@@ -208,7 +274,7 @@ class MintPage extends React.Component {
         />
         <Container>
           <Row>
-            <Image src="homeBanner.png" id='my-img' fluid={true}/>
+            <Image src="club_banner.jpg" id='my-img2' fluid={true}/>
           </Row>
           {/*<Row>
             <img src={`data:image/png;base64,${this.state.testdata}`}/>
@@ -221,7 +287,10 @@ class MintPage extends React.Component {
           <h1>Mint a Teddy</h1>
           </Col>
         </Row>
-        <Row className="justify-content-center">
+        <Row className="text-center">
+          <MintStatus updater={this.updateAvailable}/>
+        </Row>
+        <Row className="justify-content-center" style={{paddingTop: "30px"}}>
           <Col md={"auto"}>
             <div className="d-flex">
               <div style={{width: "200px"}}>
@@ -230,7 +299,7 @@ class MintPage extends React.Component {
                   <InputSpinner
                     type={'real'}
                     precision={2}
-                    max={50}
+                    max={this.state.numMinted && this.state.numMinted>2999 ? 3030-this.state.numMinted-5 : 30}
                     min={1}
                     step={1}
                     value={this.state.number}
@@ -242,12 +311,12 @@ class MintPage extends React.Component {
             </div>
             { this.state.loading ?
               <button type="button" onClick={this.handleMint} disabled={true} className="btn btn-primary me-2 mintButton teddyButton">
-                TODO: loading spinner
+                <i class="c-inline-spinner c-inline-spinner-white c-inline-spinner-lg " />
               </button>
 
             :
               <button type="button" onClick={this.handleMint} className="btn btn-primary me-2 mintButton teddyButton">
-                Mint
+                Mint&nbsp;&nbsp;<h6 style={{display:"inline"}}>{21*this.state.number} sSCRT</h6>
               </button>
             }
 

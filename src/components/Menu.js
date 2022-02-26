@@ -6,47 +6,47 @@ import Countdown from 'react-countdown';
 
 import { Link as ScrollLink, DirectLink, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
 
-  // Renderer callback with condition
-  const renderer = ({ days, hours, minutes, seconds, completed }) => {
-    if (completed) {
-      // Render a completed state
-      return (
-        <Link to="/mint" className="nav-link px-2 link-secondary">
-          <button type="button" className="btn btn-outline-primary me-2 navMintButton teddyButton">
-            MINT A TEDDY
-          </button>
-      </Link>
-      );
-    } else {
-      // Render nothing
-      return(
-        <div style={{width:"200px"}}/>
-      );
-    }
-  };
+// Renderer callback with condition
+const renderer = ({ days, hours, minutes, seconds, completed }) => {
+  if (completed) {
+    // Render a completed state
+    return (
+      <Link to="/mint" className="nav-link px-2 link-secondary">
+        <button type="button" className="btn btn-outline-primary me-2 navMintButton teddyButton">
+          MINT A TEDDY
+        </button>
+    </Link>
+    );
+  } else {
+    // Render nothing
+    return(
+      <div style={{width:"200px"}}/>
+    );
+  }
+};
 
-    // Renderer callback with condition
-    const renderer2 = ({ days, hours, minutes, seconds, completed }) => {
-      if (completed) {
-        // Render a completed state
-        return (
-          <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
-            <Link to="/gallery" className="nav-link px-2 teddyNavLink">
-              SHOWCASE
-            </Link>
-          </Col>
-        );
-      } else {
-        // Render nothing
-        return(
-          null
-        );
-      }
-    };
+// Renderer callback with condition
+const renderer2 = ({ days, hours, minutes, seconds, completed }) => {
+  if (completed) {
+    // Render a completed state
+    return (
+      <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
+        <Link to="/gallery" className="nav-link px-2 teddyNavLink">
+          SHOWCASE
+        </Link>
+      </Col>
+    );
+  } else {
+    // Render nothing
+    return(
+      null
+    );
+  }
+};
 
-  const date = new Date('2022-02-26T14:00:00')
+const date = new Date(Date.UTC(2022, 1, 26, 14))
 
-const Menu = () => {
+const Menu = (home) => {
   return (
     <Container style={{paddingTop: "30px", paddingBottom: "10px"}}>
       <Row>
@@ -64,15 +64,26 @@ const Menu = () => {
                 </Col>
 
                 <Col className="text-center" sm="auto"  style={{paddingRight: "30px"}}>
-                  <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="roadmapElement" spy={true} smooth={true} duration={500} >
-                    OUR PLAN
-                  </ScrollLink>
+                  {home.home ?
+                    <ScrollLink to="roadmapElement" activeClass="active" className="nav-link px-2 teddyNavLink" spy={true} smooth={true} duration={500} >
+                      OUR PLAN
+                    </ScrollLink>
+                  :
+                    <Link to="/roadmap" className="nav-link px-2 teddyNavLink">
+                      OUR PLAN
+                    </Link>
+                  }
+
                 </Col>
 
                 <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
-                  <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="teamElement" spy={true} smooth={true} duration={500} >
-                    TEAM
-                  </ScrollLink>
+                {home.home ?
+                    <ScrollLink activeClass="active" className="nav-link px-2 teddyNavLink" to="teamElement" spy={true} smooth={true} duration={500} >
+                      TEAM
+                    </ScrollLink>
+                  :
+                    <Link to="/team" className="nav-link px-2 teddyNavLink">TEAM</Link>
+                  }
                 </Col>
 
                 <Countdown date={date } renderer={renderer2} />

@@ -1,17 +1,52 @@
 import { Bech32 } from "@iov/encoding";
 
-const { BroadcastMode } = require('secretjs');
+const { BroadcastMode, CosmWasmClient } = require('secretjs');
 const { ExtendedSender } = require('./extendedSigner')
 
 const permitName = "midnightteddy.club";
 const allowedTokens = [process.env.REACT_APP_CONTRACT_ADDRESS];
 const permissions = ["owner" /* , "history", "allowance" */];
 
+let myStorage = window.sessionStorage;
+
 const customFees = {
     exec: {
         amount: [{ amount: "50000", denom: "uscrt" }],
-        gas: "200000",
+        gas: process.env.REACT_APP_MINT_GAS || "300000",
     }
+}
+
+const getApiURL = () => {
+  let apiUrl = process.env.REACT_APP_MAINNET_REST;
+  if (process.env.REACT_APP_USE_TESTNET === "true"){
+      apiUrl = process.env.REACT_APP_TESTNET_REST
+  }
+  return apiUrl;
+}
+
+const getChainId = () => {
+  let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
+  if (process.env.REACT_APP_USE_TESTNET === "true"){
+      chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
+  }
+  return chainId;
+}
+
+const permitQuery = class {
+  constructor(query, permit, chainId){
+    this.with_permit = {
+      query: query,
+      permit: {
+        params: {
+          permit_name: "midnightteddy.club",
+          allowed_tokens: [process.env.REACT_APP_CONTRACT_ADDRESS],
+          chain_id: chainId,
+          permissions: ["owner" /* , "history", "allowance" */],
+        },
+        signature: permit,
+      }
+    }
+  }
 }
 
 async function suggestTestnet() {
@@ -61,12 +96,18 @@ async function suggestTestnet() {
 }
 
 async function getPermit(address){
+  let data = myStorage.getItem(`teddy-permit-${process.env.REACT_APP_CONTRACT_ADDRESS}-${address}`);
+  if (data) { return JSON.parse(data); }
+
+
   let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
-  if (Boolean(process.env.REACT_APP_USE_TESTNET)){
+  if (process.env.REACT_APP_USE_TESTNET === "true"){
       await suggestTestnet();
       chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
   }
-  console.log(chainId);
+  window.keplr.enable(chainId);
+  console.log("ccc")
+
   const { signature } = await window.keplr.signAmino(
     chainId,
     address,
@@ -95,13 +136,14 @@ async function getPermit(address){
       preferNoSetMemo: true, // Memo must be empty, so hide it from the user
     }
   );
+  myStorage.setItem(`teddy-permit-${process.env.REACT_APP_CONTRACT_ADDRESS}-${address}`, JSON.stringify(signature));
   return signature;
 }
 
 async function getSigningClient() {
     let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
     let apiUrl = process.env.REACT_APP_MAINNET_REST;
-    if (Boolean(process.env.REACT_APP_USE_TESTNET)){
+    if (process.env.REACT_APP_USE_TESTNET === "true"){
         await suggestTestnet();
         chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
         apiUrl = process.env.REACT_APP_TESTNET_REST
@@ -124,6 +166,16 @@ async function getSigningClient() {
     }
 }
 
+async function getQueryClient() {
+  let apiUrl = process.env.REACT_APP_MAINNET_REST;
+  if (process.env.REACT_APP_USE_TESTNET === "true"){
+      await suggestTestnet();
+      apiUrl = process.env.REACT_APP_TESTNET_REST
+  }
+  const client = new CosmWasmClient(apiUrl);
+  return client;
+}
+
 function isValidAddress(address) {
     try {
       const { prefix, data } = Bech32.decode(address);
@@ -141,4 +193,4 @@ function countDecimals(value) {
     return value.toString().split(".")[1]?.length || 0; 
 }
 
-export { getSigningClient, getPermit, isValidAddress, countDecimals, permitName, allowedTokens, permissions }
+export { getSigningClient, getQueryClient, getPermit, isValidAddress, countDecimals, permitName, allowedTokens, permissions, permitQuery, getChainId, getApiURL }

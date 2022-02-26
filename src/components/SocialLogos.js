@@ -19,7 +19,6 @@ class SocialLogos extends React.Component {
     this.state = {
       white: this.props.white || false
     };
-    console.log(this.state)
   }
 
   render(){
