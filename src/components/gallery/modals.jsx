@@ -38,7 +38,7 @@ export class SwapModal extends React.Component {
         }
         
         const fee = {
-            gas: process.env.REACT_APP_SWAP_GAS || 30000,
+            gas: process.env.REACT_APP_SWAP_GAS || 50000,
         };
 
         const swapMsg = {
@@ -100,6 +100,9 @@ export class SwapModal extends React.Component {
               success: {
                 render({data}){
                     console.log(data);
+                    if (data.code){
+                        throw(data.raw_log)
+                    }
                     return `Metadata Swapped`
                 },
                 // other options
@@ -366,6 +369,9 @@ export class AuthModal extends React.Component {
               success: {
                 render({data}){
                     console.log(data);
+                    if (data.code){
+                        throw(data.raw_log)
+                    }
                     return `Address Authorized`
                 },
                 // other options
