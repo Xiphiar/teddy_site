@@ -3,7 +3,7 @@ import { permitQuery, getChainId } from './keplrHelper'
 
 const decryptFile = async (url, key) => {
     try {
-      return await axios.post(`https://stashhapp-public-testnet.azurewebsites.net/decrypt`, { url, key });
+      return await axios.post(`https://stashh.io/decrypt`, { url, key });
     } catch (error) {
       throw error;
     }

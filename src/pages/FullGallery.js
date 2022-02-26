@@ -121,7 +121,7 @@ class Gallery extends React.Component {
     this.setState({items: data, page: 1})
 
     /*
-    let test = await axios.post(`https://stashhapp-public-testnet.azurewebsites.net/decrypt`, { url, key }).catch((err) => {
+    let test = await axios.post(`https://stashh.io/decrypt`, { url, key }).catch((err) => {
       console.log(err)
     });
     console.log(test)
