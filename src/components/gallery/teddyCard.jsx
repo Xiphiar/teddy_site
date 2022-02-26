@@ -53,7 +53,6 @@ class TeddyCard extends React.Component {
     }
 
     checkIfOwned = async() => {
-        console.log(this.state.nft_dossier)
         if (!this.state.nft_dossier?.private_metadata){
             return false;
         }
@@ -97,9 +96,8 @@ class TeddyCard extends React.Component {
 
     processRarity = async() => {
         try {
-            console.log(this.state.attributes)
             const rarityData = await processRarity(this.state.attributes);
-            console.log(rarityData)
+            console.log("*RARITY*",rarityData)
             this.setState({rarityData: rarityData})
         } catch (e){
             console.error("Error processing rarity:",e);
@@ -123,10 +121,8 @@ class TeddyCard extends React.Component {
 
             let returned = {client: null, address: null}
             if (!this.state.secretJs || !this.state.address) {
-            console.log("getting stuff")
-            //get SigningCosmWasmClient and store in state
-            returned = await getSigningClient();
-
+                //get SigningCosmWasmClient and store in state
+                returned = await getSigningClient();
             }
         
             const signature = await getPermit(returned.address);
@@ -350,7 +346,6 @@ class TeddyCard extends React.Component {
     }
 
     render(){
-        //console.log(this.state.rarityData[this.state.attributes.Color])
         return(
 
             <div>
@@ -463,7 +458,7 @@ class TeddyCard extends React.Component {
                     this.state.rarityData ?
                         <tbody>
         
-                                { this.state.owned ?
+                                { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
                                     <tr>
                                         <td>Base Design</td>
                                         <td>{ this.state.attributes["Base Design"] }</td>
@@ -639,7 +634,7 @@ class TeddyCard extends React.Component {
                     </tbody>
                 }
                 </table>
-                { this.state.owned ?
+                { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
                                 <h3>
                                 Total Rarity Score: { this.state.rarityData ?
                                 this.state.rarityData.total.toFixed(3)

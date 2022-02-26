@@ -70,8 +70,10 @@ const queryTokenMetadata = async(client, id, permit) => {
       console.log("no permit query")
         let data = await client.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
         let attributes = {};
+        let unknown = "";
+        if (data.nft_dossier.public_metadata.extension.attributes.length===1) unknown = "?"
         for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
-            attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + "?";
+            attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + unknown;
           }
         return({
             nft_dossier: data.nft_dossier,
