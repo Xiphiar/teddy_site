@@ -136,9 +136,7 @@ class Gallery extends React.Component {
     });
     console.log(test)
     this.setState({testdata: test})
-    */
-    console.log(this.props)
-    
+    */    
     if (this.props.lookupTeddy){
       this.setState({lookupID: this.props.lookupID});
       this.handleLookup();

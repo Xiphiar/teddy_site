@@ -35,7 +35,8 @@ class TeddyCard extends React.Component {
         attributes: [],
         encryptedImage: {},
         decryptedImage: null,
-        loadingUnlock: false
+        loadingUnlock: false,
+        teddyRank: null
       };
     }
 
@@ -149,13 +150,21 @@ class TeddyCard extends React.Component {
     getPubData = async() => {
         //const data = await queryTokenMetadata(this.state.secretJs, this.state.id)
         const data = await getPublicTeddyData(this.state.id)
-        const total = await getTotalTokens();
+        //const total = await getTotalTokens();
         /*let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
         let attributes = {};
         for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
             attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + "?";
             }
         */
+
+        console.log(data)
+
+        this.setState({
+            teddyRank: data.teddyrank
+        })
+
+        /*
         const rarity = {total:total};
         const minimal_metadata = {
             public_metadata: {
@@ -170,6 +179,7 @@ class TeddyCard extends React.Component {
             attributes: { "Base Design": `${data.base_design}?` },
             rarityData: rarity
         });
+        */
     }
 
     unlockData = async() => {
@@ -225,7 +235,6 @@ class TeddyCard extends React.Component {
         try {
             data = await queryTokenMetadata(this.state.secretJs, this.state.id, this.state.queryPermit)
             console.log("*NFT*", data.nft_dossier);
-            console.log(data)
 
             this.setState({ rarityData: null })
 
@@ -241,6 +250,7 @@ class TeddyCard extends React.Component {
                 });
                 this.processRarity();
                 this.checkIfOwned();
+                if (this.state.owned) this.getPubData();
             }
 
             //else if private is public
@@ -255,6 +265,7 @@ class TeddyCard extends React.Component {
                 });
                 this.processRarity();
                 this.checkIfOwned();
+                if (this.state.owned) this.getPubData();
             }
 
             //else has only public data AND private is public
@@ -552,17 +563,17 @@ class TeddyCard extends React.Component {
                             <tr>
                                 <td>Base Design</td>
                                 <td>{ this.state.attributes["Base Design"] }</td>
-                                <td className="text-right">Loading</td>
-                                <td className="text-right">Loading</td>
-                                <td className="text-right">Loading</td>
+                                <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                             </tr>
                             { this.state.attributes.Color ?
                                 <tr>
                                     <td>Color</td>
                                     <td>{ this.state.attributes.Color }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
 
@@ -570,9 +581,9 @@ class TeddyCard extends React.Component {
                                 <tr>
                                     <td>Background</td>
                                     <td>{ this.state.attributes.Background }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
 
@@ -580,9 +591,9 @@ class TeddyCard extends React.Component {
                                 <tr>
                                     <td>Face</td>
                                     <td>{ this.state.attributes.Face }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
 
@@ -590,9 +601,9 @@ class TeddyCard extends React.Component {
                                 <tr>
                                     <td>Hand</td>
                                     <td>{ this.state.attributes.Hand }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
 
@@ -600,9 +611,9 @@ class TeddyCard extends React.Component {
                                 <tr>
                                     <td>Head</td>
                                     <td>{ this.state.attributes.Head }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
 
@@ -610,9 +621,9 @@ class TeddyCard extends React.Component {
                                 <tr>
                                     <td>Body</td>
                                     <td>{ this.state.attributes.Body }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
 
@@ -620,32 +631,42 @@ class TeddyCard extends React.Component {
                                 <tr>
                                     <td>Eyewear</td>
                                     <td>{ this.state.attributes.Eyewear }</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
-                                    <td className="text-right">Loading</td>
+                                    <td className="text-right"></td>
+                                    <td className="text-center"><i className="c-inline-spinner c-inline-spinner-white" /></td>
+                                    <td className="text-right"></td>
                                 </tr>
                             : null }
                         </tbody>
                 :
                     <tbody>
                         <tr>
-                            <td>Loading</td>
+                            <td>Loading <i className="c-inline-spinner c-inline-spinner-white" /></td>
                         </tr>
                     </tbody>
                 }
                 </table>
+                <div style={{display: "flex", justifyContent: "space-between"}}>
                 { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
-                                <h3>
-                                Total Rarity Score: { this.state.rarityData ?
+                        <h3 style={{display: "inline"}}>
+                            Total Rarity Score: { this.state.rarityData ?
                                 this.state.rarityData.total.toFixed(3)
-                                :
-                                "Loading"
-                                }
-                            </h3>
+                            :
+                                <i className="c-inline-spinner c-inline-spinner-white" />
+                            }
+                        </h3>
                     : null }
-
+                    { this.state.owned ?
+                        <h3 style={{display: "inline"}}>
+                            Rank: { this.state.teddyRank ?
+                                this.state.teddyRank
+                            :
+                                <i className="c-inline-spinner c-inline-spinner-white" />
+                            }
+                        </h3>
+                    : null }
                 </div>
-                    </div>
+                </div>
+                </div>
                 }
           </div>
         )
