@@ -425,7 +425,7 @@ class TeddyCard extends React.Component {
                                     <div>
                                         <img src="alterlogo.png" style={{marginRight: "20px", width: "40px"}} className="pointer alterLink" onClick={() => this.alterModal(true)} />
                                         <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faArrowRightArrowLeft} className="pointer backLink" title="Swap Public and Private Data" onClick={() => this.swapModal(true)} />
-                                        <FontAwesomeIcon style={{marginRight: "10px"}} icon={faKey} className="pointer backLink" title="Authorize Viewers" onClick={() => this.authModal(true)} />
+                                        <FontAwesomeIcon style={{marginRight: "10px"}} icon={faKey} className="pointer backLink" title="Authorize or Transfer" onClick={() => this.authModal(true)} />
                                     </div>
                                 :
                                     null

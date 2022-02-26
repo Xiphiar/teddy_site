@@ -283,7 +283,8 @@ export class AuthModal extends React.Component {
         secretJs: this.props.secretJs,
         address: this.props.address,
         loading: false,
-        input: ""
+        input: "",
+        input2: ""
       };
     }
 
@@ -389,6 +390,99 @@ export class AuthModal extends React.Component {
         this.setState({loading: false})
     }
 
+    handleTransfer = async() => {
+        //show spinner and disable button
+        this.setState({ loading: true });
+
+        if (!this.props.secretJs || !this.props.address){
+            const secretJs = await getSigningClient();
+            this.setState({secretJs: secretJs.client, address: secretJs.address});
+        }
+        
+        const fee = {
+            gas: process.env.REACT_APP_SWAP_GAS || 50000,
+        };
+
+        const transferMsg = {
+            transfer_nft : {
+                recipient: this.state.input2,
+                token_id: this.props.teddyId,
+            }
+        }  
+
+
+        let asyncResponse;
+        try{
+            console.log(this.state);
+        
+            //returns tx hash only
+            asyncResponse = await this.state.secretJs.execute(
+                process.env.REACT_APP_CONTRACT_ADDRESS,
+                transferMsg,
+                null,
+                [],
+                fee,
+                process.env.REACT_APP_CONTRACT_CODE_HASH
+            );
+            console.log(asyncResponse)
+                
+        //catch and show error while posting TX
+        } catch(error){
+            toast.error(error.toString(), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            this.setState({ loading: false })
+            return;
+        }
+    
+        //show error if async execute returned an error code (rare)
+        if (asyncResponse.code){
+          this.setState({
+            show: true,
+            error: true,
+            tx: asyncResponse
+          })
+          return;
+        }
+    
+        //show processing toast
+        await toast.promise(
+            this.state.secretJs.checkTx(asyncResponse.transactionHash, 3000, 100),
+            {
+              pending: {
+                render(){
+                    return "Transaction Processing"
+                },
+                icon: true,
+              },
+              success: {
+                render({data}){
+                    console.log(data);
+                    if (data.code){
+                        throw(data.raw_log)
+                    }
+                    return `Teddy transferred.`
+                },
+                // other options
+                //icon: "🟢",
+              },
+              error: {
+                render({data}){
+                    console.error(data);
+                    // When the promise reject, data will contains the error
+                    return data
+                }
+              }
+            }
+        )
+        this.setState({loading: false})
+    }
+
     render = () => {
         return (
             <Modal
@@ -400,7 +494,7 @@ export class AuthModal extends React.Component {
                 centered
             >
             <Modal.Header>
-                <div style={{width: "100%"}} className="text-center"><h3>Authorize Viewers</h3></div>
+                <div style={{width: "100%"}} className="text-center"><h3>Authorize and Transfer</h3></div>
             </Modal.Header>
             <Modal.Body>
                 <Container>
@@ -411,8 +505,19 @@ export class AuthModal extends React.Component {
                     </Row>
                     <Row className="justify-content-center">
                         <Col xs={"auto"}>
-                        <input className="addressBox" value={this.state.input} onChange={(event) => this.setState({input: event.target.value})} />
+                            Address
+                        <input className="addressBox" value={this.state.input} style={{marginLeft:"10px"}} onChange={(event) => this.setState({input: event.target.value})} />
                         <button className="modalButton"  style={{marginLeft:"20px"}} onClick={() => this.handleAuthorize()}> Authorize </button>
+                        </Col>
+                    </Row>
+                    <Row style={{paddingTop:"50px"}}>
+                        <p>Transfer your teddy to another Secret Network address.</p>
+                    </Row>
+                    <Row className="justify-content-center">
+                        <Col xs={"auto"}>
+                            Recipient
+                        <input className="addressBox" value={this.state.input2} style={{marginLeft:"10px"}} onChange={(event) => this.setState({input2: event.target.value})} />
+                        <button className="modalButton"  style={{marginLeft:"20px"}} onClick={() => this.handleTransfer()}> Transfer </button>
                         </Col>
                     </Row>
                 </Container>
