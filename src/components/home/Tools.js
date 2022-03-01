@@ -13,13 +13,15 @@ const Tools = () => {
             As Teddys are retired to “The club” Traits rarity changes keep track on your teddys rarity using our dynamic rairty tracker. 
           </p>
         </Col>
-        <Col md={{ span: "auto"}} className="justify-content-md-center text-end">
+        <Col md={{ span: 4}} className="justify-content-md-center text-end">
+          <div style={{maxWidth:"339px"}}>
           <div style={{textAlign: "left", zIndex:"5"}}>
             <img src="trackerteddy.png" fluid/>
           </div>
           <button type="button" className="btn btn-primary me-2 rarityButton" disabled={true} style={{zIndex:"3"}}>
             COMING SOON
           </button>
+          </div>
         </Col>
       </Row>
     </Container>
