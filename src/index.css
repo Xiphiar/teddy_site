@@ -97,8 +97,7 @@ main {
   line-height: 38px;
 }
 
-
-.mintButton {
+.homeMintButton {
   color: #000000;
   border-color: #C152F5;
   background-color: #C152F5;
@@ -108,6 +107,30 @@ main {
   padding-bottom: 12px;
   width: 100%;
   max-width: 388px;
+  height: 64px;
+  border-radius: 12.6858px;
+
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  
+  /* identical to box height */
+  text-align: center;
+  letter-spacing: 0.025em;
+}
+
+
+.mintButton {
+  color: #000000;
+  border-color: #C152F5;
+  background-color: #C152F5;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  width: 388px;
   height: 64px;
   border-radius: 12.6858px;
 
