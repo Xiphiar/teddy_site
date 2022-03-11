@@ -9,6 +9,20 @@ const decryptFile = async (url, key) => {
     }
   };
 
+
+const correctTrait = (trait) => {
+  switch (trait.toLowerCase()) {
+    case "i <3 mum tatoo":
+      return "I <3 MUM Tattoo"
+    case "terra hoodie":
+      return "LUNA Hoodie"
+    case "crocodile dundee hat":
+      return "Crocodile Dundee hat"
+    default:
+      return trait
+  }
+}
+
 const getRarityData = async(traitValue) => {
     const data = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/rarity/score/${traitValue}`);
     return data.data;
@@ -53,12 +67,12 @@ const queryTokenMetadata = async(client, id, permit) => {
         
         let priv_attributes = {};
         for (let i = 0; i < data.nft_dossier.private_metadata.extension.attributes.length; i++) {
-          priv_attributes[data.nft_dossier.private_metadata.extension.attributes[i].trait_type] = data.nft_dossier.private_metadata.extension.attributes[i].value;
+          priv_attributes[data.nft_dossier.private_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.private_metadata.extension.attributes[i].value);
         }
 
         let pub_attributes = {};
         for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
-          pub_attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value;
+          pub_attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.public_metadata.extension.attributes[i].value);
         }
         return({
             nft_dossier: data.nft_dossier,
