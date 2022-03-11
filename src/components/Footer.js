@@ -11,7 +11,7 @@ const Footer = () => {
         <Container fluid>
           <Row>
 
-            <Col className="text-left" md={{span:4, offset:1}} sm={6}>
+            <Col className="text-left" md={{span:4}} sm={6}>
               {/*}
               <div className="emailForm">
                 <Form className='d-flex align-items-end'>
@@ -28,7 +28,7 @@ const Footer = () => {
             */}
             </Col>
 
-            <Col  md={{span:3}} className="d-none d-md-block">
+            <Col  md={{span:4}} className="d-none d-md-block">
               <Image src="logo.png" width="150px" className="d-block mx-auto img-fluid"/>
             </Col>
 
@@ -38,7 +38,7 @@ const Footer = () => {
 
               </div>
               <div style={{"paddingTop": "10px"}} className="copywright text-end">
-                © 2022 MTC CLUB
+                © 2022 MIDNIGHT TEDDY CLUB
               </div>
               {/*}
               <div style={{"paddingBottom": "10px"}} className="text-end termsLink">

@@ -1,0 +1,15 @@
+.mintModal {
+    background-color: #2e3844;
+}
+
+.modalSize {
+    width: 60%;
+    max-width: none !important;
+    height: 80%;
+    max-height: none !important;
+}
+
+.modal-90w {
+    width: 90%;
+    max-width: none !important;
+  }

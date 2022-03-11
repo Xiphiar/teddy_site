@@ -33,7 +33,7 @@ const Roadmap = () => {
         </Col>
         <Col md={{ span: 4}} className="align-items-center justify-content-center ">
           <div className="my-auto">
-            <Image src="roadmapteddy.png" fluid={true} className="d-block mx-auto img-fluid" />
+            <Image src="roadmapteddy.png" className="d-block mx-auto img-fluid" fluid/>
           </div>
         </Col>
       </Row>

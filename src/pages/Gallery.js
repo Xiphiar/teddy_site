@@ -1,19 +1,21 @@
-import Header from '../components/Header'
 import React from 'react';
 import Select from 'react-select';
 import Meta from '../components/Meta'
 import Image from 'react-bootstrap/Image'
-import { Nav, Container, Col, Row } from "react-bootstrap";
+import { Nav, Container, Col, Row, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import TeddyInfo from '../components/gallery/teddyInfo'
+import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
+import { queryOwnedTokens } from "../utils/dataHelper";
+import TeddyCard from '../components/gallery/teddyCard';
+import { getPublicTeddyData } from '../utils/dataHelper'
+import { useParams } from 'react-router-dom';
 
 import axios from "axios";
 
 // Layout
 import Layout from "../layout/Layout";
 
-const backendUrl = "http://localhost:9176"
 
 const hash = 'QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs'
 const url="https://ipfs.io/ipfs/QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs"
@@ -69,13 +71,35 @@ class Padding extends React.Component {
 class TeddyTile extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loading: true,
+      imageUrl: null
+    };
+  }
+
+  componentDidMount = () => {
+    this.getData();
+  }
+
+  getData = async() => {
+    const data = await getPublicTeddyData(this.props.id);
+    console.log(data);
+    this.setState({
+      imageUrl: data.pub_url,
+      loading: false
+    })
+    console.log(this.state)
   }
 
   render(){
     return (
-      <a onClick={this.props.clickHandler}>
-      <div style={{paddingBottom: "15px"}} >
-        <Image src="team1.png" rounded />
+      <a onClick={() => this.props.clickHandler(this.props.id, this.state.imageUrl)}>
+      <div style={{paddingBottom: "15px"}}>
+        {this.state.loading ?
+          <i className="c-inline-spinner c-inline-spinner-white" />
+        :
+          <Image src={this.state.imageUrl} rounded  style={{width: "237px", minHeight: "228px"}}/>
+        }
         <h5>Midnight Teddy #{this.props.id}</h5>
       </div>
       </a>
@@ -87,62 +111,71 @@ class Gallery extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sort: {value: 'numberasc', label: 'Number (Asc)'},
-      base: [],
-      burnt: false,
-      owned: false,
-      sortPlaceholder: "Number (Asc)",
-      items: [],
+      //sort: {value: 'numberasc', label: 'Number (Asc)'},
+      //base: [],
+      //burnt: false,
+      //owned: false,
+      //sortPlaceholder: "Number (Asc)",
+      loadingOwned: false,
+      showTeddy: this.props.showTeddy || false,
+      lookupID: this.props.lookupID || "",
+      clickedID: null,
+      //items: [],
       page: 1,
-      show: false,
       queryPermit: {},
-      tokenList: []
+      tokenList: [],
+      owned: false,
     };
   }
 
-  queryBackendAll = async(page=1, sort=this.state.sort, base=this.state.base) => {
-    let baseOpt = ""
-    if (base.length){
-      const values = base.map(function (item) {
-        return item.value;
-      });
-      baseOpt = `&base=${values.join(',')}`
-      console.log(baseOpt);
-    }
-    console.log(`${process.env.REACT_APP_BACKEND_URL}/teddy?page=${page}&sort=${sort.value}${baseOpt}`)
-    const backendRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/teddy?page=${page}&sort=${sort.value}${baseOpt}`);
-    let backendData = await backendRes.json(); //extract JSON from the http response
-    //backendData.data[0].attributes = JSON.parse(backendData.data[0].attributes);
-    //console.log(backendData.data);
-    return backendData.data;
-  }
-
   componentDidMount = async() => {
-    console.log("did Mount")
-    let data = await this.queryBackendAll(1);
+    /*let data = await this.queryBackendAll(1);
     this.setState({items: data, page: 1})
-
+*/
     /*
-    let test = await axios.post(`https://stashhapp-public-testnet.azurewebsites.net/decrypt`, { url, key }).catch((err) => {
+    let test = await axios.post(`https://stashh.io/decrypt`, { url, key }).catch((err) => {
       console.log(err)
     });
     console.log(test)
     this.setState({testdata: test})
     */
+    console.log(this.props)
+    
+    if (this.props.lookupTeddy){
+      this.setState({lookupID: this.props.lookupID});
+      this.handleLookup();
+    }
+    
   }
 
-  handleClick = (data) => {
-    console.log(data)
+  async componentDidUpdate(prevProps){
+    if (this.props !== prevProps) {
+        /*
+        this.setState({
+            showTeddy: this.props.showTeddy || false,
+            lookupID: this.props.lookupID || null,
+        })
+        
+        if (this.props.lookupID){
+          this.handleLookup();
+        }
+        */
+    }
+}
+
+  handleClickTile = (data, publicUrl) => {
     this.setState({
-      show: true,
-      clicked: data
+      showTeddy: true,
+      clickedID: data,
+      owned: true
     })
-    console.log(this.state)
   }
 
-  handleHide = () => {
+  showGallery = () => {
     this.setState({
-      show: false
+      showTeddy: false,
+      lookupID: "",
+      clickedID: null
     })
   }
 
@@ -159,13 +192,14 @@ class Gallery extends React.Component {
     return;
   }
 
-  handleQuery = async() => {
+  queryOwned = async() => {
     //disable Mint button and show spinner
     this.setState({
-      loading: true
+      loadingOwned: true
     })
+
     let returned = {client: null, address: null}
-    if (!this.state.secretJs || this.state.address) {
+    if (!this.state.secretJs || !this.state.address) {
       //get SigningCosmWasmClient and store in state
       returned = await getSigningClient();
       this.setState({
@@ -176,106 +210,90 @@ class Gallery extends React.Component {
 
     await this.getPermit();
 
-    let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
-    if (Boolean(process.env.REACT_APP_USE_TESTNET)){
-        chainId = process.env.REACT_APP_TESTNET_CHAIN_ID
-    }
+    const data = await queryOwnedTokens(this.state.secretJs, this.state.address, this.state.queryPermit)
 
-    let query = {
-      tokens: {
-        owner: this.state.address,
-        limit: 200
-      }
-    }
-    
-    const permitQuery = {
-      with_permit: {
-        query: query,
-        permit: {
-          params: {
-            permit_name: permitName,
-            allowed_tokens: allowedTokens,
-            chain_id: chainId,
-            permissions: permissions,
-          },
-          signature: this.state.queryPermit,
-        },
-      },
-    };
-    console.log(permitQuery)
-    let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, permitQuery, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
-    console.log(data);
-    this.setState({tokenList: data.token_list.tokens});
+    this.setState({
+      loadingOwned: false,
+      tokenList: data,
+      owned: true
+    });
 
+  }
+
+  handleLookupIDChange = (event) => {
+    this.setState({lookupID: event.target.value});
+  }
+
+  handleLookup = () => {
+    this.setState({
+      clickedID: this.state.lookupID.trim(),
+      showTeddy: true,
+      owned: false
+    })
   }
 
   render () {
     // page content
     const pageTitle = 'Midnight Teddy Club'
-    const { base, burnt, owned, sort } = this.state;
-    const customStyles = {
-      option: (provided, state) => ({
-        ...provided,
-        borderBottom: '1px solid #C152F5',
-        color: "#FFF",
-        "background-color": "black"
-      }),
-      container: (base, state) => ({
-        ...base,
-        "padding-bottom": "20px",
-      }),
-      control: (base, state) => ({
-        ...base,
-        background: "black",
-        // Overwrittes the different states of border
-        borderColor: "white",
-        // Removes weird border around container
-        boxShadow: state.isFocused ? null : null,
-        "&:hover": {
-          // Overwrittes the different states of border
-          borderColor: "#C152F5"
-        }
-      }),
-      singleValue: (provided, state) => {
-        const opacity = state.isDisabled ? 0.5 : 1;
-        const transition = 'opacity 300ms';
-        return { ...provided, opacity, transition };
-      },
-      menu: (base, state) => ({
-        ...base,
-        "background-color": "black",
-        // Overwrittes the different states of border
-        //borderColor: "white",
-        // Removes weird border around container
-        //boxShadow: state.isFocused ? null : null,
-        //"&:hover": {
-          // Overwrittes the different states of border
-        //  borderColor: "#C152F5"
-        //}
-      }),
-    }
+
     return (
       <Layout>
-      <TeddyInfo show={this.state.show} hide={() => this.handleHide()} data={this.state.clicked}/>
       <div>
         <Meta title={pageTitle}/>
-        <Container>
-          <Row>
-            <button onClick={() => this.handleQuery()}>Connect Keplr</button>
-            <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
+        <h1 className="homeTitle">Gallery</h1>
+        { this.state.showTeddy ?
+          <TeddyCard owned={this.state.owned} handleBack={this.showGallery} id={this.state.clickedID} queryPermit={this.state.queryPermit} secretJs={this.state.secretJs}/>
+        :
+          <Container>
+              <Row className="justify-content-center" style={{paddingBottom: "20px"}}>
+                <Col xs={"auto"} className="text-center">
+                  <h4>Lookup any Teddy</h4>
+                  <div className="d-flex justify-content-center" style={{margin:"auto"}}>
+                    <label>
+                      ID:&nbsp;
+                      <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
+                    </label>
+                    <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
+                    </div>
+                </Col>
+              </Row>
 
-            
-            {this.state.tokenList.map(item => {
-              return (<TeddyTile id={item}  clickHandler={() => this.handleClick(item)}/>)
-            }
-            )}
-            </div>
-          </Row>
-        </Container>
+              <Row className="justify-content-center">
+                  {this.state.tokenList.length ?
+                      <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
+                          {this.state.tokenList.map(item => {
+                              return (<TeddyTile id={item} clickHandler={this.handleClickTile} key={`teddy-tile-${item}`}/>)
+                          })}
+                      </div>
+                  :
+                  <Col xs={"auto"} >
+                    { this.state.loadingOwned ?
+                      <Button className="keplrButton" disabled={true}><i className="c-inline-spinner c-inline-spinner-white" /></Button>
+                    :
+                      <Button className="keplrButton" onClick={() => this.queryOwned()}>Connect Keplr</Button>
+                    }
+                  </Col>
+                  }
+            </Row>   
+          </Container>
+        }
       </div>
       </Layout>
     )
   }
 }
 
-export default Gallery
+function WrappedGallery() {
+  const params = useParams();
+  console.log("paramsss", params);
+
+    return (
+    <Gallery
+      lookupTeddy={true}
+      lookupID={params.lookupID}
+      // etc...
+    />
+  );
+}
+
+export { Gallery, WrappedGallery };

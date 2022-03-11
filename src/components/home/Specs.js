@@ -9,7 +9,7 @@ const Specs = () => {
       </Row>
       <Row className="align-items-top">
         <Col lg={6} md={6} sm={12}>
-          <Image src="2357.png" fluid={true}/>
+          <Image src="2357.png" fluid/>
         </Col>
         <Col lg={6} md={6} sm={12}>
           <div style={{height:"5%"}} className="d-none d-md-block"/>
@@ -17,7 +17,7 @@ const Specs = () => {
           <p>
             Each Midnight Teddy is unique and programmatically generated from over 120 possible traits, including expression, headwear, clothing, and more. All Teddys are bad-ass, but some are rarer than others.
             <br/><br/>
-            The Midnight Teddys are stored as SNIP-721 tokens on the Secret Network and hosted on Arweave. (See Record and Proof.) Purchasing a Midnight Teddy costs 21sScrt.
+            The Midnight Teddys are stored as SNIP-721 tokens on the Secret Network and hosted on IPFS. (See Record and Proof.) Purchasing a Midnight Teddy costs 21sScrt.
             <br/><br/>
             To access members-only areas such as The Secret Society, Teddy holders will need to be signed into their Keplr Wallet.
           </p>

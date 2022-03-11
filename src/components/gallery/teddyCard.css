@@ -1,0 +1,226 @@
+.anon-card {
+    max-width: 1200px;
+    margin: 40px auto;
+    display: flex;
+    justify-content: center;
+    /*align-items: center;*/
+    background-color: #2e3844;
+    border-radius: 10px;
+    box-shadow: 0px 5px 24px 5px #00000042;
+  }
+  .anon-card > .anon-img-container {
+    width: 500px;
+    /*height: 500px;*/
+    flex-basis: 500px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+
+    position: relative;
+    text-align: center;
+    color: #682b85;
+  }
+  .anon-img-container img {
+    width: 95%;
+    /*height: 480px;*/
+    /*border-radius: 30px 0px 0px 30px;*/
+    border-radius: 10px;
+
+  }
+
+  /* Bottom left text */
+.imgOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.overlayText {
+  padding-top: 20px;
+  font-size: 54px;
+  font-weight: 900;
+}
+
+.pulsate {
+  opacity: 0.5;
+  -webkit-animation: pulsate 1s ease-out;
+  animation: pulsate 1s ease-out;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  
+}
+@-webkit-keyframes pulsate {
+  0% { 
+      opacity: 0.5;
+  }
+  50% { 
+      opacity: 1.0;
+  }
+  100% { 
+      opacity: 0.5;
+  }
+}
+@-moz-keyframes pulsate {
+  0% { 
+    opacity: 0.5;
+  }
+  50% { 
+      opacity: 1.0;
+  }
+  100% { 
+      opacity: 0.5;
+  }
+}
+@-o-keyframes pulsate {
+  0% { 
+      opacity: 0.5;
+  }
+  50% { 
+      opacity: 1.0;
+  }
+  100% { 
+      opacity: 0.5;
+  }
+}
+@keyframes pulsate {
+  0% { 
+      opacity: 0.5;
+  }
+  50% { 
+      opacity: 1.0;
+  }
+  100% { 
+      opacity: 0.5;
+  }
+}
+
+
+  .anon-stats {
+    width: 100%;
+    padding: 15px 15px;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+  .text-right {
+    text-align: right;
+  }
+  .pointer {
+    cursor: pointer;
+  }
+  .actions {
+    text-align: center;
+    margin: 15px;
+  }
+  .credits {
+    text-align: center;
+    margin: 15px;
+  }
+
+  @media only screen and (max-width: 1280px) {
+    .anon-card {
+      text-align: center;
+      flex-direction: column;
+      margin: 50px 0;
+      height: 1020px;
+    }
+    .anon-card > .anon-img-container {
+      width: 100%;
+      height: 100%;
+      flex-basis: initial;
+      flex-grow: initial;
+      flex-shrink: initial;
+    }
+    .anon-stats {
+      padding: 5px 0;
+    }
+  }
+  @media only screen and (max-width: 640px) {
+    .anon-card img {
+      height: inherit;
+      width: auto;
+      border-radius: 10px;
+    }
+  }
+  @media only screen and (min-width: 640px) and (max-width: 1280px) {
+    .anon-card > .anon-img-container {
+      width: initial;
+      height: initial;
+      flex-basis: initial;
+      flex-grow: initial;
+      flex-shrink: initial;
+    }
+    .anon-card img {
+      height: 500px;
+      width: 500px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  
+  td, th {
+    padding: 6px;
+    text-align: left;
+  }
+  
+  th {
+    border-bottom: 1px solid #dbdbdb;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #161f27;
+  }
+
+
+  .decrypt-spinner {
+    /*
+    position: absolute;
+    left: 50%;
+    top: 50%;*/
+    height:100px;
+    width:100px;
+    margin:0px auto;
+    -webkit-animation: rotation .6s infinite linear;
+    -moz-animation: rotation .6s infinite linear;
+    -o-animation: rotation .6s infinite linear;
+    animation: rotation .6s infinite linear;
+    border-left:10px solid #2d103b77;
+    border-right:10px solid #2d103b77;
+    border-bottom:10px solid #561f729a;
+    border-top:10px solid #C152F5;
+    border-radius:100%;
+  }
+  
+  @-webkit-keyframes rotation {
+    from {-webkit-transform: rotate(0deg);}
+    to {-webkit-transform: rotate(359deg);}
+  }
+  @-moz-keyframes rotation {
+    from {-moz-transform: rotate(0deg);}
+    to {-moz-transform: rotate(359deg);}
+  }
+  @-o-keyframes rotation {
+    from {-o-transform: rotate(0deg);}
+    to {-o-transform: rotate(359deg);}
+  }
+  @keyframes rotation {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(359deg);}
+  }

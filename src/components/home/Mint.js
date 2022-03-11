@@ -9,7 +9,7 @@ import Countdown from 'react-countdown';
       // Render a completed state
       return (
         <Link to="/mint">
-          <button type="button" className="btn btn-primary me-2 mintButton teddyButton">
+          <button type="button" className="btn btn-primary me-2 homeMintButton teddyButton">
             MINT A TEDDY
           </button>
         </Link>

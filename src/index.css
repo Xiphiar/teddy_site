@@ -64,6 +64,7 @@ main {
   border-radius: 12.6858px;
   text-align: center;
   letter-spacing: 0.025em;
+  transition: color 0.15s ease-in-out;
 }
 .teddyButton:hover {
   color: #fff;
@@ -75,6 +76,8 @@ main {
   background-color: #512366;
   border-color: #512366;
 }
+
+
 
 .enterButton {
   color: #000000;
@@ -92,6 +95,30 @@ main {
   font-weight: 600;
   font-size: 25.3717px;
   line-height: 38px;
+}
+
+.homeMintButton {
+  color: #000000;
+  border-color: #C152F5;
+  background-color: #C152F5;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  width: 100%;
+  max-width: 388px;
+  height: 64px;
+  border-radius: 12.6858px;
+
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  
+  /* identical to box height */
+  text-align: center;
+  letter-spacing: 0.025em;
 }
 
 
@@ -149,7 +176,8 @@ main {
   padding-right: 20px;
   padding-top: 12px;
   padding-bottom: 12px;
-  width: 339px;
+  width:100%;
+  max-width: 339px;
   height: 56px;
   border-radius: 12.6858px;
 
@@ -162,6 +190,7 @@ main {
   /* identical to box height */
   text-align: center;
   letter-spacing: 0.025em;
+  transition: color 0.15s ease-in-out;
 }
 
 .rarityButton:hover {
@@ -225,6 +254,33 @@ main {
   font-size: 16px;
 }
 
+
+
+
+/* unvisited link */
+a:link {
+  color: #C152F5;
+  transition: color 0.15s ease-in-out;
+}
+
+/* visited link */
+a:visited {
+  color: #5f287a;
+}
+
+/* mouse over link */
+a:hover {
+  color: #ae00ff;
+}
+
+/* selected link */
+a:active {
+  color: #ff34b1;
+}
+
+
+
+
 .purpleText {
   color: #C152F5;
 }
@@ -237,6 +293,36 @@ main {
 }
 
 .mintRow {
+  min-height: 333px;
+  background-color: #2D2C2C;
+  background-image:
+      radial-gradient(
+          circle at right,
+          #000000,
+          #2D2C2C 20%,
+          transparent 40%
+
+      ),
+      radial-gradient(
+          circle at left,
+          #000000,
+          #2D2C2C 20%,
+          transparent 40%
+      );
+}
+
+.idk1{
+  position: absolute;
+  width: 152.33px;
+  height: 9.5px;
+  left: 1679.64px;
+  top: 1982.14px;
+
+  border: 4px solid #AFAFAF;
+  transform: matrix(-1, 0, 0, 1, 0, 0);
+}
+
+.mintRow2 {
   min-height: 333px;
   background-color: #2D2C2C;
   background-image:
@@ -289,10 +375,11 @@ main {
   font-size: 16px;
   line-height: 24px;
   cursor: pointer;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
+  transition: color 0.15s ease-in-out !important;
 }
 .teddyNavLink:hover{
-  color: #C152F5;
+  color: #C152F5 !important;
 }
 
 .teddyNavBar li {
@@ -365,9 +452,256 @@ main {
   color: #fff;
   background-color: black;
 }
-
 .emailBox:focus {
   color: #fff;
   background-color: black;
   box-shadow: inset 0 1px 1px #C152F5, 0 0 8px #C152F5;
 }
+
+.addressBox {
+  border: 1px solid #FFFFFF;
+  box-sizing: border-box;
+  border-radius: 10px;
+  height: 45px;
+  width: 400px;
+  /*color: #fff;
+  background-color: black;*/
+}
+.addressBox:focus {
+  /*color: #fff;
+  background-color: black;*/
+  box-shadow: inset 0 1px 1px #C152F5, 0 0 8px #C152F5;
+}
+
+
+.lookupBox {
+  border: 1px solid #FFFFFF;
+  box-sizing: border-box;
+  border-radius: 117px;
+  height: 45px;
+  width: 100px;
+  color: #fff;
+  background-color: black;
+}
+.lookupBox:focus {
+  color: #fff;
+  background-color: black;
+  border: 1px solid #C152F5;
+}
+
+.lookupBtn {
+  display:block;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: #C152F5;
+  border: 1px solid black;
+  margin-left: 10px;
+  transition: color 0.15s ease-in-out;
+}
+.lookupBtn:hover {
+  color: white;
+}
+
+
+.keplrButton {
+  color: #000000;
+  border-color: #C152F5;
+  background-color: #C152F5;
+  border-radius: 12.6858px;
+  text-align: center;
+  letter-spacing: 0.025em;
+  transition: color 0.15s ease-in-out;
+  font-size: 20px;
+  padding: 10px 20px;
+}
+.keplrButton:hover {
+  color: #fff;
+  background-color: #C152F5;
+  border-color: #C152F5;
+}
+.keplrButton:disabled {
+  color: #FFF;
+  background-color: #512366;
+  border-color: #512366;
+}
+
+.modalButton {
+  color: #FFF;
+  border-color: #9d3fc900;
+  background-color: #C152F5;
+  border-radius: 0.25rem;
+  line-height: 1.5;
+  text-align: center;
+  letter-spacing: 0.025em;
+  transition: color 0.15s ease-in-out;
+  transition: background-color 0.15s ease-in-out;
+  font-size: 1rem;
+  padding: 0.375rem 0.75rem;
+}
+.modalButton:hover {
+  color: #000000;
+  background-color: #9d3fc9;
+  border-color: #c152f500;
+}
+.modalButton:disabled {
+  color: #FFF;
+  background-color: #512366;
+  border-color: #51236600;
+}
+
+
+
+
+.whiteFont {
+  color: white !important;
+}
+
+.backLink {
+  color: #FFFFFF;
+  transition: color 0.15s ease-in-out;
+}
+.backLink:hover {
+  color: #C152F5;
+}
+
+.alterLink {
+  transition: filter 0.2s ease-in-out;
+  width: 40px !important;
+  height: 40px !important;
+  margin-top: 0px !important;
+}
+.alterLink:hover {
+  /*box-shadow: 0px 0px 50px 20px #C152F5;*/
+  -webkit-filter: drop-shadow(0px 0px 15px #C152F5);
+  filter: drop-shadow(0px 0px 15px #C152F5);
+}
+
+@keyframes c-inline-spinner-kf {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.c-inline-spinner,
+.c-inline-spinner:before {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  transform-origin: 50%;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  content: "";
+  animation: linear c-inline-spinner-kf 900ms infinite;
+  position: relative;
+  vertical-align: inherit;
+  line-height: inherit;
+}
+.c-inline-spinner {
+  top: 3px;
+  margin: 0 3px;
+}
+.c-inline-spinner:before {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  border-style: solid;
+}
+
+.c-inline-spinner-white {
+  border-color: #ffffff #ffffff transparent transparent;
+}
+.c-inline-spinner-white:before {
+  border-color: #ffffff #ffffff transparent transparent;
+}
+
+.c-inline-spinner-purple {
+  border-color: #C152F5 #C152F5 transparent transparent;
+}
+.c-inline-spinner-purple:before {
+  border-color: #C152F5 #C152F5 transparent transparent;
+}
+
+
+.c-inline-spinner-large,
+.c-inline-spinner-large:before {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  transform-origin: 50%;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  content: "";
+  animation: linear c-inline-spinner-kf 900ms infinite;
+  position: relative;
+  vertical-align: inherit;
+  line-height: inherit;
+}
+.c-inline-spinner-large {
+  top: 3px;
+  margin: 0 3px;
+}
+.c-inline-spinner-large:before {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  border-style: solid;
+}
+
+
+
+:root {
+  --toastify-color-light: #fff;
+  --toastify-color-dark: #121212;
+  --toastify-color-info: #3498db;
+  --toastify-color-success: #07bc0c;
+  --toastify-color-warning: #f1c40f;
+  --toastify-color-error: #e74c3c;
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+  --toastify-icon-color-info: var(--toastify-color-info);
+  --toastify-icon-color-success: var(--toastify-color-success);
+  --toastify-icon-color-warning: var(--toastify-color-warning);
+  --toastify-icon-color-error: var(--toastify-color-error);
+
+  --toastify-toast-width: 320px;
+  --toastify-toast-background: #fff;
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-max-height: 800px;
+  --toastify-font-family: sans-serif;
+  --toastify-z-index: 9999;
+
+  --toastify-text-color-light: #757575;
+  --toastify-text-color-dark: #fff;
+
+  /*Used only for colored theme*/
+  --toastify-text-color-info: #fff;
+  --toastify-text-color-success: #fff;
+  --toastify-text-color-warning: #fff;
+  --toastify-text-color-error: #fff;
+
+  --toastify-spinner-color: #616161;
+  --toastify-spinner-color-empty-area: #e0e0e0;
+
+  /* Used when no type is provided
+  // toast("**hello**") */
+  --toastify-color-progress-light: linear-gradient(
+    to right,
+    #4cd964,
+    #5ac8fa,
+    #007aff,
+    #34aadc,
+    #5856d6,
+    #ff2d55
+  );
+  /* Used when no type is provided*/
+  --toastify-color-progress-dark: #bb86fc;
+  --toastify-color-progress-info: var(--toastify-color-info);
+  --toastify-color-progress-success: var(--toastify-color-success);
+  --toastify-color-progress-warning: var(--toastify-color-warning);
+  --toastify-color-progress-error: var(--toastify-color-error);
+}
+

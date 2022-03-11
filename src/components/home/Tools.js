@@ -14,9 +14,14 @@ const Tools = () => {
           </p>
         </Col>
         <Col md={{ span: 4}} className="justify-content-md-center text-end">
-          <button type="button" className="btn btn-primary me-2 rarityButton" disabled={true}>
+          <div style={{maxWidth:"339px"}}>
+          <div style={{textAlign: "left", zIndex:"5"}}>
+            <img src="trackerteddy.png" fluid/>
+          </div>
+          <button type="button" className="btn btn-primary me-2 rarityButton" disabled={true} style={{zIndex:"3"}}>
             COMING SOON
           </button>
+          </div>
         </Col>
       </Row>
     </Container>

@@ -26,7 +26,7 @@ const Welcome = () => {
         <Col>
         <Row className="justify-content-center align-items-center" style={{height: "100%"}}>
             <Col className="align-items-center" md={{span: 11, offset: 1}} xs={12}>
-              <Image src="quad.png" fluid={true} />
+              <Image src="quad.png" fluid />
               <p style={{width: "100%"}}>Note: 30 Midnight Teddy’s are “Parody” Teddys and based on some of the teams favourite characters.</p>
             </Col>
 

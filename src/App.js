@@ -9,8 +9,9 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import LandingPage from './pages/LandingPage';
-import Gallery from './pages/Gallery';
+import { Gallery, WrappedGallery } from './pages/GalleryV2';
 import MintPage from './pages/Mint';
+import TeddyInfoPage from './pages/Teddy';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,12 +26,13 @@ const App = () => {
           <Route path="/team" element={<Home jumpto={"teamElement"} />} />
           <Route path="/roadmap" element={<Home jumpto={"roadmapElement"} />} />
           <Route path="/about" element={<Home jumpto={"roadmapElement"} />} />
-
-        {/*}
+        
           <Route path="/mint" element={<MintPage />} />
           <Route path="/gallery" element={<Gallery />} />
-        */}
-          <Route element={<NotFound />} />
+          <Route path="/gallery/:lookupID" element={<WrappedGallery />} />
+          <Route path="/showcase" element={<Gallery />} />
+          <Route path="*" element={<NotFound />} />
+
         </Routes>
       </Container>
   );

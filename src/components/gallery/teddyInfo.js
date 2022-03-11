@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import { getPermit, permitName, allowedTokens, permissions } from "../../utils/keplrHelper";
 
 //modal
 class TeddyInfo extends React.Component {
@@ -17,6 +18,17 @@ class TeddyInfo extends React.Component {
     componentDidMount = () => {
         //check for owned prop and query priv data
         //otherwise show provided public data
+
+    }
+
+    async componentDidUpdate(prevProps){
+        if (this.props !== prevProps) {
+            this.setState({
+                show: this.props.show || false,
+                id: this.props.id || null,
+                queryPermit: this.props.permit || {}
+            })
+        }
     }
 
     handleClose = () => {
