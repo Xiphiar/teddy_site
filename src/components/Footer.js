@@ -38,7 +38,7 @@ const Footer = () => {
 
               </div>
               <div style={{"paddingTop": "10px"}} className="copywright text-end">
-                © 2022 MTC CLUB
+                © 2022 MIDNIGHT TEDDY CLUB
               </div>
               {/*}
               <div style={{"paddingBottom": "10px"}} className="text-end termsLink">
