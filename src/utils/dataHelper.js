@@ -28,7 +28,7 @@ const queryOwnedTokens = async(client, address, permit) => {
     const query = {
         tokens: {
           owner: address,
-          limit: 200
+          limit: 300
         }
     }
     const chainId = getChainId();

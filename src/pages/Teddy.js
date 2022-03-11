@@ -167,7 +167,7 @@ class TeddyInfoPage extends React.Component {
     let query = {
       tokens: {
         owner: this.state.address,
-        limit: 200
+        limit: 300
       }
     }
     
