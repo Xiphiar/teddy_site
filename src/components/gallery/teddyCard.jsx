@@ -4,12 +4,12 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import { getPermit, getSigningClient, getQueryClient, getChainId } from "../../utils/keplrHelper";
+import { getPermit, getSigningClient, getQueryClient, getChainId, getAddress } from "../../utils/keplrHelper";
 import './teddyCard.css';
 //import styles from './dark.min.module.css';
 import axios from "axios";
 import { toast } from 'react-toastify';
-import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData } from '../../utils/dataHelper'
+import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage } from '../../utils/dataHelper'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faUnlockKeyhole, faLink, faArrowRightArrowLeft, faKey, faArrowLeft, faLockOpen, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import {  SwapModal, AuthModal, AlterModal } from './modals';
@@ -31,6 +31,8 @@ class TeddyCard extends React.Component {
         signer: false,
         nft_dossier: null,
         owned: this.props.owned || false,
+        unlocked: false,
+        swapped: false,
         rarityData: null,
         attributes: [],
         encryptedImage: {},
@@ -42,28 +44,6 @@ class TeddyCard extends React.Component {
 
     componentDidMount = async() => {
         this.queryChainData();
-        
-
-    }
-
-    getAddress = async() => {
-        const chainID = getChainId();
-        const offlineSigner = window.getOfflineSigner(chainID);
-        const accounts = await offlineSigner.getAccounts();
-        return accounts[0].address;
-    }
-
-    checkIfOwned = async() => {
-        if (!this.state.nft_dossier?.private_metadata){
-            return false;
-        }
-
-        const address = await this.getAddress();
-        if (this.state.nft_dossier.owner === address) {
-            this.setState({owned: true});
-            return true;
-        }
-        return false;
     }
 
     componentDidUpdate(prevProps){
@@ -97,9 +77,16 @@ class TeddyCard extends React.Component {
 
     processRarity = async() => {
         try {
-            const rarityData = await processRarity(this.state.attributes);
-            console.log("*RARITY*",rarityData)
-            this.setState({rarityData: rarityData})
+            if (this.state.unlocked || this.state.swapped){
+                const rarityData = await processRarity(this.state.attributes);
+                console.log("*RARITY*",rarityData)
+                this.setState({rarityData: rarityData})
+            } else {
+                const total = await getTotalTokens();
+                const rarityTotal = {total:total};
+                this.setState({rarityData: rarityTotal})
+            }
+
         } catch (e){
             console.error("Error processing rarity:",e);
             toast.error(e, {
@@ -111,7 +98,6 @@ class TeddyCard extends React.Component {
                 draggable: true,
             });
         }
-
     }
 
     getPermit = async() => {
@@ -157,8 +143,6 @@ class TeddyCard extends React.Component {
             attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + "?";
             }
         */
-
-        console.log(data)
 
         this.setState({
             teddyRank: data.teddyrank
@@ -209,7 +193,8 @@ class TeddyCard extends React.Component {
     queryChainData = async() => {
         //show loading spinners
         this.setState({
-            loading: true
+            loading: true,
+            rarityData: null //reset rarity data when refreshing info from chain
         })
         console.log("*STATE*", this.state);
         console.log("*PROPS*", this.props);
@@ -236,69 +221,72 @@ class TeddyCard extends React.Component {
             data = await queryTokenMetadata(this.state.secretJs, this.state.id, this.state.queryPermit)
             console.log("*NFT*", data.nft_dossier);
 
-            this.setState({ rarityData: null })
-
-            //if has permit and private is private
-            if (data.priv_attributes && data.nft_dossier.private_metadata?.extension?.media){
-                console.log("permit, private is private");
-                //save priv attributes to state
-                this.setState({
-                    nft_dossier: data.nft_dossier,
-                    attributes: data.priv_attributes,
-                    pubImage: data.nft_dossier.public_metadata.extension.image,
-                    encryptedImage: data.nft_dossier.private_metadata.extension.media[0]
-                });
-                this.processRarity();
-                this.checkIfOwned();
-                if (this.state.owned) this.getPubData();
+            let owned = false;
+            let unlocked = false;
+            if (data.nft_dossier.private_metadata){
+                unlocked = true;
+                const address = await getAddress();
+                if (data.nft_dossier.owner === address) {
+                    owned = true;
+                }
             }
 
-            //else if private is public
-            else if (data.priv_attributes && data.nft_dossier.private_metadata?.extension?.image) {
-                console.log("permit, private is public");
-                
-                this.setState({
-                    nft_dossier: data.nft_dossier,
-                    attributes: data.pub_attributes,
-                    pubImage: data.nft_dossier.private_metadata.extension.image,
-                    encryptedImage: data.nft_dossier.public_metadata.extension.media[0]
-                });
-                this.processRarity();
-                this.checkIfOwned();
-                if (this.state.owned) this.getPubData();
+            let swapped = false;
+            //encrypted image is in the media key, if this key exists in public_metadata then the private metadata is swapped to public
+            if (data.nft_dossier.public_metadata.extension?.media){
+                swapped=true;
             }
 
-            //else has only public data AND private is public
-            else if (!data.priv_attributes && data.nft_dossier.public_metadata.extension.media){
-                console.log("no permit, private is public");
-                //save PUB attributes and encrypted image to state
-                this.setState({
-                    nft_dossier: data.nft_dossier,
-                    attributes: data.pub_attributes,
-                    //pubImage: data.nft_dossier.private_metadata.extension.image, //we dont have this, its in the private data
-                    encryptedImage: data.nft_dossier.public_metadata.extension.media[0]
-                });
-                this.processRarity();
+            if (unlocked || swapped) this.getPubData();
 
+            let attributes;
+            let pubImage;
+            let privImage;
+
+            if (unlocked && !swapped) {
+                console.log("Valid permit was provided. Private data is not swapped.");
+                attributes = data.priv_attributes;
+                pubImage = data.nft_dossier.public_metadata.extension.image;
+                privImage = data.nft_dossier.private_metadata.extension.media[0];
             }
 
-            //else has only public data AND private is PRIVATE
-            else if (!data.priv_attributes && data.nft_dossier.public_metadata.extension.image){
-                console.log("no permit, private is private");
-                //save PUB attributes and encrypted image to state
-                const total = await getTotalTokens();
-                const rarity = {total:total};
-                this.setState({
-                    nft_dossier: data.nft_dossier,
-                    attributes: data.pub_attributes,
-                    pubImage: data.nft_dossier.public_metadata.extension.image,
-                    rarityData: rarity
-                    //encryptedImage: data.nft_dossier.public_metadata.extension.media[0] //we dont have this, its in the private data
-                });
+            else if (unlocked && swapped) {
+                console.log("Valid permit was provided. Private data IS swapped.");
+                attributes = data.pub_attributes;
+                pubImage = data.nft_dossier.private_metadata.extension.image;
+                privImage = data.nft_dossier.public_metadata.extension.media[0];
+            }
 
-            } else {
+            else if (!unlocked && swapped) {
+                console.log("Valid permit was NOT provided. Private data IS swapped.");
+                attributes = data.pub_attributes;
+                //pubImage = data.nft_dossier.private_metadata.extension.image; //we dont have this, its in the private data
+                privImage = data.nft_dossier.public_metadata.extension.media[0];
+            }
+
+            else if (!unlocked && !swapped) {
+                console.log("Valid permit was NOT provided. Private data is not swapped.");
+                attributes = data.pub_attributes;
+                pubImage = data.nft_dossier.public_metadata.extension.image;
+                //privImage = data.nft_dossier.public_metadata.extension.media[0]; //we dont have this, its in the private data
+            }
+            
+            else {
                 throw `Something went wrong. Couldnt determine if private data is swapped.`
             }
+
+            this.setState({
+                nft_dossier: data.nft_dossier,
+                owned: owned,
+                swapped: swapped,
+                unlocked: unlocked,
+                attributes: attributes,
+                pubImage: pubImage,
+                encryptedImage: privImage
+            })
+
+            cachePublicImage(this.state.id, pubImage)
+       
         } catch (e) {
             console.error("Error getting metadata:",e);
             this.setState({
@@ -306,15 +294,33 @@ class TeddyCard extends React.Component {
             })
             return;
         }
-        
+
+        //process rarity in background
+        this.processRarity();
+
         try {
-            if (this.state.encryptedImage.authentication) {
-                console.log("decrypting")
-                let privImage = await decryptFile(this.state.encryptedImage.url, this.state.encryptedImage.authentication.key)
-                console.log("decrypted", privImage)
-                this.setState({
-                    decryptedImage: privImage.data
-                })
+            
+            if (this.state.encryptedImage?.authentication) {
+                
+                const cachedPrivateImage = await getPrivateImage(this.state.id)
+                if (cachedPrivateImage){
+                    console.log("using cached private image")
+                    this.setState({
+                        decryptedImage: cachedPrivateImage
+                    })
+                }
+
+                else {
+                    console.log("decrypting")
+                    let privImage = await decryptFile(this.state.encryptedImage.url, this.state.encryptedImage.authentication.key)
+                    console.log("decrypted", privImage)
+                    
+                    this.setState({
+                        decryptedImage: `data:image/png;base64,${privImage.data}`
+                    })
+                    cachePrivateImage(this.state.id, `data:image/png;base64,${privImage.data}`)
+                }
+
             }
         } catch (e) {
             console.error("Error decrypting:",e, this.state.encryptedImage, this.state.nft_dossier);
@@ -329,9 +335,7 @@ class TeddyCard extends React.Component {
             return;
         }
 
-
-
-        //show loading spinners
+        //hide loading spinners
         this.setState({
             loading: false
         })
@@ -387,12 +391,12 @@ class TeddyCard extends React.Component {
                     {this.state.nft_dossier ?
                         this.state.decryptedImage ?
                             <div className="anon-img-container">
-                                <img src={`data:image/png;base64,${this.state.decryptedImage}`} alt={`Midnight Teddy ${this.state.id}`} key={`teddy-${this.state.id}`} />
+                                <img src={this.state.decryptedImage} alt={`Midnight Teddy ${this.state.id}`} key={`teddy-${this.state.id}`} />
                             </div>
                         :
                             <div className="anon-img-container">
                                 <img src={this.state.pubImage} alt={`Midnight Teddy ${this.state.id}`} key={`teddy-${this.state.id}`} />
-                                { this.state.encryptedImage.authentication ?
+                                { this.state.encryptedImage?.authentication ?
                                     <div className="imgOverlay pulsate">
                                         <div className="decrypt-spinner"/>
                                         <span className="overlayText">Decrypting...</span>
@@ -421,7 +425,7 @@ class TeddyCard extends React.Component {
 
                         <div  style={{width: "auto"}} className="text-right">
                             <h1>
-                                { this.state.encryptedImage.authentication && this.state.owned ?
+                                { this.state.encryptedImage?.authentication && this.state.owned ?
                                     <div>
                                         <img src="alterlogo.png" style={{marginRight: "20px", width: "40px"}} className="pointer alterLink" onClick={() => this.alterModal(true)} />
                                         <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faArrowRightArrowLeft} className="pointer backLink" title="Swap Public and Private Data" onClick={() => this.swapModal(true)} />
@@ -431,7 +435,7 @@ class TeddyCard extends React.Component {
                                     null
                                 }
 
-                                { this.state.nft_dossier && !this.state.nft_dossier.private_metadata && !this.state.encryptedImage.authentication ?
+                                { this.state.nft_dossier && !this.state.nft_dossier.private_metadata && !this.state.encryptedImage?.authentication ?
                                     this.state.loadingUnlock ?
                                         <FontAwesomeIcon style={{marginRight: "20px"}}  icon={faSpinner} title="Trying to unlock private data..." spin/>                           
                                     :
@@ -655,7 +659,7 @@ class TeddyCard extends React.Component {
                             }
                         </h3>
                     : null }
-                    { this.state.owned ?
+                    { this.state.unlocked || this.state.swapped ?
                         <h3 style={{display: "inline"}}>
                             Rank: { this.state.teddyRank ?
                                 this.state.teddyRank

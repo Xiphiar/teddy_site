@@ -8,7 +8,7 @@ import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
 import { queryOwnedTokens } from "../utils/dataHelper";
 import TeddyCard from '../components/gallery/teddyCard';
-import { getPublicTeddyData, truncate } from '../utils/dataHelper'
+import { getPublicTeddyData, truncate, getKnownImage } from '../utils/dataHelper'
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
@@ -70,7 +70,7 @@ class TeddyTile extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      imageUrl: null
+      imageSrc: null
     };
   }
 
@@ -79,9 +79,10 @@ class TeddyTile extends React.Component {
   }
 
   getData = async() => {
-    const data = await getPublicTeddyData(this.props.id);
+    const image = await getKnownImage(this.props.id, true)
+    //const data = await getPublicTeddyData(this.props.id);
     this.setState({
-      imageUrl: data.pub_url,
+      imageSrc: image, //data.pub_url,
       loading: false
     })
   }
@@ -89,12 +90,12 @@ class TeddyTile extends React.Component {
   render(){
     return (
       <div>
-        <a onClick={() => this.props.clickHandler(this.props.id, this.state.imageUrl)}>
+        <a onClick={() => this.props.clickHandler(this.props.id)}>
           <div className="backLink pointer" style={{paddingBottom: "15px"}} >
             {this.state.loading ?
               <i className="c-inline-spinner c-inline-spinner-white" />
             :
-              <Image src={this.state.imageUrl} rounded  style={{width: "237px", minHeight: "228px"}}/>
+              <Image src={this.state.imageSrc} rounded  style={{width: "237px", minHeight: "228px"}}/>
             }
             <h5>Midnight Teddy #{this.props.id}</h5>
           </div>
@@ -126,22 +127,11 @@ class Gallery extends React.Component {
     };
   }
 
-  componentDidMount = async() => {
-    /*let data = await this.queryBackendAll(1);
-    this.setState({items: data, page: 1})
-*/
-    /*
-    let test = await axios.post(`https://stashh.io/decrypt`, { url, key }).catch((err) => {
-      console.log(err)
-    });
-    console.log(test)
-    this.setState({testdata: test})
-    */    
+  componentDidMount = async() => {  
     if (this.props.lookupTeddy){
       this.setState({lookupID: this.props.lookupID});
       this.handleLookup();
     }
-    
   }
 
   async componentDidUpdate(prevProps){
@@ -159,7 +149,7 @@ class Gallery extends React.Component {
     }
 }
 
-  handleClickTile = (data, publicUrl) => {
+  handleClickTile = (data) => {
     this.setState({
       showTeddy: true,
       clickedID: data,
@@ -374,8 +364,6 @@ class Gallery extends React.Component {
 
 function WrappedGallery() {
   const params = useParams();
-  console.log("paramsss", params);
-
     return (
     <Gallery
       lookupTeddy={true}

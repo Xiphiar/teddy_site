@@ -1,5 +1,6 @@
 import axios from "axios";
 import { permitQuery, getChainId } from './keplrHelper'
+import { get, set } from 'idb-keyval';
 
 const decryptFile = async (url, key) => {
     try {
@@ -9,6 +10,46 @@ const decryptFile = async (url, key) => {
     }
   };
 
+const getKnownImage = async(id, fetch = true) => {
+  //try to get private image data from IDB
+  const priv = await get(`MTC-Teddy-${id}-Private-Image`);
+  if (priv) return priv;
+
+  //try to get public URL from IDB
+  const pub = await get(`MTC-Teddy-${id}-Public-Image`);
+  if (pub) return pub;
+
+  //get public URL from backend API
+  if (fetch) {
+    const data = await getPublicTeddyData(id);
+    
+    //cache in IDB
+    cachePublicImage(id, data.pub_url)
+
+    return data.pub_url;
+  }
+  
+  //else
+  return false;
+}
+
+const getPrivateImage = async(id) => {
+  //try to get private image data from IDB
+  const priv = get(`MTC-Teddy-${id}-Private-Image`);
+  if (priv) return priv;
+  
+  //else
+  return false;
+}
+
+const cachePublicImage = (id, url) => {
+  set(`MTC-Teddy-${id}-Public-Image`, url);
+}
+
+const cachePrivateImage = async(id, data) => {
+  set(`MTC-Teddy-${id}-Private-Image`, data).then(() => console.log("successfully cached."))
+  
+}
 
 const correctTrait = (trait) => {
   switch (trait.toLowerCase()) {
@@ -123,4 +164,4 @@ const truncate = function (fullStr, strLen, separator) {
          fullStr.substr(fullStr.length - backChars);
 };
 
-export { decryptFile, getRarityData, queryOwnedTokens, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate };
+export { decryptFile, getRarityData, queryOwnedTokens, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage };

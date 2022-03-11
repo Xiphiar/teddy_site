@@ -140,6 +140,13 @@ async function getPermit(address){
   return signature;
 }
 
+const getAddress = async() => {
+  const chainID = getChainId();
+  const offlineSigner = window.getOfflineSigner(chainID);
+  const accounts = await offlineSigner.getAccounts();
+  return accounts[0].address;
+}
+
 async function getSigningClient() {
     let chainId = process.env.REACT_APP_MAINNET_CHAIN_ID;
     let apiUrl = process.env.REACT_APP_MAINNET_REST;
@@ -193,4 +200,4 @@ function countDecimals(value) {
     return value.toString().split(".")[1]?.length || 0; 
 }
 
-export { getSigningClient, getQueryClient, getPermit, isValidAddress, countDecimals, permitName, allowedTokens, permissions, permitQuery, getChainId, getApiURL }
+export { getSigningClient, getQueryClient, getPermit, isValidAddress, countDecimals, getAddress, permitName, allowedTokens, permissions, permitQuery, getChainId, getApiURL }
