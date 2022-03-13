@@ -11,12 +11,12 @@ import ProcessingModal from '../components/mint/ProcessingModal'
 // Layout
 import Layout from "../layout/Layout";
 
-import { getSigningClient, getApiURL } from "../utils/keplrHelper";
+import { getSigningClient } from "../utils/keplrHelper";
 import Feedback from 'react-bootstrap/esm/Feedback';
 
 import { toast } from 'react-toastify';
-import { CosmWasmClient } from 'secretjs';
 import clubBanner from '../assets/club_banner.jpg'
+import { MintStatus } from './MintStatus';
 
 
 class Padding extends React.Component {
@@ -27,42 +27,6 @@ class Padding extends React.Component {
   render(){
     return (
       <div style={{height:`${this.props.size}px`}} />
-    )
-  }
-}
-
-class MintStatus extends React.Component {
-  constructor(props) {  
-    super(props);
-    this.state = {
-      queryJS: new CosmWasmClient(getApiURL()),
-      loading: true
-    };
-  }
-
-  componentDidMount = () => {
-    this.getMintCount();
-  }
-
-  getMintCount = async() => {
-    this.setState({loading: true})
-
-    const minted_query = {
-      num_tokens : {}
-    };
-
-    const data = await this.state.queryJS.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, minted_query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
-    console.log(data)
-    this.setState({minted: parseInt(data.num_tokens.count), loading: false})
-    this.props.updater(parseInt(data.num_tokens.count))
-  }
-
-  render(){
-    return (
-      this.state.loading ?
-        <div><span><i className="c-inline-spinner c-inline-spinner-white" /> Teddies are available.</span>&nbsp;&nbsp;<i className="fa fa-refresh fa-spin" style={{fontSize:"24px"}}></i></div> 
-      :
-        <div><span>{3030 - this.state.minted} Teddies are available.</span>&nbsp;&nbsp;<i style={{fontSize:"24px"}} className="fa pointer" onClick={()=>this.getMintCount()}>&#xf021;</i></div> 
     )
   }
 }
@@ -300,10 +264,10 @@ class MintPage extends React.Component {
                   <InputSpinner
                     type={'real'}
                     precision={2}
-                    max={this.state.numMinted && this.state.numMinted>2999 ? 3030-this.state.numMinted-5 : 30}
-                    min={1}
+                    max={0}
+                    min={0}
                     step={1}
-                    value={this.state.number}
+                    value={0}
                     onChange={num=>this.changeNumber(num)}
                     variant={'dark'}
                     size="sm"
@@ -316,8 +280,8 @@ class MintPage extends React.Component {
               </button>
 
             :
-              <button type="button" onClick={this.handleMint} className="btn btn-primary me-2 mintButton teddyButton">
-                Mint&nbsp;&nbsp;<h6 style={{display:"inline"}}>{21*this.state.number} sSCRT</h6>
+              <button type="button" disabled={true} className="btn btn-primary me-2 mintButton teddyButton">
+                SOLD OUT
               </button>
             }
 

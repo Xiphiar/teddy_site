@@ -2,7 +2,7 @@ import { Container, Row, Col } from 'react-bootstrap'
 import Image from 'react-bootstrap/Image'
 import RoadmapItem from './RoadmapItem'
 
-const item1 = ["3030 Midnight Teddy’s Minted.",<br/>,"AlterDapp Lifetime membership accounts distributed."]
+const item1 = [<s>3030 Midnight Teddy’s Minted.</s>,<br/>,"AlterDapp Lifetime membership accounts distributed."]
 const item2 = ['“The Factory” Is opened and evolutionary reconstruction begins.',<br/>,'Midnight Teddys retired to “The Club” are viewable in our “Burn Gallary”.']
 const item3 = ["Dynamic trait rarity tracker",<br/>,"Stashh used as secondary market place"]
 const item4 = ["First NFT airdrop to all MTC holders - Secret Society Emblems"]
