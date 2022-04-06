@@ -6,12 +6,23 @@ import Countdown from 'react-countdown';
   // Renderer callback with condition
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
+
       // Render a completed state
-      return (
-          <button type="button" className="btn btn-primary me-2 homeMintButton teddyButton" disabled={true}>
-            SOLD OUT
-          </button>
-      );
+      if (Number(process.env.REACT_APP_SOLD_OUT))
+        return (
+            <button type="button" className="btn btn-primary me-2 homeMintButton teddyButton" disabled={true}>
+              SOLD OUT
+            </button>
+        );
+      else
+        return (
+          <Link to="/mint">
+            <button type="button" className="btn btn-primary me-2 homeMintButton teddyButton">
+              MINT A TEDDY
+            </button>
+          </Link>
+        );
+
     } else {
       // Render a countdown
       return(

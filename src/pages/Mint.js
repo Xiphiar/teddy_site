@@ -222,6 +222,14 @@ class MintPage extends React.Component {
   }
 
   render () {
+    let min = 1;
+    let max = 30;
+    let value = this.state.number;
+    if (Number(process.env.REACT_APP_SOLD_OUT)){
+      min = 0;
+      max = 0;
+      value = 0;
+    }
     // page content
     const pageTitle = 'Midnight Teddy Club Mint'
     return (
@@ -264,10 +272,10 @@ class MintPage extends React.Component {
                   <InputSpinner
                     type={'real'}
                     precision={2}
-                    max={0}
-                    min={0}
+                    max={max}
+                    min={min}
                     step={1}
-                    value={0}
+                    value={value}
                     onChange={num=>this.changeNumber(num)}
                     variant={'dark'}
                     size="sm"
@@ -280,9 +288,14 @@ class MintPage extends React.Component {
               </button>
 
             :
-              <button type="button" disabled={true} className="btn btn-primary me-2 mintButton teddyButton">
-                SOLD OUT
-              </button>
+              Number(process.env.REACT_APP_SOLD_OUT) ?
+                <button type="button" disabled={true} className="btn btn-primary me-2 mintButton teddyButton">
+                  SOLD OUT
+                </button>
+              :
+                <button type="button" onClick={this.handleMint} className="btn btn-primary me-2 mintButton teddyButton">
+                  Mint&nbsp;&nbsp;<h6 style={{display:"inline"}}>{0*this.state.number} sSCRT</h6>
+                </button>
             }
 
             </div>
