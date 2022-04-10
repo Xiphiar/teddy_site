@@ -1,10 +1,30 @@
 import axios from "axios";
 import { permitQuery, getChainId } from './keplrHelper'
 import { get, set } from 'idb-keyval';
+import retry from 'async-await-retry';
 
 const decryptFile = async (url, key) => {
     try {
-      return await axios.post(`https://stashh.io/decrypt`, { url, key });
+      return await retry(
+        async() => {
+          return await axios.post(
+            `https://stashh.io/decrypt`,
+            {
+              url,
+              key
+            },
+            {
+              timeout: 10000
+            }
+          );
+        },
+        null,
+        {
+          retriesMax: 5,
+          interval: 1000
+        },
+      );
+
     } catch (error) {
       throw error;
     }
