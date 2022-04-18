@@ -104,7 +104,17 @@ const Menu = (home) => {
             </div>
         </Col>
       </Row>    
-
+      { process.env.REACT_APP_USE_TESTNET === 'true' ?
+      <>
+        <span>Testnet Mode!</span>
+        <span style={{fontSize: '12px'}}>
+          <b>&emsp;Chain ID: </b>{process.env.REACT_APP_TESTNET_CHAIN_ID}&emsp;<b>REST: </b>{process.env.REACT_APP_TESTNET_REST}<br />
+          <b>Token: </b>{process.env.REACT_APP_TOKEN_ADDRESS}&emsp;<b>NFT: </b>{process.env.REACT_APP_CONTRACT_ADDRESS}&emsp;
+          <b>Ticket: </b>{process.env.REACT_APP_TICKET_ADDRESS}</span>
+          </>
+      :
+        null
+      }
     </Container>
   );
 };

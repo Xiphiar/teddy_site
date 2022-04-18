@@ -1,10 +1,31 @@
 import axios from "axios";
 import { permitQuery, getChainId } from './keplrHelper'
 import { get, set } from 'idb-keyval';
+import retry from 'async-await-retry';
 
 const decryptFile = async (url, key) => {
     try {
-      return await axios.post(`https://stashh.io/decrypt`, { url, key });
+      return await retry(
+        async() => {
+          return await axios.post(
+            `https://stashh.io/decrypt`,
+            {
+              url,
+              key
+            },
+            {
+              timeout: 10000,
+              responseType: "blob"
+            }
+          );
+        },
+        null,
+        {
+          retriesMax: 5,
+          interval: 1000
+        },
+      );
+
     } catch (error) {
       throw error;
     }
@@ -164,4 +185,12 @@ const truncate = function (fullStr, strLen, separator) {
          fullStr.substr(fullStr.length - backChars);
 };
 
-export { decryptFile, getRarityData, queryOwnedTokens, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage };
+const blobToBase64 = (blob) => {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+export { decryptFile, getRarityData, queryOwnedTokens, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };
