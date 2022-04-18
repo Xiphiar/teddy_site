@@ -9,7 +9,7 @@ import './teddyCard.css';
 //import styles from './dark.min.module.css';
 import axios from "axios";
 import { toast } from 'react-toastify';
-import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage } from '../../utils/dataHelper'
+import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../utils/dataHelper'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faUnlockKeyhole, faLink, faArrowRightArrowLeft, faKey, faArrowLeft, faLockOpen, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import {  SwapModal, AuthModal, AlterModal } from './modals';
@@ -312,13 +312,28 @@ class TeddyCard extends React.Component {
 
                 else {
                     console.log("decrypting")
-                    let privImage = await decryptFile(this.state.encryptedImage.url, this.state.encryptedImage.authentication.key)
-                    console.log("decrypted", privImage)
-                    
-                    this.setState({
-                        decryptedImage: `data:image/png;base64,${privImage.data}`
-                    })
-                    cachePrivateImage(this.state.id, `data:image/png;base64,${privImage.data}`)
+                    const privImage = await decryptFile(this.state.encryptedImage.url, this.state.encryptedImage.authentication.key)
+                    console.log("decrypted response", privImage)
+
+                    if (!!privImage.data) {
+                        const blob = new Blob([privImage.data], {
+                            type: `image/png`,
+                        });
+
+                        const objURL = URL.createObjectURL(blob);
+                        console.log("Decrypted Object URL", objURL)
+
+                        const base64 = await blobToBase64(blob);
+                        console.log("Decerypted Data base64", base64)
+
+                        this.setState({
+                            //decryptedImage: `data:image/png;base64,${privImage.data}`
+                            decryptedImage: base64
+                        })
+                        //cachePrivateImage(this.state.id, `data:image/png;base64,${privImage.data}`)
+                        cachePrivateImage(this.state.id, base64)
+                    }
+
                 }
 
             }
