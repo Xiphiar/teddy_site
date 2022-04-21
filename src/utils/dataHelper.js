@@ -170,10 +170,8 @@ const processRarity = async(attributes) => {
         return rarity;
 }
 
-const truncate = function (fullStr, strLen, separator) {
+const truncate = function (fullStr, strLen, separator = '...') {
   if (fullStr.length <= strLen) return fullStr;
-
-  separator = separator || '...';
 
   var sepLen = separator.length,
       charsToShow = strLen - sepLen,
