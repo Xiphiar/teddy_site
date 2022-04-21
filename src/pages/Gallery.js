@@ -256,6 +256,9 @@ class Gallery extends React.Component {
                     <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
                     </div>
                 </Col>
+                <Col xs={"auto"}>
+                  <TicketCounter permit={this.state.queryPermit} address={this.state.address} />
+                </Col>
               </Row>
 
               <Row className="justify-content-center">

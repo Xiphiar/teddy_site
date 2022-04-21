@@ -4,7 +4,7 @@ const { BroadcastMode, CosmWasmClient } = require('secretjs');
 const { ExtendedSender } = require('./extendedSigner')
 
 const permitName = "midnightteddy.club";
-const allowedTokens = [process.env.REACT_APP_CONTRACT_ADDRESS];
+const allowedTokens = [process.env.REACT_APP_CONTRACT_ADDRESS, process.env.REACT_APP_TICKET_ADDRESS];
 const permissions = ["owner" /* , "history", "allowance" */];
 
 let myStorage = window.sessionStorage;
@@ -38,10 +38,10 @@ const permitQuery = class {
       query: query,
       permit: {
         params: {
-          permit_name: "midnightteddy.club",
-          allowed_tokens: [process.env.REACT_APP_CONTRACT_ADDRESS],
+          permit_name: permitName,
+          allowed_tokens: allowedTokens,
           chain_id: chainId,
-          permissions: ["owner" /* , "history", "allowance" */],
+          permissions: permissions,
         },
         signature: permit,
       }
@@ -96,7 +96,7 @@ async function suggestTestnet() {
 }
 
 async function getPermit(address){
-  let data = myStorage.getItem(`teddy-permit-${process.env.REACT_APP_CONTRACT_ADDRESS}-${address}`);
+  let data = myStorage.getItem(`teddy-permit-2-${process.env.REACT_APP_CONTRACT_ADDRESS}-${address}`);
   if (data) { return JSON.parse(data); }
 
 
@@ -136,7 +136,7 @@ async function getPermit(address){
       preferNoSetMemo: true, // Memo must be empty, so hide it from the user
     }
   );
-  myStorage.setItem(`teddy-permit-${process.env.REACT_APP_CONTRACT_ADDRESS}-${address}`, JSON.stringify(signature));
+  myStorage.setItem(`teddy-permit-2-${process.env.REACT_APP_CONTRACT_ADDRESS}-${address}`, JSON.stringify(signature));
   return signature;
 }
 

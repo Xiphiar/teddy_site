@@ -113,6 +113,19 @@ const queryOwnedTokens = async(client, address, permit) => {
     return data.token_list.tokens;
 }
 
+const queryOwnedTickets = async(client, address, permit) => {
+  const query = {
+      tokens: {
+        owner: address,
+        limit: 300
+      }
+  }
+  const chainId = getChainId();
+  const query2 = new permitQuery(query, permit, chainId);
+  let data = await client.queryContractSmart(process.env.REACT_APP_TICKET_ADDRESS, query2, {}, process.env.REACT_APP_TICKET_CODE_HASH);
+  return data.token_list.tokens;
+}
+
 const queryTokenMetadata = async(client, id, permit) => {
     const query = {
         nft_dossier: {
@@ -191,4 +204,4 @@ const blobToBase64 = (blob) => {
   });
 }
 
-export { decryptFile, getRarityData, queryOwnedTokens, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };
+export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };

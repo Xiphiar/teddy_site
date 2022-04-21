@@ -13,6 +13,8 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
 import clubBanner from '../assets/club_banner.jpg'
+import { TicketCounter } from '../components/gallery/TicketCounter';
+
 
 // Layout
 import Layout from "../layout/Layout";
@@ -267,9 +269,13 @@ class Gallery extends React.Component {
             <Image src={clubBanner} id='my-img2' fluid/>
           </Row>
           <Padding size={30}/>
-            <Row>
-              <Col>
+            <Row className="justify-content-between">
+              <Col md={'auto'}>
                 <h1 className="homeTitle">Midnight Teddy Clubhouse</h1>
+              </Col>
+              <Col xs={"auto"} className="d-flex align-items-center">
+                <TicketCounter permit={this.state.queryPermit} address={this.state.address} />
+
               </Col>
               <Col xs={"auto"} className="text-center">
                 <h4>Lookup any Teddy</h4>
