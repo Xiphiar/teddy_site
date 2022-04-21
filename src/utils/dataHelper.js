@@ -14,7 +14,8 @@ const decryptFile = async (url, key) => {
               key
             },
             {
-              timeout: 10000
+              timeout: 10000,
+              responseType: "blob"
             }
           );
         },
@@ -182,10 +183,8 @@ const processRarity = async(attributes) => {
         return rarity;
 }
 
-const truncate = function (fullStr, strLen, separator) {
+const truncate = function (fullStr, strLen, separator = '...') {
   if (fullStr.length <= strLen) return fullStr;
-
-  separator = separator || '...';
 
   var sepLen = separator.length,
       charsToShow = strLen - sepLen,
@@ -197,4 +196,12 @@ const truncate = function (fullStr, strLen, separator) {
          fullStr.substr(fullStr.length - backChars);
 };
 
-export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage };
+const blobToBase64 = (blob) => {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };
