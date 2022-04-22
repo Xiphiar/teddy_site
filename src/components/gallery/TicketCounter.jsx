@@ -31,12 +31,12 @@ export class TicketCounter extends React.Component {
   render() {
     return (
       this.state.loading ?
-        <div><span>You have <i className="c-inline-spinner c-inline-spinner-white" /> Golden Tickets</span>&nbsp;&nbsp;<i className="fa fa-refresh fa-spin" style={{ fontSize: "24px" }}></i></div>
+        <div><span>You have <i className="c-inline-spinner c-inline-spinner-white" /> Golden Tokens</span>&nbsp;&nbsp;<i className="fa fa-refresh fa-spin" style={{ fontSize: "24px" }}></i></div>
         :
         this.state.count === 1 ?
-          <div><span>You have {this.state.count} Golden Ticket</span>&nbsp;&nbsp;<i style={{ fontSize: "24px" }} className="fa pointer" onClick={() => this.getTicketCount()}>&#xf021;</i></div>
+          <div><span>You have {this.state.count} Golden Token</span>&nbsp;&nbsp;<i style={{ fontSize: "24px" }} className="fa pointer" onClick={() => this.getTicketCount()}>&#xf021;</i></div>
         :
-          <div><span>You have {this.state.count} Golden Tickets</span>&nbsp;&nbsp;<i style={{ fontSize: "24px" }} className="fa pointer" onClick={() => this.getTicketCount()}>&#xf021;</i></div>
+          <div><span>You have {this.state.count} Golden Tokens</span>&nbsp;&nbsp;<i style={{ fontSize: "24px" }} className="fa pointer" onClick={() => this.getTicketCount()}>&#xf021;</i></div>
         
     );
   }
