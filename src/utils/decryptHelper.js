@@ -14,7 +14,7 @@ const download = async (url) => {
 }
 
 const decrypt = (input, key) => {
-  console.log("key is ", key);
+  //console.log("key is ", key);
   const dataBuffer = Buffer.from(input)
   const data32 = dataBuffer.toString('utf-8').substring(0, 32);
   const cipherKey = Buffer.from(key);
@@ -30,4 +30,4 @@ const decrypt = (input, key) => {
 };
 
 
-module.exports = { download, decrypt };
+export { download, decrypt };
