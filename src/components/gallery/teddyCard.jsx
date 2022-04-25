@@ -311,23 +311,24 @@ class TeddyCard extends React.Component {
                 }
 
                 else {
-                    console.log("decrypting")
-                    const privImage = await decryptFile(this.state.encryptedImage.url, this.state.encryptedImage.authentication.key)
-                    console.log("decrypted response", privImage)
+                    const url = this.state.encryptedImage.url.replace('ipfs.io', process.env.REACT_APP_IPFS_MIRROR);
+                    const privImage = await decryptFile(url, this.state.encryptedImage.authentication.key);
 
-                    if (!!privImage.data) {
-                        const blob = new Blob([privImage.data], {
+                    if (!!privImage.length) {
+
+                        const blob = new Blob([privImage], {
                             type: `image/png`,
                         });
 
-                        const objURL = URL.createObjectURL(blob);
-                        console.log("Decrypted Object URL", objURL)
+                        //const objURL = URL.createObjectURL(blob);
+                        //console.log("Decrypted Object URL", objURL)
 
                         const base64 = await blobToBase64(blob);
-                        console.log("Decerypted Data base64", base64)
+                        //console.log("Decerypted Data base64", base64)
+                        
 
                         this.setState({
-                            //decryptedImage: `data:image/png;base64,${privImage.data}`
+                            //decryptedImage: `data:image/png;base64,${privImage}`
                             decryptedImage: base64
                         })
                         //cachePrivateImage(this.state.id, `data:image/png;base64,${privImage.data}`)

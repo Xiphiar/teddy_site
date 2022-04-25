@@ -2,9 +2,28 @@ import axios from "axios";
 import { permitQuery, getChainId } from './keplrHelper'
 import { get, set } from 'idb-keyval';
 import retry from 'async-await-retry';
+import { download, decrypt } from './decryptHelper'
 
 const decryptFile = async (url, key) => {
     try {
+        console.log('Downloading...');
+
+        const data = await retry(
+          async() => {
+            const { data } = await download(url);
+            return data;
+          },
+          null,
+          {
+            retriesMax: 5,
+            interval: 1000
+          },
+        );
+        
+        console.log('Downloaded. Decrypting...')
+        const decrypted = decrypt(data, key);
+        return decrypted;
+      /*
       return await retry(
         async() => {
           return await axios.post(
@@ -25,6 +44,7 @@ const decryptFile = async (url, key) => {
           interval: 1000
         },
       );
+      */
 
     } catch (error) {
       throw error;
