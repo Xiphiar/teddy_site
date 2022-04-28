@@ -120,6 +120,14 @@ const getTotalTokens = async(traitValue) => {
     return data.data;
 }
 
+const verifydiscord = async (signedMessage, tokenId) => {
+  const data = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/verifydiscord`, {
+      signedMessage,
+      tokenId
+  });
+  return data.data
+};
+
 const queryOwnedTokens = async(client, address, permit) => {
     const query = {
         tokens: {
@@ -224,4 +232,4 @@ const blobToBase64 = (blob) => {
   });
 }
 
-export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };
+export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, processRarity, getTotalTokens, verifydiscord, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };

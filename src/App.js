@@ -12,6 +12,7 @@ import LandingPage from './pages/LandingPage';
 import { Gallery, WrappedGallery } from './pages/GalleryV2';
 import MintPage from './pages/Mint';
 import TeddyInfoPage from './pages/Teddy';
+import SecretSociety from './pages/SecretSociety';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/gallery/:lookupID" element={<WrappedGallery />} />
           <Route path="/showcase" element={<Gallery />} />
+          <Route path="/secretsociety" element={<SecretSociety />} />
           <Route path="*" element={<NotFound />} />
 
         </Routes>
