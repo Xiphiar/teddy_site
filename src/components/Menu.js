@@ -5,6 +5,7 @@ import SocialLogos from './SocialLogos.js'
 import Countdown from 'react-countdown';
 
 import { Link as ScrollLink, DirectLink, Element, Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
+import { Fragment } from "react";
 
 // Renderer callback with condition
 const renderer = ({ days, hours, minutes, seconds, completed }) => {
@@ -30,11 +31,18 @@ const renderer2 = ({ days, hours, minutes, seconds, completed }) => {
   if (completed) {
     // Render a completed state
     return (
-      <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
-        <Link to="/gallery" className="nav-link px-2 teddyNavLink">
-          SHOWCASE
-        </Link>
-      </Col>
+      <Fragment>
+        <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
+          <Link to="/gallery" className="nav-link px-2 teddyNavLink">
+            SHOWCASE
+          </Link>
+        </Col>
+        <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
+          <Link to="/secretsociety" className="nav-link px-2 teddyNavLink">
+            SECRET SOCIETY
+          </Link>
+        </Col>
+      </Fragment>
     );
   } else {
     // Render nothing
@@ -57,7 +65,7 @@ const Menu = (home) => {
           </Link>
         </Col>
 
-        <Col md={{span: "6"}} xs={{span:12, offset:0}}  style={{paddingBottom: "20px", marginLeft: "auto"}}>
+        <Col md={{span: "8"}} xs={{span:12, offset:0}}  style={{paddingBottom: "20px", marginLeft: "auto"}}>
             <Row className="align-items-center justify-content-end" style={{height: "100%"}}>
                 <Col className="text-center d-none d-md-block" sm="auto"  style={{paddingRight: "30px"}}>
                   <Countdown date={date } renderer={renderer} />
