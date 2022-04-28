@@ -134,7 +134,7 @@ class SecretSocietyCard extends React.Component {
             className="society-left-col"
           >
             <h2>Join the Society</h2>
-            <div class="discord-input-container">
+            <div className="discord-input-container">
               <label className="discord-label">
                 Discord Username:&nbsp;
                 <input
@@ -167,7 +167,8 @@ class SecretSocietyCard extends React.Component {
           >
             <img
               src="mtc_discord_emblem.png"
-              class="steddy-img d-block mx-auto"
+              className="steddy-img d-block mx-auto"
+              alt="MTC Secret Society"
             ></img>
           </Col>
         </Row>
