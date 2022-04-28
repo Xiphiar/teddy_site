@@ -48,38 +48,54 @@ class SecretSocietyCard extends React.Component {
     let returned = { client: null, address: null };
     if (!this.state.secretJs || !this.state.address) {
       //get SigningCosmWasmClient and store in state
-      returned = await getSigningClient();
-      this.setState({
-        secretJs: returned.client,
-        address: returned.address,
+      returned = await getSigningClient().catch((err) => {
+        this.emitToast({ msg: "Error connecting to Keplr", msgType: "error" });
+        this.setState({isLoading: false});
       });
+      if (returned) {
+        this.setState({
+          secretJs: returned.client,
+          address: returned.address,
+        });
+      }
     }
 
-    await this.getPermit();
+    if (this.state.secretJs && this.state.address) {
+      await this.getPermit().catch((err) => { 
+        this.setState({isLoading: false});
+      });
+      
+      //if permit is received query owned tokens and try to verify discord
+      if (this.state.queryPermit && Object.keys(this.state.queryPermit).length > 0) {
+        const owned = await queryOwnedTokens(
+          this.state.secretJs,
+          this.state.address,
+          this.state.queryPermit
+        );
 
-    const owned = await queryOwnedTokens(
-      this.state.secretJs,
-      this.state.address,
-      this.state.queryPermit
-    );
+        if (owned.length > 0) {
+          const nftMetaData = await queryTokenMetadata(
+            this.state.secretJs,
+            owned[0],
+            this.state.queryPermit
+          );
+          const pKey = nftMetaData.nft_dossier.private_metadata.extension.key;
+          const uint8key = Uint8Array.from(pKey);
+          const message = new Uint8Array(Buffer.from(this.state.discordTag));
+          const signedMessage = signMessage(uint8key, message);
+          const response = await verifydiscord(
+            signedMessage.toString(),
+            owned[0]
+          );
 
-    if (owned.length > 0) {
-      const nftMetaData = await queryTokenMetadata(
-        this.state.secretJs,
-        owned[0],
-        this.state.queryPermit
-      );
-      const pKey = nftMetaData.nft_dossier.private_metadata.extension.key;
-      const uint8key = Uint8Array.from(pKey);
-      const message = new Uint8Array(Buffer.from(this.state.discordTag));
-      const signedMessage = signMessage(uint8key, message);
-      const response = await verifydiscord(signedMessage.toString(), owned[0]);
+          this.setState({ isLoading: false });
+          this.emitToast(response);
 
-      this.setState({ isLoading: false });
-      this.emitToast(response);
-    } else {
-      this.setState({ isLoading: true });
-    }
+        } else {
+          this.setState({ isLoading: true });
+        }
+      } 
+    } 
   };
 
   emitToast(message) {
@@ -134,7 +150,9 @@ class SecretSocietyCard extends React.Component {
             <Button
               className="keplrButton"
               onClick={() => this.queryOwned()}
-              disabled={this.state.isLoading && discordTag.length < 4}
+              disabled={
+                this.state.isLoading || this.state.discordTag.length < 3
+              }
             >
               {!this.state.isLoading && <span>Join The Society</span>}
               {this.state.isLoading && (
