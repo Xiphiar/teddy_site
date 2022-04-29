@@ -121,10 +121,11 @@ const getTotalTokens = async(traitValue) => {
 }
 
 const verifydiscord = async (signedMessage, tokenId) => {
-  const data = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/verifydiscord`, {
-      signedMessage,
-      tokenId
-  });
+  var params = new URLSearchParams();
+    params.append('signedMessage', signedMessage);
+    params.append('tokenId', tokenId);
+
+  const data = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/verifydiscord`, params);
   return data.data
 };
 
