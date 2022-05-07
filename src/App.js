@@ -10,6 +10,7 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import LandingPage from './pages/LandingPage';
 import { Gallery, WrappedGallery } from './pages/GalleryV2';
+import { Factory, WrappedFactory } from './pages/Factory';
 import MintPage from './pages/Mint';
 import TeddyInfoPage from './pages/Teddy';
 import SecretSociety from './pages/SecretSociety';
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/gallery/:lookupID" element={<WrappedGallery />} />
           <Route path="/showcase" element={<Gallery />} />
+          <Route path="/factory" element={<Factory />} />
           <Route path="/secretsociety" element={<SecretSociety />} />
           <Route path="*" element={<NotFound />} />
 
