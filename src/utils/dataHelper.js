@@ -200,6 +200,51 @@ const queryTokenMetadata = async(client, id, permit) => {
     }
 }
 
+const batchQueryTokenMetadata = async(client, ids, permit) => {
+  const query = {
+      batch_nft_dossier: {
+        token_ids: ids
+      }
+  }
+  console.log(query)
+  const chainId = getChainId();
+
+  if (permit.signature){
+
+      const query2 = new permitQuery(query, permit, chainId);
+      const data = await client.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query2, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+      
+      let priv_attributes = {};
+      for (let i = 0; i < data.nft_dossier.private_metadata.extension.attributes.length; i++) {
+        priv_attributes[data.nft_dossier.private_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.private_metadata.extension.attributes[i].value);
+      }
+
+      let pub_attributes = {};
+      for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
+        pub_attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.public_metadata.extension.attributes[i].value);
+      }
+      return({
+          nft_dossier: data.nft_dossier,
+          priv_attributes: priv_attributes,
+          pub_attributes: pub_attributes
+      });
+      
+  } else {
+    console.log("no permit query")
+      let data = await client.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+      let attributes = {};
+      let unknown = "";
+      if (data.nft_dossier.public_metadata.extension.attributes.length===1) unknown = "?"
+      for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
+          attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + unknown;
+        }
+      return({
+          nft_dossier: data.nft_dossier,
+          pub_attributes: attributes
+      });
+  }
+}
+
 const processRarity = async(attributes) => {
         let rarity = {}
         let total = 0;
@@ -233,4 +278,4 @@ const blobToBase64 = (blob) => {
   });
 }
 
-export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, processRarity, getTotalTokens, verifydiscord, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };
+export { decryptFile, getRarityData, queryOwnedTokens, queryOwnedTickets, queryTokenMetadata, batchQueryTokenMetadata, processRarity, getTotalTokens, verifydiscord, getPublicTeddyData, truncate, cachePrivateImage, cachePublicImage, getPrivateImage, getKnownImage, blobToBase64 };
