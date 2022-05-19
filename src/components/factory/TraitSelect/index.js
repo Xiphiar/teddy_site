@@ -9,24 +9,25 @@ export default function TraitSelect({traitsIn = [], set, selectedIn, required=fa
         setTraits(traitsIn);
     },[traitsIn])
     
-    if (required)
+    if (required) {
         return(
             <Form.Control
                 required
                 as="select"
                 value={selected}
                 onChange={e => {
+                    console.log(e.target.value)
                     set(e.target.value);
                 }}
             >
-                <option>Choose...</option>
+                <option key='choose' value={''}>Choose...</option>
                 {traits.map( (x) => {
-                    console.log(x)
                     return (<option key={x.trait+x.id}>{x.trait}</option>)
                 })}
+                <option key='other' value={'other'}>Unlisted Trait* (specify in comments)</option>
             </Form.Control>
         );
-    else
+    } else
     return(
         <Form.Control
             as="select"
@@ -35,11 +36,11 @@ export default function TraitSelect({traitsIn = [], set, selectedIn, required=fa
                 set(e.target.value);
             }}
         >
-            <option>None</option>
+            <option key='none' value={''}>None</option>
             {traits.map( (x) => {
-                console.log(x)
                 return (<option key={x.trait+x.id}>{x.trait}</option>)
             })}
+            <option key='other' value={'other'}>Unlisted Trait* (specify in comments)</option>
         </Form.Control>
     );
 

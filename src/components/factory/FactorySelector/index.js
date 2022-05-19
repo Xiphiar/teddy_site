@@ -17,6 +17,7 @@ import FactoryTeddyCard from '../FactoryTeddyCard';
 import TraitSelect from '../TraitSelect';
 
 import styles from './styles.module.css';
+import { ConfirmModal } from '../ConfirmModal';
 
 
 const noOptions = {
@@ -34,24 +35,29 @@ const noOptions = {
 //class FactorySelector extends React.Component {
 function FactorySelector({selectedTeddies}){
     const [loading, setLoading] = useState(true);
+    const [ showNext, setShowNext ] = useState(false);
+
     const [permit, setPermit] = useState();
     const [address, setAddress] = useState();
     const [client, setClient] = useState();
+
     const [teddyData, setTeddyData] = useState([]);
-    const [selectedBase, setSelectedBase] = useState("None");
-    const [selectedFace, setSelectedFace] = useState("None");
-    const [selectedColor, setSelectedColor] = useState("None");
-    const [selectedBackground, setSelectedBackground] = useState("None");
-    const [selectedHand, setSelectedHand] = useState("None");
-    const [selectedHead, setSelectedHead] = useState("None");
-    const [selectedBody, setSelectedBody] = useState("None");
-    const [selectedEyewear, setSelectedEyewear] = useState("None");
+    const [name, setName] = useState('');
+    const [selectedBase, setSelectedBase] = useState('');
+    const [selectedFace, setSelectedFace] = useState("");
+    const [selectedColor, setSelectedColor] = useState("");
+    const [selectedBackground, setSelectedBackground] = useState("");
+    const [selectedHand, setSelectedHand] = useState("");
+    const [selectedHead, setSelectedHead] = useState("");
+    const [selectedBody, setSelectedBody] = useState("");
+    const [selectedEyewear, setSelectedEyewear] = useState("");
     
     const [options, setOptions] = useState(noOptions);
     const [notes, setNotes] = useState("");
 
     console.log('Render')
-
+    const other = [selectedBase, selectedFace, selectedColor, selectedBackground, selectedHand, selectedHead, selectedBody, selectedEyewear].includes('other') ? true : false
+    console.log('other', other)
     const parseTraits = (nft_dossier) => {
         let attributes1 = nft_dossier.private_metadata.extension.attributes;
         let attributes2 = nft_dossier.public_metadata.extension.attributes;
@@ -85,52 +91,44 @@ function FactorySelector({selectedTeddies}){
         const body = attributes.find(item => item.trait_type === "Body")?.value
         const eyewear = attributes.find(item => item.trait_type === "Eyewear")?.value
         
-        if (base) object.base.push({trait: base, id: id});
-        if (face) object.face.push({trait: face, id: id});
-        if (color) object.color.push({trait: color, id: id});
-        if (background) object.background.push({trait: background, id: id});
-        if (hand) object.hand.push({trait: hand, id: id});
-        if (head) object.head.push({trait: head, id: id});
-        if (body) object.body.push({trait: body, id: id});
-        if (eyewear) object.eyewear.push({trait: eyewear, id: id});
-        //console.log(state);
+        if (base && !object.base.find(v => v.trait === base))       object.base.push({trait: base, id: id});
+        if (face && !object.face.find(v => v.trait === face))       object.face.push({trait: face, id: id});
+        if (color && !object.color.find(v => v.trait === color))    object.color.push({trait: color, id: id});
+        if (background &&
+            !object.background.find(v => v.trait === background))   object.background.push({trait: background, id: id});
+        if (hand && !object.hand.find(v => v.trait === hand))       object.hand.push({trait: hand, id: id});
+        if (head && !object.head.find(v => v.trait === head))       object.head.push({trait: head, id: id});
+        if (body && !object.body.find(v => v.trait === body))       object.body.push({trait: body, id: id});
+        if (eyewear &&
+            !object.eyewear.find(v => v.trait === eyewear))         object.eyewear.push({trait: eyewear, id: id});
+
         return object;
     }
 
     useEffect(() => {
         setup();
     },[])
-    /*
-    constructor(props) {
-      super(props);
-      this.state = {
-        id: this.props.id,
-        queryPermit: this.props.queryPermit,
-        secretJs: this.props.secretJs,
-        signer: false,
-        nft_dossier: null,
-        owned: this.props.owned || false,
-        unlocked: false,
-        swapped: false,
-        rarityData: null,
-        attributes: [],
-        encryptedImage: {},
-        decryptedImage: null,
-        loadingUnlock: false,
-        teddyRank: null
-      };
+
+    const hideNext = () => {
+        setShowNext(false);
     }
-    */
-    // componentDidUpdate(prevProps){
-    //     if (this.props !== prevProps) {
-    //         this.setState({
-    //             id: this.props.id || null,
-    //             queryPermit: this.props.queryPermit || {},
-    //             secretJs: this.props.secretJs || null,
-    //             owned: this.props.owned || false
-    //         })
-    //     }
-    // }
+
+    const handleNext = (e) => {
+        e.preventDefault();
+        if (!selectedBase || selectedBase === "None") {
+            toast.error('Please select a base design.')
+            return
+        }
+        if (!selectedFace || selectedFace === "None") {
+            toast.error('Please select a face.')
+            return
+        }
+        if (!selectedColor || selectedColor === "None") {
+            toast.error('Please select a color.')
+            return
+        }
+        setShowNext(true);
+    }
 
     const setup = async() => {
         console.log("Running Setup")
@@ -139,7 +137,10 @@ function FactorySelector({selectedTeddies}){
 
             //get SigningCosmWasmClient and store in state
             const returned = await getSigningClient();
+            setAddress(returned.address);
+            setClient(returned.client);
             const signature = await getPermit(returned.address);
+            setPermit(signature);
 
         
             //query all metadata
@@ -162,7 +163,6 @@ function FactorySelector({selectedTeddies}){
             options2 = addOptions(attributes1, options, selectedTeddies[1].toString());
             options2 = addOptions(attributes2, options, selectedTeddies[2].toString());
 
-            console.log(options2);
             setOptions(options2);
             setLoading(false);
         
@@ -181,6 +181,15 @@ function FactorySelector({selectedTeddies}){
 
     return(
         <div>
+            <ConfirmModal show={showNext} hide={hideNext}
+                secretJs={client} address={address}
+                ids={selectedTeddies}
+                base={selectedBase} color={selectedColor}
+                background={selectedBackground} face={selectedFace}
+                hand={selectedHand} head={selectedHead}
+                body={selectedBody} eyewear={selectedEyewear}
+                notes={notes} name={name}
+            />
             <div className="pointer backLink" style={{width:"fit-content"}} onClick={() => this.props.handleBack()} >
                 <h1 style={{display: "inline"}}>
                     <FontAwesomeIcon style={{paddingLeft: "10px"}} icon={faArrowLeft} className="pointer" title="Back to Gallery" onClick={() => this.setUriHash(this.state.id)} />
@@ -202,8 +211,19 @@ function FactorySelector({selectedTeddies}){
                         <div style={{height: "30px"}} />
 
                         { !loading ?
-                        <Form>
-                        <h3 style={{paddingLeft: '10px'}}>Select Desired Traits</h3>
+                        <Form style={{paddingBottom: '10px'}}>
+                        <h3 style={{paddingLeft: '10px'}}>Build Your Teddy</h3>
+                        <Row style={{padding: "10px 20px"}}>
+                            <Form.Group as={Col} md="4" controlId="formGridState">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                    // as="textarea"
+                                    name="name"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Row>
 
                         <Row style={{padding: "0px 20px"}}>
                             <Form.Group as={Col} md="4" controlId="formGridState">
@@ -250,9 +270,9 @@ function FactorySelector({selectedTeddies}){
                             </Form.Group>
                         </Row>
 
-                        <Row style={{padding: "20px 20px"}} className="justify-content-between">
-                            <Form.Group as={Col} md="4" controlId="formGridState">
-                                <Form.Label>Notes</Form.Label>
+                        <Row style={{padding: "20px 20px 0px"}} className="justify-content-between">
+                            <Form.Group as={Col} md="6" controlId="formGridState">
+                                <Form.Label style={{ lineHeight: '100%'}}>Notes<br/><span style={{fontSize: '10px', color: '#cccccc'}}>Recommended: Include contact information in case there are issues with your order.</span></Form.Label>
                                 <Form.Control
                                     as="textarea"
                                     name="notes"
@@ -261,11 +281,17 @@ function FactorySelector({selectedTeddies}){
                                 />
                             </Form.Group>
                             <Col md="2" className="text-right d-flex justify-content-end">
-                                <Button variant="primary" type="submit" style={{alignSelf: "end"}}>
+                                <Button variant="primary" /*type="submit"*/ onClick={handleNext} style={{alignSelf: "end"}}>
                                     Next
                                 </Button>
                             </Col>
                         </Row>
+                        { other? 
+                            <Row style={{padding: "0px 20px"}} >
+                                <Col>
+                                <span>* Image must contain your desired trait.</span></Col>
+                            </Row>
+                        :null}
 
 
                         </Form>

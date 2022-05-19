@@ -146,7 +146,11 @@ class Gallery extends React.Component {
         let render = (<div style={{textAlign: "center"}}>{`${selected} ${selected === 1 ? "Teddy" : "Teddies"} Selected`}</div>)
         if (selected === 3) {
             render = (<div style={{textAlign: "center"}}>
-              <Link onClick={() => toast.dismiss(this.state.factoryToast)} to="/factory" state={{ selectedTeddies: this.state.factoryTeddies }}>
+              <Link onClick={() => toast.dismiss(this.state.factoryToast)} to="/factory" state={{ selectedTeddies: this.state.factoryTeddies }}
+              style={{
+                color: "#fff",
+                textDecoration: "none"
+              }}>
                 Send to Factory 🌋  ➡
               </Link>
             </div>)
@@ -234,8 +238,10 @@ class Gallery extends React.Component {
     this.setState({
       showTeddy: true,
       clickedID: data,
-      owned: true
+      owned: true,
+      factoryTeddies: []
     })
+    toast.dismiss(this.state.factoryToast)
   }
 
   showGallery = () => {
