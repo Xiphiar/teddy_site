@@ -258,6 +258,7 @@ export class ConfirmModal extends React.Component {
             return;
         }
         this.setState({loading: false})
+        this.props.returner();
     }
 
     render = () => {

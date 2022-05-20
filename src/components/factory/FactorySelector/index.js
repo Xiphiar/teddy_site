@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from "react-router-dom";
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
@@ -54,6 +55,7 @@ function FactorySelector({selectedTeddies}){
     
     const [options, setOptions] = useState(noOptions);
     const [notes, setNotes] = useState("");
+    let navigate = useNavigate();
 
     console.log('Render')
     const other = [selectedBase, selectedFace, selectedColor, selectedBackground, selectedHand, selectedHead, selectedBody, selectedEyewear].includes('other') ? true : false
@@ -179,6 +181,10 @@ function FactorySelector({selectedTeddies}){
         }
     }
 
+    const toGallery = () =>{
+        navigate('/gallery',{state: {connect: true}})
+    }
+
     return(
         <div>
             <ConfirmModal show={showNext} hide={hideNext}
@@ -189,8 +195,9 @@ function FactorySelector({selectedTeddies}){
                 hand={selectedHand} head={selectedHead}
                 body={selectedBody} eyewear={selectedEyewear}
                 notes={notes} name={name}
+                returner={toGallery}
             />
-            <div className="pointer backLink" style={{width:"fit-content"}} onClick={() => this.props.handleBack()} >
+            <div className="pointer backLink" style={{width:"fit-content"}} onClick={() => toGallery()} >
                 <h1 style={{display: "inline"}}>
                     <FontAwesomeIcon style={{paddingLeft: "10px"}} icon={faArrowLeft} className="pointer" title="Back to Gallery" onClick={() => this.setUriHash(this.state.id)} />
                 </h1>
