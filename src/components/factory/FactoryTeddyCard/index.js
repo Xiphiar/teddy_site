@@ -41,7 +41,7 @@ export default function FactoryTeddyCard({teddyId, nft_dossier}){
             }
             else {
                 const url = privImageUrl.replace('ipfs.io', process.env.REACT_APP_IPFS_MIRROR);
-                const decrypted = await decryptFile(privImageUrl, privImageKey);
+                const decrypted = await decryptFile(url, privImageKey);
                 if (!!decrypted.length) {
 
                     const blob = new Blob([decrypted], {
