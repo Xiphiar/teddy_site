@@ -200,4 +200,6 @@ function countDecimals(value) {
     return value.toString().split(".")[1]?.length || 0; 
 }
 
-export { getSigningClient, getQueryClient, getPermit, isValidAddress, countDecimals, getAddress, permitName, allowedTokens, permissions, permitQuery, getChainId, getApiURL }
+const queryJs = new CosmWasmClient(getApiURL());
+
+export { getSigningClient, getQueryClient, getPermit, isValidAddress, countDecimals, getAddress, permitName, allowedTokens, permissions, permitQuery, getChainId, getApiURL, queryJs }
