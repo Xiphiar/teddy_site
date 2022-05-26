@@ -1,73 +1,115 @@
-import React from 'react';
+import React, {useState,useEffect,useRef} from 'react';
 import Image from 'react-bootstrap/Image';
 import { getKnownImage } from '../../../utils/dataHelper';
+import Overlay from 'react-bootstrap/Overlay'
+import Tooltip from 'react-bootstrap/Tooltip'
 
 import styles from './styles.module.css';
+import './tooltip.css';
 
-export class TeddyTile extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: true,
-            imageSrc: null
-        };
-    }
+export default function TeddyTile({id, index, showCheckBox=false, totalChecked, checkHandler, clickHandler}){
+// export class TeddyTile extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = {
+//             loading: true,
+//             imageSrc: null,
+//             showCheckBox: this.props.showCheckBox || false
+//         };
+//     }
+    const [loading, setLoading] = useState(true);
+    const [imageSrc, setImageSrc] = useState(null);
+    const [showCheck, setShowCheck] = useState(showCheckBox);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [numChecked, setNumChecked] = useState(totalChecked);
+    const [checked, setChecked] = useState(false);
+    const target = useRef(null);
 
-    componentDidMount = () => {
-        this.getData();
-    };
-
-    componentDidUpdate(prevProps){
-        if (this.props !== prevProps) {
-            this.setState({
-                numChecked: this.props.numChecked
-            })
-        }
-    }
-
-    getData = async () => {
-        const image = await getKnownImage(this.props.id, true);
+    const getData = async () => {
+        const image = await getKnownImage(id, true);
         //const data = await getPublicTeddyData(this.props.id);
-        this.setState({
-            imageSrc: image,
-            loading: false
-        });
+        // this.setState({
+        //     imageSrc: image,
+        //     loading: false
+        // });
+        setImageSrc(image);
+        setLoading(false);
     };
 
-    handleCheckChange = (event) => {
-        console.log(event.target.checked)
-        this.props.checkHandler(this.props.id, event.target.checked)
-        this.setState({
-            checked: event.target.checked
-        })
-    }
+    // run on mount
+    useEffect(()=>{
+        getData();
+    },[id])
 
-    render() {
-        return (
-            <div className={styles.tileContainer}>
-                <div style={{ paddingBottom: "15px", width: '260px' }}>
-                    {this.state.loading ?
-                        <i className="c-inline-spinner c-inline-spinner-white" />
-                        :
-                        <Image src={this.state.imageSrc} rounded style={{ width: "237px", minHeight: "228px" }} className="pointer" onClick={() => this.props.clickHandler(this.props.id)} />}
-                    <div>
-                        <input
-                          type="checkbox"
-                          disabled={this.state.numChecked > 2 && !this.state.checked ? true : false}
-                          className={styles.checkmark} id={`teddy-check-${this.props.id}`}
-                          value="" style={{float: 'left'}}
-                          onChange={this.handleCheckChange}
-                        />
-                        <span 
-                          className="backLink pointer"
-                          onClick={() => this.props.clickHandler(this.props.id)}
-                        >
-                            <h5>&nbsp;Midnight Teddy #{this.props.id}</h5>
-                        </span>
-                    </div>
+    useEffect(()=>{
+        console.log("change total", id, showTooltip, totalChecked)
+        setNumChecked(totalChecked)
+        if (totalChecked){
+            console.log(id, 'disabled tooltip')
+            setShowTooltip(false);
+        }
+    },[totalChecked])
+
+    useEffect(()=>{
+        console.log("show checkbox", id, showTooltip, totalChecked)
+        setShowCheck(showCheckBox);
+        if (!index){
+            setShowTooltip(true);
+        }
+    },[showCheckBox])
+
+    const handleCheckChange = (event) => {
+        checkHandler(id, event.target.checked)
+        setChecked(event.target.checked)
+    }
+    return (
+        <div className={styles.tileContainer}>
+            <div style={{ paddingBottom: "15px", width: '260px' }}>
+                {loading ?
+                    <i className="c-inline-spinner c-inline-spinner-white" />
+                    :
+                    <Image src={imageSrc} rounded style={{ width: "237px", minHeight: "228px" }} className="pointer" onClick={() => clickHandler(id)} />}
+                <div>
+                    { showCheck ?
+                        <>
+                            <input
+                                ref={target}
+                                type="checkbox"
+                                disabled={numChecked > 2 && !checked ? true : false}
+                                className={styles.checkmark} id={`teddy-check-${id}`}
+                                value="" style={{float: 'left'}}
+                                onChange={handleCheckChange}
+                            />
+                            {/*this is fucked but i dont care at least it fucking works */
+                            showTooltip ?
+                                <Overlay
+                                    target={target.current}
+                                    show={true}
+                                    placement={'left'}
+                                >
+                                    {(props) => (
+                                        <Tooltip id="tooltip-this-shit-sucks"  {...props}>
+                                            Check the boxes to select your teddies!
+                                        </Tooltip>
+                                    )}
+                                </Overlay>
+                            : null
+                            }
+
+
+                        </>
+
+                    : null }
+
+                    <span 
+                        className="backLink pointer"
+                        onClick={() => clickHandler(id)}
+                    >
+                        <h5>&nbsp;Midnight Teddy #{id}</h5>
+                    </span>
                 </div>
             </div>
+        </div>
 
-        );
-    }
+    );
 }

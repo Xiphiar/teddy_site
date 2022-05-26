@@ -1,0 +1,17 @@
+.tooltip-inner {
+    background-color: #fff;
+    color: #000;
+    /* border: 1px solid #062e56; */
+    margin-right: 15px;
+  }
+
+  .tooltip::after {
+    position: absolute;
+    left: 89%;
+    top: 35%;
+    content: '';
+    width: 15px;
+    height: 15px;
+    background: #fff;
+    transform: rotate(45deg);
+}

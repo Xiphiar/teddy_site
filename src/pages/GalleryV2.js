@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import Meta from '../components/Meta'
 import Image from 'react-bootstrap/Image'
-import { Nav, Container, Col, Row, Button } from "react-bootstrap";
+import { Nav, Container, Col, Row, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
@@ -13,12 +13,12 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
 import clubBanner from '../assets/club_banner.jpg'
-import { TicketCounter } from '../components/gallery/TicketCounter';
+import TicketCounter from '../components/gallery/TicketCounter';
 
 
 // Layout
 import Layout from "../layout/Layout";
-import { TeddyTile } from '../components/gallery/teddyTile';
+import TeddyTile from '../components/gallery/teddyTile';
 
 
 const hash = 'QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs'
@@ -115,6 +115,7 @@ class Gallery extends React.Component {
       owned: false,
       factoryTeddies: [],
       factoryToast: null,
+      showCheckBoxes: false
     };
   }
 
@@ -374,6 +375,18 @@ class Gallery extends React.Component {
                   </div>
               </Col>
             </Row>
+            { !this.state.showCheckBoxes ?
+              <Row>
+                <h5>The factory is now open! Click the button below to select teddies to send.</h5>
+                <Button
+                    className="keplrButton"
+                    style={{width: 'auto', marginLeft: '2vw'}}
+                    onClick={()=>this.setState({showCheckBoxes: true})}
+                >
+                    Select Teddies for Factory
+                </Button>
+              </Row>
+            :null}
 
             <Padding size={30}/>
 
@@ -384,8 +397,8 @@ class Gallery extends React.Component {
             <Row className="justify-content-center">
               { this.state.tokenList.length ? 
                 <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
-                  {this.state.tokenList.map(item => {
-                      return (<TeddyTile id={item}  clickHandler={this.handleClickTile} checkHandler={this.changeFactoryList} numChecked={this.state.factoryTeddies.length} key={`teddy-tile-${item}`} />)
+                  {this.state.tokenList.map((item, index) => {
+                      return (<TeddyTile id={item} index={index} showCheckBox={this.state.showCheckBoxes} totalChecked={this.state.factoryTeddies.length} clickHandler={this.handleClickTile} checkHandler={this.changeFactoryList} key={`teddy-tile-${item}`} />)
                   })}
                 </div>
               :
