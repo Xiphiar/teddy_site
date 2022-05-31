@@ -1,6 +1,7 @@
 import { Col } from "react-bootstrap";
 import {useState, useEffect} from 'react';
 import Spinner from 'react-bootstrap/Spinner'
+import Image from 'react-bootstrap/Image'
 import { getPermit, getSigningClient, getQueryClient, getChainId, getAddress } from "../../../utils/keplrHelper";
 import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../../utils/dataHelper'
 import { CosmWasmClient } from "secretjs";
@@ -74,7 +75,8 @@ export default function FactoryTeddyCard({teddyId, nft_dossier}){
                 <div className="d-flex justify-content-center align-items-center" style={{flexDirection: 'column'}}>
                     { decryptedImage ?
                         <div className="factory-img-container d-flex justify-content-center">
-                            <img src={decryptedImage} alt={`Midnight Teddy ${teddyId}`} key={`teddy-${teddyId}`} />
+                            {/* <img src={decryptedImage} alt={`Midnight Teddy ${teddyId}`} key={`teddy-${teddyId}`} /> */}
+                            <Image src={decryptedImage} alt={`Midnight Teddy ${teddyId}`} key={`teddy-${teddyId}`} fluid />
                         </div>
                     :
                         <div>

@@ -133,7 +133,7 @@
       text-align: center;
       flex-direction: column;
       margin: 50px 0;
-      height: 1020px;
+      height: auto;
     }
     .anon-card > .anon-img-container {
       width: 100%;

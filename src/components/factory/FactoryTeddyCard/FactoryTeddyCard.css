@@ -6,3 +6,17 @@
     padding-bottom: 10px;
 
   }
+
+  @media only screen and (max-width: 1280px) {
+    .factory-img-container img {
+      width: inherit;
+      height: 100%
+    }
+  }
+
+  @media only screen and (max-width: 640px) {
+    .factory-img-container img {
+      width: 100%;
+      height: 100%
+    }
+  }
