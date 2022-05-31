@@ -64,20 +64,24 @@ export default function TeddyTile({id, index, showCheckBox=false, totalChecked, 
     }
     return (
         <div className={styles.tileContainer}>
-            <div style={{ paddingBottom: "15px", width: '260px' }}>
+            <div style={{ paddingBottom: "15px", width: '285px' }}>
+                <div className='d-flex justify-content-center'>
                 {loading ?
                     <i className="c-inline-spinner c-inline-spinner-white" />
                     :
-                    <Image src={imageSrc} rounded style={{ width: "237px", minHeight: "228px" }} className="pointer" onClick={() => clickHandler(id)} />}
+                    <Image src={imageSrc} rounded style={{ width: "237px", minHeight: "228px", marginBottom: showCheck ? '10px' : '5px' }} className="pointer" onClick={() => clickHandler(id)} />}
+                </div>
                 <div>
+                <div style={{height: '30px', width: '30px', float: 'left'}} ref={target}>
                     { showCheck ?
                         <>
                             <input
-                                ref={target}
+                                
                                 type="checkbox"
                                 disabled={numChecked > 2 && !checked ? true : false}
                                 className={styles.checkmark} id={`teddy-check-${id}`}
-                                value="" style={{float: 'left'}}
+                                value=""
+                                //style={{margin: '10px'}}
                                 onChange={handleCheckChange}
                             />
                             {/*this is fucked but i dont care at least it fucking works */
@@ -100,13 +104,15 @@ export default function TeddyTile({id, index, showCheckBox=false, totalChecked, 
                         </>
 
                     : null }
-
+                </div>
+                <div style={{marginLeft: showCheck ? '40px' : '0px'}}>
                     <span 
                         className="backLink pointer"
                         onClick={() => clickHandler(id)}
                     >
                         <h5>&nbsp;Midnight Teddy #{id}</h5>
                     </span>
+                </div>
                 </div>
             </div>
         </div>
