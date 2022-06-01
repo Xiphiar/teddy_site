@@ -123,7 +123,7 @@ function FactorySelector({selectedTeddies}){
             toast.error('Please select a base design.')
             return
         }
-        if (!selectedFace || selectedFace === "None") {
+        if (selectedBase !== 'Ro-Bear' && (!selectedFace || selectedFace === "None")) {
             toast.error('Please select a face.')
             return
         }
@@ -238,17 +238,17 @@ function FactorySelector({selectedTeddies}){
                         <Row style={{padding: "0px 20px"}}>
                             <Form.Group as={Col} md="4" controlId="formGridState">
                                 <Form.Label>Base Design</Form.Label>
-                                <TraitSelect traitsIn={options.base} set={setSelectedBase} valueIn={selectedBase} required={true} />
+                                <TraitSelect traitsIn={options.base} set={setSelectedBase} valueIn={selectedBase} requiredIn={true} />
                             </Form.Group>
 
                             <Form.Group as={Col} md="4" controlId="formGridState">
                                 <Form.Label>Face</Form.Label>
-                                <TraitSelect traitsIn={options.face} set={setSelectedFace} valueIn={selectedFace} required={true} />
+                                <TraitSelect traitsIn={options.face} set={setSelectedFace} valueIn={selectedFace} requiredIn={selectedBase === 'Ro-Bear' ? false : true} enabledIn={selectedBase === 'Ro-Bear' ? false : true}/>
                             </Form.Group>
 
                             <Form.Group as={Col} md="4" controlId="formGridState">
                                 <Form.Label>Color</Form.Label>
-                                <TraitSelect traitsIn={options.color} set={setSelectedColor} valueIn={selectedColor} required={true} />
+                                <TraitSelect traitsIn={options.color} set={setSelectedColor} valueIn={selectedColor} requiredIn={true} />
                             </Form.Group>
                         </Row>
 
