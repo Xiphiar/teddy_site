@@ -42,16 +42,13 @@ export default function TeddyTile({id, index, showCheckBox=false, totalChecked, 
     },[id])
 
     useEffect(()=>{
-        console.log("change total", id, showTooltip, totalChecked)
         setNumChecked(totalChecked)
         if (totalChecked){
-            console.log(id, 'disabled tooltip')
             setShowTooltip(false);
         }
     },[totalChecked])
 
     useEffect(()=>{
-        console.log("show checkbox", id, showTooltip, totalChecked)
         setShowCheck(showCheckBox);
         if (!index){
             setShowTooltip(true);

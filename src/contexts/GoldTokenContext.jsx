@@ -25,12 +25,13 @@ export const GoldTokenProvider = ({ children }) => {
   const refreshTokens = async(
     address, permit
   ) => {
+    console.log('Loading Gold Tokens')
     setLoading(true);
-    console.log(1)
     const data = await queryOwnedTickets(queryJs, address, permit);
     console.log(2)
     setTokens(data);
     setLoading(false);
+    console.log('Done Loading Gold Tokens')
   };
 
   const values = {

@@ -18,8 +18,9 @@ import FactoryTeddyCard from '../FactoryTeddyCard';
 import TraitSelect from '../TraitSelect';
 
 import styles from './styles.module.css';
-import { ConfirmModal } from '../ConfirmModal';
+import ConfirmModal from '../ConfirmModal';
 
+import { useGoldTokens } from '../../../contexts/GoldTokenContext';
 
 const noOptions = {
     base: [],
@@ -55,11 +56,12 @@ function FactorySelector({selectedTeddies}){
     
     const [options, setOptions] = useState(noOptions);
     const [notes, setNotes] = useState("");
+
+    const {tokens, refreshTokens} = useGoldTokens();
+
     let navigate = useNavigate();
 
-    console.log('Render')
     const other = [selectedBase, selectedFace, selectedColor, selectedBackground, selectedHand, selectedHead, selectedBody, selectedEyewear].includes('other') ? true : false
-    console.log('other', other)
     const parseTraits = (nft_dossier) => {
         let attributes1 = nft_dossier.private_metadata.extension.attributes;
         let attributes2 = nft_dossier.public_metadata.extension.attributes;
@@ -144,6 +146,7 @@ function FactorySelector({selectedTeddies}){
             const signature = await getPermit(returned.address);
             setPermit(signature);
 
+            if (!tokens.length) refreshTokens(returned.address, signature)
         
             //query all metadata
             const data = await Promise.all([
@@ -188,7 +191,7 @@ function FactorySelector({selectedTeddies}){
     return(
         <div>
             <ConfirmModal show={showNext} hide={hideNext}
-                secretJs={client} address={address}
+                secretJs={client} address={address} permit={permit}
                 ids={selectedTeddies}
                 base={selectedBase} color={selectedColor}
                 background={selectedBackground} face={selectedFace}
