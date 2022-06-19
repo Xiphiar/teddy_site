@@ -269,6 +269,107 @@ export default function ConfirmModal(props) {
         refreshTokens(acctAddress, props.permit);
     }
 
+    const handleSendSCRT2 = async() => {
+        //show spinner and disable button
+        setLoading(true);
+        setLoadingSCRT(true);
+
+        const {address: acctAddress} = await ensureSigner();
+        
+        const fee = {
+            gas: process.env.REACT_APP_FACTORY_GAS + 50000 || 200000,
+        };
+
+        //messages for the NFT contracts
+        const bulkTransferMsg = {
+            batch_transfer_nft: {
+                transfers: [{
+                    recipient: factoryAdmin,
+                    token_ids: [props.ids[0].toString(), props.ids[1].toString(), props.ids[2].toString()]
+                }]
+            }
+        };
+
+        const tokenTransferMsg = {
+            transfer: {
+                recipient: factoryAdmin,
+                amount: process.env.REACT_APP_FACTORY_PRICE
+            }
+        };
+
+        // transfer teddies and token
+        let asyncResponse;
+        try{
+            asyncResponse = await secretJs.multiExecute(
+              [
+                {
+                    contractAddress: process.env.REACT_APP_CONTRACT_ADDRESS,
+                    contractCodeHash: process.env.REACT_APP_CONTRACT_CODE_HASH,
+                    handleMsg: bulkTransferMsg
+                },
+                {
+                    contractAddress: process.env.REACT_APP_TOKEN_ADDRESS,
+                    contractCodeHash: process.env.REACT_APP_TOKEN_CODE_HASH,
+                    handleMsg: tokenTransferMsg
+                }
+              ],
+              "",
+              fee
+            );
+            console.log(asyncResponse) 
+
+        } catch(error){
+            toast.error(error.toString(), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setLoading(false);
+            setLoadingSCRT(false);
+            return;
+        }
+    
+        //show error if async execute returned an error code (rare)
+        if (asyncResponse.code){
+          setShow(true);
+          setError(true);
+          setTx(asyncResponse);
+
+          return;
+        }
+    
+        // get full tx response
+        let fullResponse;
+        try {
+            //show loading toast
+            const txToast = toast.loading("Transaction Processing...")
+
+            // check if tx was processed every 3s up to 100 times
+            fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 3000, 100);
+            console.log('Full Response:', fullResponse);
+
+            //check for errors
+            if (fullResponse.code){
+                toast.update(txToast, { render: fullResponse.raw_log, type: "error", isLoading: false, autoClose: 5000 });
+                throw new Error(fullResponse.raw_log)
+            }
+
+            // display success toast
+            toast.update(txToast, { render: "Transaction Processed", type: "success", isLoading: false, autoClose: 5000 });
+
+        } catch(error) {
+            setLoading(false);
+            setLoadingSCRT(false);
+            return;
+        }
+
+        await sendOrder(fullResponse.transactionHash, tokens[0]);
+
+    }
+
     const handleSendSCRT = async() => {
         //show spinner and disable button
         setLoading(true);
@@ -471,7 +572,7 @@ export default function ConfirmModal(props) {
                             { loadingSCRT ? 
                                 <button className="modalButton" disabled={true}><i className="c-inline-spinner c-inline-spinner-white" /></button>
                             :
-                                <button className="modalButton" onClick={() => handleSendSCRT()} disabled={loading}>Send ( 5 sSCRT )</button>
+                                <button className="modalButton" onClick={() => handleSendSCRT2()} disabled={loading}>Send ( 5 sSCRT )</button>
                             }
                             </Col>
 
