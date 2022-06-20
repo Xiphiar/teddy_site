@@ -20,11 +20,7 @@ import TicketCounter from '../components/gallery/TicketCounter';
 import Layout from "../layout/Layout";
 import TeddyTile from '../components/gallery/teddyTile';
 
-
-const hash = 'QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs'
-const url="https://ipfs.io/ipfs/QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs"
-const key = "c9afac7fbed9cc01f66237d3e108bdc9aa"
-
+const factoryAdmin = process.env.REACT_APP_FACTORY_ADMIN || 'secret1s7hqr22y5unhsc9r4ddnj049ltn9sa9pt55nzz';
 
 
 
@@ -300,6 +296,17 @@ class Gallery extends React.Component {
         tokenList: data,
         owned: true
       });
+      
+      if (this.state.address === factoryAdmin) {
+        toast.error(`You are connected as the factory admin! Do not use the factory!`,{
+          position: "top-right",
+          autoClose: 15000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
     } else {
       const truncatedAddress = truncate(this.state.address, 27, "...")
       toast.error(`No teddies found for address ${truncatedAddress}`,{

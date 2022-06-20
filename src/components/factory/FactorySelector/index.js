@@ -22,6 +22,8 @@ import ConfirmModal from '../ConfirmModal';
 
 import { useGoldTokens } from '../../../contexts/GoldTokenContext';
 
+const factoryAdmin = process.env.REACT_APP_FACTORY_ADMIN || 'secret1s7hqr22y5unhsc9r4ddnj049ltn9sa9pt55nzz';
+
 const noOptions = {
     base: [],
     face: [],
@@ -145,6 +147,16 @@ function FactorySelector({selectedTeddies}){
             setClient(returned.client);
             const signature = await getPermit(returned.address);
             setPermit(signature);
+            if (returned.address === factoryAdmin) {
+                toast.error(`You are connected as the factory admin! Do not use the factory!`,{
+                  position: "top-right",
+                  autoClose: 15000,
+                  hideProgressBar: true,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                });
+              }
 
             if (!tokens.length) refreshTokens(returned.address, signature)
         

@@ -33,94 +33,95 @@ export default function ConfirmModal(props) {
     },[props])
 
     const sendOrder = async(txHash, goldToken = undefined) => {
-        //show loading toast for permit and post
-        const finalToast = toast.loading("Awaiting permit signature...");
+        // //show loading toast for permit and post
+        // const finalToast = toast.loading("Awaiting permit signature...");
 
-        const chainId = getChainId();
+        // const chainId = getChainId();
 
-        //try permit 3 times
-        let signature;
-        let signed = false;
-        for (let i = 0; i < 3 && !signed; i++){
-            try {
-                const permitTx = {
-                    chain_id: chainId,
-                    account_number: "0", // Must be 0
-                    sequence: "0", // Must be 0
-                    fee: {
-                      amount: [{ denom: "uscrt", amount: "0" }], // Must be 0 uscrt
-                      gas: "1", // Must be 1
-                    },
-                    msgs: [
-                      {
-                        type: "factory_order", // Must match the type on the client
-                        value: {
-                          permit_name: permitName,
-                          allowed_destinations: allowedDestinations,
-                          order_details: {
-                            teddy1: props.ids[0],
-                            teddy2: props.ids[1],
-                            teddy3: props.ids[2],
-                            owner: address,
-                            tx_hash: txHash,
-                            base_design: props.base || null,
-                            face: props.face || null,
-                            color: props.color || null,
-                            background: props.background || null,
-                            hand: props.hand || null,
-                            head: props.head || null,
-                            body: props.body || null,
-                            eyewear: props.eyewear || null,
-                            notes: props.notes || null,
-                            name: props.name || null,
-                            goldToken: goldToken || null
-                          }
-                        },
-                      },
-                    ],
-                    memo: "" // Must be empty
-                }
+        // //try permit 3 times
+        // let signature;
+        // let signed = false;
+        // for (let i = 0; i < 3 && !signed; i++){
+        //     try {
+        //         const permitTx = {
+        //             chain_id: chainId,
+        //             account_number: "0", // Must be 0
+        //             sequence: "0", // Must be 0
+        //             fee: {
+        //               amount: [{ denom: "uscrt", amount: "0" }], // Must be 0 uscrt
+        //               gas: "1", // Must be 1
+        //             },
+        //             msgs: [
+        //               {
+        //                 type: "factory_order", // Must match the type on the client
+        //                 value: {
+        //                   permit_name: permitName,
+        //                   allowed_destinations: allowedDestinations,
+        //                   order_details: {
+        //                     teddy1: props.ids[0],
+        //                     teddy2: props.ids[1],
+        //                     teddy3: props.ids[2],
+        //                     owner: address,
+        //                     tx_hash: txHash,
+        //                     base_design: props.base || null,
+        //                     face: props.face || null,
+        //                     color: props.color || null,
+        //                     background: props.background || null,
+        //                     hand: props.hand || null,
+        //                     head: props.head || null,
+        //                     body: props.body || null,
+        //                     eyewear: props.eyewear || null,
+        //                     notes: props.notes || null,
+        //                     name: props.name || null,
+        //                     goldToken: goldToken || null
+        //                   }
+        //                 },
+        //               },
+        //             ],
+        //             memo: "" // Must be empty
+        //         }
                 
-                console.log(JSON.stringify(permitTx, null, 2));
+        //         console.log(JSON.stringify(permitTx, null, 2));
 
-                const response = await window.keplr.signAmino(
-                    chainId,
-                    address,
-                    permitTx,
-                    {
-                      preferNoSetFee: true, // Fee must be 0, so hide it from the user
-                      preferNoSetMemo: true, // Memo must be empty, so hide it from the user
-                    }
-                );
-                signature = response.signature;
-                signed = true;
-            } catch (error) {
-                console.error(error)
-                if (i > 1){
-                    alert(`Failed to complete factory order. Please contact staff on discord.\nTX Hash: ${txHash}`)
-                } else {
-                    alert(
-                        error.toString().includes('Request rejected') ?
-                            'You must sign the permit to complete your factory order, click OK to try again.\nIf the Keplr window is still open, please close it before clicking OK.'
-                        :
-                            `Error signing:\n${error.toString()}\nPlease try again, the permit must be signed to complete your order.`
-                    );
-                }
-            }
-        }
+        //         const response = await window.keplr.signAmino(
+        //             chainId,
+        //             address,
+        //             permitTx,
+        //             {
+        //               preferNoSetFee: true, // Fee must be 0, so hide it from the user
+        //               preferNoSetMemo: true, // Memo must be empty, so hide it from the user
+        //             }
+        //         );
+        //         signature = response.signature;
+        //         signed = true;
+        //     } catch (error) {
+        //         console.error(error)
+        //         if (i > 1){
+        //             alert(`Failed to complete factory order. Please contact staff on discord.\nTX Hash: ${txHash}`)
+        //         } else {
+        //             alert(
+        //                 error.toString().includes('Request rejected') ?
+        //                     'You must sign the permit to complete your factory order, click OK to try again.\nIf the Keplr window is still open, please close it before clicking OK.'
+        //                 :
+        //                     `Error signing:\n${error.toString()}\nPlease try again, the permit must be signed to complete your order.`
+        //             );
+        //         }
+        //     }
+        // }
 
-        if (!signed) {
-            toast.update(finalToast, { render: "Failed to Sign Permit", type: "error", isLoading: false, autoClose: 5000});
-            return;
-        }
+        // if (!signed) {
+        //     toast.update(finalToast, { render: "Failed to Sign Permit", type: "error", isLoading: false, autoClose: 5000});
+        //     return;
+        // }
 
-        toast.update(finalToast, { render: "Sending Order..."});
+        // toast.update(finalToast, { render: "Sending Order..."});
+        const finalToast = toast.loading("Sending Order...");
 
         try {
             var params = new URLSearchParams();
                 params.append('permit_name', permitName);
                 params.append('allowed_destinations', JSON.stringify(allowedDestinations));
-                params.append('signature', JSON.stringify(signature));
+                //params.append('signature', JSON.stringify(signature));
                 params.append('owner', address);
                 params.append('tx_hash', txHash);
                 params.append('teddy1', props.ids[0]);
