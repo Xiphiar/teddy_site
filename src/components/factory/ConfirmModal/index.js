@@ -559,12 +559,6 @@ export default function ConfirmModal(props) {
                     <br/>
                     <Row className="justify-content-center">
                         <Col xs={"auto"}>
-                            <p style={{fontSize: "16px", lineHeight: '145%'}}>
-                                You will be asked to sign two transactions when you click Send.<br/>
-                                The first transaction will transfer the teddies and fee to the factory.<br/>
-                                The second is a permit containing your trait selections, TX hash, and return address.<br/>
-                                You must sign <b>both</b> transactions or your teddies may be lost.<br/>
-                            </p>
                             <p style={{fontSize: "15px"}}>If you encounter any issues, make note of your TX hash and contact a moderator in our Discord.</p>
                         </Col>
                         </Row>
