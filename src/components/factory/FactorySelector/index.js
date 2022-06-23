@@ -108,12 +108,12 @@ function FactorySelector({selectedTeddies}){
         if (eyewear &&
             !object.eyewear.find(v => v.trait === eyewear))         object.eyewear.push({trait: eyewear, id: id});
 
-        return object;
+        return true;
     }
 
     useEffect(() => {
         setup();
-    },[])
+    },[selectedTeddies])
 
     const hideNext = () => {
         setShowNext(false);
@@ -140,6 +140,7 @@ function FactorySelector({selectedTeddies}){
         console.log("Running Setup")
         try {
             setOptions(noOptions)
+            const newOptions = JSON.parse(JSON.stringify(noOptions));
 
             //get SigningCosmWasmClient and store in state
             const returned = await getSigningClient();
@@ -174,13 +175,11 @@ function FactorySelector({selectedTeddies}){
             const attributes1 = parseTraits(data[1].nft_dossier)
             const attributes2 = parseTraits(data[2].nft_dossier)
 
-            let options2 = JSON.parse(JSON.stringify(noOptions))
+            addOptions(attributes0, newOptions, selectedTeddies[0].toString());
+            addOptions(attributes1, newOptions, selectedTeddies[1].toString());
+            addOptions(attributes2, newOptions, selectedTeddies[2].toString());
 
-            options2 = addOptions(attributes0, options, selectedTeddies[0].toString());
-            options2 = addOptions(attributes1, options, selectedTeddies[1].toString());
-            options2 = addOptions(attributes2, options, selectedTeddies[2].toString());
-
-            setOptions(options2);
+            setOptions(newOptions);
             setLoading(false);
         
         } catch(e) {
