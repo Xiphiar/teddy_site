@@ -147,7 +147,7 @@ export default function ConfirmModal(props) {
             console.log(response.data);
             toast.update(finalToast, { render: "Sent to Factory!", type: "success", isLoading: false, autoClose: 5000 });
         } catch (error) {
-            const message = error.response.data.message || error.response.data || error.toString();
+            const message = error.response?.data?.message || error.response?.data || error.toString();
             console.error("abc", message)
             toast.update(finalToast, { render: (<>Failed to send order to Factory:<br/>{message}<br/><br/>Please contact a moderator on Discord.</>), type: "error", isLoading: false, autoClose: 5000 });
             alert(`Failed to send order to Factory:\n${message}\n\nPlease contact a moderator on Discord.\nTX Hash: ${txHash}\nTeddy IDs: ${props.ids[0]}, ${props.ids[1]}, ${props.ids[2]}`);
@@ -367,7 +367,7 @@ export default function ConfirmModal(props) {
             return;
         }
 
-        await sendOrder(fullResponse.transactionHash, tokens[0]);
+        await sendOrder(fullResponse.transactionHash);
 
     }
 
