@@ -224,7 +224,7 @@ function FactorySelector({selectedTeddies}){
                 <div className="anon-card">
                     <Container style={{paddingTop: "15px"}}>
                         
-                        <Row>
+                        <Row className='align-items-start'>
                         <FactoryTeddyCard teddyId={[selectedTeddies[0]]} nft_dossier={teddyData[0]?.nft_dossier} />
                         <FactoryTeddyCard teddyId={[selectedTeddies[1]]} nft_dossier={teddyData[1]?.nft_dossier} />
                         <FactoryTeddyCard teddyId={[selectedTeddies[2]]} nft_dossier={teddyData[2]?.nft_dossier} />
