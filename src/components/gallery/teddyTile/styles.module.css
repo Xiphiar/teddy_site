@@ -3,12 +3,12 @@
 
 /* Customize the label (the container) */
 .tileContainer {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
   /* Hide the browser's default checkbox */
   /* .tileContainer input {
     position: absolute;
@@ -62,3 +62,19 @@
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
   }  */
+
+.gtIssued {
+  border: 1px solid red;
+  border-radius: 20px;
+}
+
+.imgContainer {
+  position: relative;
+  text-align: right;
+}
+
+.topRight {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+}

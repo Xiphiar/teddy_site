@@ -1,11 +1,12 @@
 import React, {useState,useEffect,useRef} from 'react';
 import Image from 'react-bootstrap/Image';
-import { getKnownImage } from '../../../utils/dataHelper';
+import { getKnownImage, getPublicTeddyData } from '../../../utils/dataHelper';
 import Overlay from 'react-bootstrap/Overlay'
 import Tooltip from 'react-bootstrap/Tooltip'
 
 import styles from './styles.module.css';
 import './tooltip.css';
+import gtImg from '../../../assets/MTC_GT_Small.png';
 
 export default function TeddyTile({id, index, showCheckBox=false, totalChecked, checkHandler, clickHandler}){
 // export class TeddyTile extends React.Component {
@@ -23,16 +24,16 @@ export default function TeddyTile({id, index, showCheckBox=false, totalChecked, 
     const [showTooltip, setShowTooltip] = useState(false);
     const [numChecked, setNumChecked] = useState(totalChecked);
     const [checked, setChecked] = useState(false);
+    const [teddyData, setTeddyData] = useState();
     const target = useRef(null);
 
     const getData = async () => {
         const image = await getKnownImage(id, true);
-        //const data = await getPublicTeddyData(this.props.id);
-        // this.setState({
-        //     imageSrc: image,
-        //     loading: false
-        // });
+        const data = await getPublicTeddyData(id);
+        console.log('Data', data)
+
         setImageSrc(image);
+        setTeddyData(data);
         setLoading(false);
     };
 
@@ -62,54 +63,56 @@ export default function TeddyTile({id, index, showCheckBox=false, totalChecked, 
     return (
         <div className={styles.tileContainer}>
             <div style={{ paddingBottom: "15px", width: '285px' }}>
-                <div className='d-flex justify-content-center'>
+                <div className={`d-flex justify-content-center ${styles.imgContainer}`}>
                 {loading ?
                     <i className="c-inline-spinner c-inline-spinner-white" />
                     :
                     <Image src={imageSrc} rounded style={{ width: "237px", minHeight: "228px", marginBottom: showCheck ? '10px' : '5px' }} className="pointer" onClick={() => clickHandler(id)} />}
+                    { teddyData?.gold_token ? <div className={styles.topRight}><img alt="Gold Token" src={gtImg} style={{ width: '20%' }}/></div> : null }
                 </div>
                 <div>
-                <div style={{height: '30px', width: '30px', float: 'left'}} ref={target}>
-                    { showCheck ?
-                        <>
-                            <input
-                                
-                                type="checkbox"
-                                disabled={numChecked > 2 && !checked ? true : false}
-                                className={styles.checkmark} id={`teddy-check-${id}`}
-                                value=""
-                                //style={{margin: '10px'}}
-                                onChange={handleCheckChange}
-                            />
-                            {/*this is fucked but i dont care at least it fucking works */
-                            showTooltip ?
-                                <Overlay
-                                    target={target.current}
-                                    show={true}
-                                    placement={'left'}
-                                >
-                                    {(props) => (
-                                        <Tooltip id="tooltip-this-shit-sucks"  {...props}>
-                                            Check the boxes to select your teddies!
-                                        </Tooltip>
-                                    )}
-                                </Overlay>
-                            : null
-                            }
+                    <div style={{height: '30px', width: '30px', float: 'left'}} ref={target}>
+                        { showCheck ?
+                            <>
+                                <input
+                                    
+                                    type="checkbox"
+                                    disabled={numChecked > 2 && !checked ? true : false}
+                                    className={styles.checkmark} id={`teddy-check-${id}`}
+                                    value=""
+                                    //style={{margin: '10px'}}
+                                    onChange={handleCheckChange}
+                                />
+                                {/*this is fucked but i dont care at least it fucking works */
+                                showTooltip ?
+                                    <Overlay
+                                        target={target.current}
+                                        show={true}
+                                        placement={'left'}
+                                    >
+                                        {(props) => (
+                                            <Tooltip id="tooltip-this-shit-sucks"  {...props}>
+                                                Check the boxes to select your teddies!
+                                            </Tooltip>
+                                        )}
+                                    </Overlay>
+                                : null
+                                }
 
 
-                        </>
+                            </>
 
-                    : null }
-                </div>
-                <div style={{marginLeft: showCheck ? '40px' : '0px'}}>
-                    <span 
-                        className="backLink pointer"
-                        onClick={() => clickHandler(id)}
-                    >
-                        <h5>&nbsp;Midnight Teddy #{id}</h5>
-                    </span>
-                </div>
+                        : null }
+                    </div>
+                    <div style={{textAlign: 'left', marginLeft: showCheck ? '40px' : '0px'}}>
+                        <span 
+                            className="backLink pointer"
+                            onClick={() => clickHandler(id)}
+                        >
+                            <h5 style={{marginBottom: '0'}}>Midnight Teddy #{id}</h5>
+                            { teddyData?.teddyrank ? <h6 style={{textAlign: 'left'}} >Rank {teddyData.teddyrank}</h6> : null }
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
