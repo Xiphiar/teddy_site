@@ -108,6 +108,8 @@
   .anon-stats {
     width: 100%;
     padding: 15px 15px;
+    display: flex;
+    flex-direction: column;
   }
 
   .text-center {
