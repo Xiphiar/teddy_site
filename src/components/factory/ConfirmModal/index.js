@@ -115,7 +115,7 @@ export default function ConfirmModal(props) {
         // }
 
         // toast.update(finalToast, { render: "Sending Order..."});
-        const finalToast = toast.loading("Sending Order...");
+        const finalToast = toast.loading("Sending Order... Do not leave or refresh this page.");
 
         try {
             var params = new URLSearchParams();
