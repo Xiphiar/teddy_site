@@ -11,13 +11,14 @@ import { Fragment } from "react";
 const renderer = ({ days, hours, minutes, seconds, completed }) => {
   if (completed) {
     // Render a completed state
-    return (
-      <Link to="/mint" className="nav-link px-2 link-secondary">
-        <button type="button" className="btn btn-outline-primary me-2 navMintButton teddyButton">
-          MINT A TEDDY
-        </button>
-    </Link>
-    );
+    return null;
+    // return (
+    //   <Link to="/mint" className="nav-link px-2 link-secondary">
+    //     <button type="button" className="btn btn-outline-primary me-2 navMintButton teddyButton">
+    //       MINT A TEDDY
+    //     </button>
+    // </Link>
+    // );
   } else {
     // Render nothing
     return(

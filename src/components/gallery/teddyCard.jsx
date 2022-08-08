@@ -38,7 +38,8 @@ class TeddyCard extends React.Component {
         encryptedImage: {},
         decryptedImage: null,
         loadingUnlock: false,
-        teddyRank: null
+        teddyRank: null,
+        teddyDaoValue: undefined,
       };
     }
 
@@ -143,9 +144,10 @@ class TeddyCard extends React.Component {
             attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + "?";
             }
         */
-
+        console.log('Backend Data', data)
         this.setState({
-            teddyRank: data.teddyrank
+            teddyRank: data.teddyrank,
+            teddyDaoValue: data.dao_value
         })
 
         /*
@@ -431,15 +433,35 @@ class TeddyCard extends React.Component {
                 <div className="anon-stats">
                     <Row className="justify-content-between">
                         <Col xs={"auto"}>
-                            <h2 style={{display: "inline"}}>
-                                Midnight Teddy #{ this.state.id } {/*(Rank { rarityAnon.rank } / { totalAnonsCount })*/}
-                            </h2>
-                            <h1 style={{display: "inline"}}>
-                                <FontAwesomeIcon style={{paddingLeft: "5px"}} icon={faLink} className="pointer backLink" title="Copy Link" onClick={() => this.setUriHash(this.state.id)} />
-                            </h1>
+                            {/* <div> */}
+                                <h2 style={{display: "inline", marginBottom: '0px'}}>
+                                    { !isNaN(parseInt(this.state.id)) || !this.state.nft_dossier ?
+                                        <>Midnight Teddy #{ this.state.id } {/*(Rank { rarityAnon.rank } / { totalAnonsCount })*/}</>
+                                    :
+                                        <>{this.state.nft_dossier.public_metadata.extension.name}</>
+                                    }
+                                    
+                                </h2>
+                                <h2 style={{display: "inline", marginBottom: '0px'}}>
+                                    <FontAwesomeIcon style={{paddingLeft: "5px"}} icon={faLink} className="pointer backLink" title="Copy Link" onClick={() => this.setUriHash(this.state.id)} />
+                                </h2>
+                                { !isNaN(parseInt(this.state.id)) || !this.state.nft_dossier ?
+                                        null
+                                    :
+                                        <>&nbsp;&nbsp;&nbsp;<span style={{fontSize: '1rem'}}>#{ this.state.id }</span></>
+                                    }
+                                
+                            {/* </div> */}
+                            {/* { !isNaN(parseInt(this.state.id)) || !this.state.nft_dossier ?
+                                null
+                            :
+                                <div className='mb-2' style={{display: 'flex', fontSize: '1rem'}}>
+                                <span style={{fontSize: '.75rem'}}>#{ this.state.id }</span>
+                                </div>
+                            } */}
                         </Col>
-
                         <div  style={{width: "auto"}} className="text-right">
+
                             <h1>
                                 { this.state.encryptedImage?.authentication && this.state.owned ?
                                     <div>
@@ -466,13 +488,13 @@ class TeddyCard extends React.Component {
 
                 
                 <h4>
-                        Traits&nbsp;
-                        { this.state.nft_dossier?.private_metadata?.extension?.image ? 
-                            <FontAwesomeIcon style={{paddingRight: "20px"}}  icon={faLockOpen} title="Private data is swapped to public." />
-                        :
-                            null
-                        }
-                    </h4>
+                    Traits&nbsp;
+                    { this.state.nft_dossier?.private_metadata?.extension?.image ? 
+                        <FontAwesomeIcon style={{paddingRight: "20px"}}  icon={faLockOpen} title="Private data is swapped to public." />
+                    :
+                        null
+                    }
+                </h4>
                 <table>
                     <thead>
                     <tr>
@@ -665,6 +687,17 @@ class TeddyCard extends React.Component {
                     </tbody>
                 }
                 </table>
+                <div style={{display: "flex", justifyContent: "space-between", flexGrow: "2", alignItems: 'flex-end'}}>
+                { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
+                        <h3 style={{display: "inline"}}>
+                            DAO Value: { this.state.teddyDaoValue ?
+                                this.state.teddyDaoValue
+                            :
+                                <i className="c-inline-spinner c-inline-spinner-white" />
+                            }
+                        </h3>
+                    : null }
+                </div>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
                 { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
                         <h3 style={{display: "inline"}}>

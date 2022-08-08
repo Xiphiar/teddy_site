@@ -1,29 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import Meta from '../components/Meta'
 import Image from 'react-bootstrap/Image'
-import { Nav, Container, Col, Row, Button } from "react-bootstrap";
+import { Nav, Container, Col, Row, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
 import { queryOwnedTokens } from "../utils/dataHelper";
 import TeddyCard from '../components/gallery/teddyCard';
-import { getPublicTeddyData, truncate, getKnownImage } from '../utils/dataHelper'
+import { getPublicTeddyData, truncate } from '../utils/dataHelper'
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
 import clubBanner from '../assets/club_banner.jpg'
-import { TicketCounter } from '../components/gallery/TicketCounter';
+import TicketCounter from '../components/gallery/TicketCounter';
 
 
 // Layout
 import Layout from "../layout/Layout";
+import TeddyTile from '../components/gallery/teddyTile';
 
-
-const hash = 'QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs'
-const url="https://ipfs.io/ipfs/QmQut4RpE5tYE7WD3yc17okr1TC8HDg3xPk3BPcog6XfFs"
-const key = "c9afac7fbed9cc01f66237d3e108bdc9aa"
-
+const factoryAdmin = process.env.REACT_APP_FACTORY_ADMIN || 'secret1s7hqr22y5unhsc9r4ddnj049ltn9sa9pt55nzz';
 
 
 
@@ -67,46 +64,32 @@ class Padding extends React.Component {
   }
 }
 
-class TeddyTile extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      imageSrc: null
-    };
-  }
+function FactoryToast({selected}){
+    const toastId = React.useRef(null);
 
-  componentDidMount = () => {
-    this.getData();
-  }
-
-  getData = async() => {
-    const image = await getKnownImage(this.props.id, true)
-    //const data = await getPublicTeddyData(this.props.id);
-    this.setState({
-      imageSrc: image, //data.pub_url,
-      loading: false
-    })
-  }
-
-  render(){
+    useEffect(() => {
+        console.log("effect running",selected)
+        if (selected) {
+            toastId.current = toast(`${selected} ${selected === 1 ? "Teddy" : "Teddies"} Selected`, {
+                position: "bottom-center",
+                draggable: true,
+                autoClose: false,
+                closeOnClick: false
+            })
+        }
+        else {
+            toast.dismiss(toastId.current)
+        }
+        console.log(toastId)
+    }, [selected])
+  
+  
     return (
-      <div>
-        <a onClick={() => this.props.clickHandler(this.props.id)}>
-          <div className="backLink pointer" style={{paddingBottom: "15px"}} >
-            {this.state.loading ?
-              <i className="c-inline-spinner c-inline-spinner-white" />
-            :
-              <Image src={this.state.imageSrc} rounded  style={{width: "237px", minHeight: "228px"}}/>
-            }
-            <h5>Midnight Teddy #{this.props.id}</h5>
-          </div>
-        </a>
-      </div>
-
-    )
+      <>
+      null
+      </>
+    );
   }
-}
 
 class Gallery extends React.Component {
   constructor(props) {
@@ -126,6 +109,9 @@ class Gallery extends React.Component {
       tokenList: [],
       tokensLoaded: false,
       owned: false,
+      factoryTeddies: [],
+      factoryToast: null,
+      showCheckBoxes: false
     };
   }
 
@@ -151,12 +137,108 @@ class Gallery extends React.Component {
     }
 }
 
+    updateFactoryToast = () => {
+        const selected = this.state.factoryTeddies.length;
+
+        let render = (<div style={{textAlign: "center"}}>{`${selected} ${selected === 1 ? "Teddy" : "Teddies"} Selected`}</div>)
+        if (selected === 3) {
+            render = (<div style={{textAlign: "center"}}>
+              <Link onClick={() => toast.dismiss(this.state.factoryToast)} to="/factory" state={{ selectedTeddies: this.state.factoryTeddies }}
+              style={{
+                color: "#fff",
+                textDecoration: "none"
+              }}>
+                Send to Factory 🌋  ➡
+              </Link>
+            </div>)
+            toast.update(this.state.factoryToast, {
+                render: render,
+                type: toast.TYPE.SUCCESS,
+                icon: false,
+                closeButton: false,
+                style: {cursor: 'pointer'}
+            });
+        }
+        else if (selected) {
+            toast.update(this.state.factoryToast, {
+                render: render,
+                type: toast.TYPE.DEFAULT,
+                style: {cursor: 'default'}
+            });
+        } else {
+            toast.dismiss(this.state.factoryToast)
+        }
+    }
+
+    changeFactoryList = (id, checkStatus) => {
+        const currentLength = this.state.factoryTeddies.length;
+        
+        // if checking a box
+        if (checkStatus) {
+            const newLength = currentLength + 1;
+            console.log(`Checked. Old Length:`,currentLength,`New Length`,newLength)
+
+
+            //if there is already one checked (toast should be created), add to list and update toast
+            if (currentLength) {
+                this.setState(
+                    { factoryTeddies: [...this.state.factoryTeddies, id]},
+                    () => {
+                        console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies);
+                        this.updateFactoryToast(newLength);
+                }) 
+            }
+
+            //else create new toast
+            else {
+                this.setState({
+                    factoryTeddies: [...this.state.factoryTeddies, id],
+                    factoryToast: toast((<div style={{textAlign: "center"}}>{`${newLength} ${newLength === 1 ? "Teddy" : "Teddies"} Selected`}</div>), {
+                        position: "bottom-center",
+                        draggable: false,
+                        autoClose: false,
+                        closeOnClick: false
+                    })
+                },
+                () => {
+                    console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies)
+                })
+            }
+        } 
+
+        // if UNchecking a box
+        else {
+            const newLength = currentLength - 1;
+            console.log(`UNChecked. Old Length:`,currentLength,`New Length`,newLength)
+
+            // remove from list
+            const index = this.state.factoryTeddies.indexOf(id);
+            const newAry = this.state.factoryTeddies.filter(element => element !== id);
+            console.log("index", index, newAry)
+
+            this.setState(
+                { factoryTeddies: newAry },
+                () => {
+                    console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies)
+
+                    // if now empty, dismiss toast
+                    if (!newLength) toast.dismiss(this.state.factoryToast)
+                    else this.updateFactoryToast(newLength);
+            });
+
+
+            
+        }
+    }
+
   handleClickTile = (data) => {
     this.setState({
       showTeddy: true,
       clickedID: data,
-      owned: true
+      owned: true,
+      factoryTeddies: []
     })
+    toast.dismiss(this.state.factoryToast)
   }
 
   showGallery = () => {
@@ -214,6 +296,17 @@ class Gallery extends React.Component {
         tokenList: data,
         owned: true
       });
+      
+      if (this.state.address === factoryAdmin) {
+        toast.error(`You are connected as the factory admin! Do not use the factory!`,{
+          position: "top-right",
+          autoClose: 15000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
     } else {
       const truncatedAddress = truncate(this.state.address, 27, "...")
       toast.error(`No teddies found for address ${truncatedAddress}`,{
@@ -264,6 +357,7 @@ class Gallery extends React.Component {
       return (
         <Layout>
           <Meta title={pageTitle}/>
+          {/*<FactoryToast selected={this.state.factoryTeddies.length} />*/}
           <Container>
           <Row>
             <Image src={clubBanner} id='my-img2' fluid/>
@@ -288,6 +382,18 @@ class Gallery extends React.Component {
                   </div>
               </Col>
             </Row>
+            { !this.state.showCheckBoxes ?
+              <Row>
+                <h5>The factory is now open! Click the button below to select teddies to send.</h5>
+                <Button
+                    className="keplrButton"
+                    style={{width: 'auto', marginLeft: '2vw'}}
+                    onClick={()=>this.setState({showCheckBoxes: true})}
+                >
+                    Select Teddies for Factory
+                </Button>
+              </Row>
+            :null}
 
             <Padding size={30}/>
 
@@ -298,8 +404,8 @@ class Gallery extends React.Component {
             <Row className="justify-content-center">
               { this.state.tokenList.length ? 
                 <div className="d-flex" style={{flexWrap: "wrap", justifyContent: 'space-evenly'}}>
-                  {this.state.tokenList.map(item => {
-                      return (<TeddyTile id={item}  clickHandler={this.handleClickTile} key={`teddy-tile-${item}`} />)
+                  {this.state.tokenList.map((item, index) => {
+                      return (<TeddyTile id={item} index={index} showCheckBox={this.state.showCheckBoxes} totalChecked={this.state.factoryTeddies.length} clickHandler={this.handleClickTile} checkHandler={this.changeFactoryList} key={`teddy-tile-${item}`} />)
                   })}
                 </div>
               :
