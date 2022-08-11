@@ -105,8 +105,17 @@ const correctTrait = (trait) => {
   }
 }
 
+const emptyRarity = {
+  count: 0,
+  percent: 0,
+  score: 0,
+  total: 0,
+}
+
 const getRarityData = async(traitValue) => {
     const data = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/rarity/score/${traitValue}`);
+    
+    if (data.data.message) return emptyRarity
     return data.data;
 }
 
@@ -249,6 +258,8 @@ const processRarity = async(attributes) => {
         let rarity = {}
         let total = 0;
         for (const key in attributes) {
+            //dont check rarity for DAO Value
+            if (key === 'DAO Value') continue;
             const data = await getRarityData(attributes[key]);
             rarity[attributes[key]] = data;
             total += data.score
