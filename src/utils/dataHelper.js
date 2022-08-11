@@ -179,8 +179,11 @@ const queryTokenMetadata = async(client, id, permit) => {
         const data = await client.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query2, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
         
         let priv_attributes = {};
-        for (let i = 0; i < data.nft_dossier.private_metadata.extension.attributes.length; i++) {
-          priv_attributes[data.nft_dossier.private_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.private_metadata.extension.attributes[i].value);
+        console.log(data.nft_dossier)
+        if (data.nft_dossier.private_metadata){
+          for (let i = 0; i < data.nft_dossier.private_metadata.extension.attributes.length; i++) {
+            priv_attributes[data.nft_dossier.private_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.private_metadata.extension.attributes[i].value);
+          };
         }
 
         let pub_attributes = {};

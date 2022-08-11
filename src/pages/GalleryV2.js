@@ -374,11 +374,13 @@ class Gallery extends React.Component {
               <Col xs={"auto"} className="text-center">
                 <h4>Lookup any Teddy</h4>
                 <div className="d-flex justify-content-center" style={{margin:"auto"}}>
-                  <label>
-                    ID:&nbsp;
-                    <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
-                  </label>
-                  <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
+                  <form>
+                    <label>
+                      ID:&nbsp;
+                      <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
+                    </label>
+                    <button type="submit"  style={{display: 'inline'}} className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
+                  </form>
                   </div>
               </Col>
             </Row>
@@ -459,11 +461,13 @@ class Gallery extends React.Component {
               </Col>
               <Col>
               <div className="d-flex justify-content-center" style={{margin:"auto"}}>
-                  <label>
+                <form onSubmit={() => this.handleLookup()}  style={{display: 'inline'}}>
+                <label style={{display: 'inline'}}>
                     ID:&nbsp;
                     <input className="lookupBox text-center" type="text" value={this.state.lookupID} name="lookupbox" onChange={this.handleLookupIDChange}/>
                   </label>
-                  <button className="lookupBtn" onClick={() => this.handleLookup()}>Go</button>
+                  <button type="submit" className="lookupBtn" onClick={() => this.handleLookup()}  style={{display: 'inline'}}>Go</button>
+                </form>
                 </div>
               </Col>
             </Row>
