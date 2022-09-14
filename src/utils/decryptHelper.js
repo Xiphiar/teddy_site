@@ -15,14 +15,23 @@ const download = async (url) => {
 
 const decrypt = (input, key) => {
   //console.log("key is ", key);
+
+  let cipherKey;
+  if (key.length === 32)
+    cipherKey = Buffer.from(key);
+  else
+    cipherKey = Buffer.from(key, 'base64');
+
   const dataBuffer = Buffer.from(input)
   const data32 = dataBuffer.toString('utf-8').substring(0, 32);
-  const cipherKey = Buffer.from(key);
+
   const ivSize = dataBuffer.readUInt8(0);
   const iv = dataBuffer.slice(1, ivSize + 1);
   const authTag = dataBuffer.slice(ivSize + 1, ivSize + 17);
+
   const decipher = crypto.createDecipheriv(ALGORITHM, cipherKey, iv);
   decipher.setAuthTag(authTag);
+
   return Buffer.concat([
     decipher.update(dataBuffer.slice(ivSize + 17)),
     decipher.final(),
