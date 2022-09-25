@@ -177,7 +177,7 @@ export default function ConfirmModal(props) {
         const {address: acctAddress} = await ensureSigner();
         
         const fee = {
-            gas: process.env.REACT_APP_FACTORY_GAS + 50000 || 200000,
+            gas: 500_000,
         };
 
         //messages for the NFT contracts
@@ -278,7 +278,7 @@ export default function ConfirmModal(props) {
         const {address: acctAddress} = await ensureSigner();
         
         const fee = {
-            gas: process.env.REACT_APP_FACTORY_GAS + 50000 || 200000,
+            gas: 500_000,
         };
 
         //messages for the NFT contracts
@@ -348,8 +348,8 @@ export default function ConfirmModal(props) {
             //show loading toast
             const txToast = toast.loading("Transaction Processing...")
 
-            // check if tx was processed every 3s up to 100 times
-            fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 3000, 100);
+            // check if tx was processed every 6s up to 100 times
+            fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 5000, 100);
             console.log('Full Response:', fullResponse);
 
             //check for errors
@@ -379,7 +379,7 @@ export default function ConfirmModal(props) {
         await ensureSigner();
         
         const fee = {
-            gas: process.env.REACT_APP_FACTORY_GAS || 150000,
+            gas: 500_000,
         };
 
         //message for the NFT contract

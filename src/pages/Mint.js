@@ -100,7 +100,7 @@ class MintPage extends React.Component {
       //mint multiple with multiExecute
       if (this.state.number > 1){
         const fee = {
-          gas: parseInt(process.env.REACT_APP_MINT_GAS) * parseInt(this.state.number),
+          gas: 900_000 * parseInt(this.state.number),
         }
         let multiObj = {
           contractAddress: process.env.REACT_APP_TOKEN_ADDRESS,
@@ -118,7 +118,7 @@ class MintPage extends React.Component {
       //mint single with regular execute
       } else {
         const fee = {
-          gas: process.env.REACT_APP_MINT_GAS,
+          gas: 900_000,
         };
 
         //returns tx hash only

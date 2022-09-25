@@ -38,7 +38,7 @@ export class SwapModal extends React.Component {
         }
         
         const fee = {
-            gas: process.env.REACT_APP_SWAP_GAS || 60000,
+            gas: 150_000,
         };
 
         const swapMsg = {
@@ -306,7 +306,7 @@ export class AuthModal extends React.Component {
         }
         
         const fee = {
-            gas: process.env.REACT_APP_AUTH_GAS || 40000,
+            gas: 150_000,
         };
 
         const authMsg = {
@@ -400,7 +400,7 @@ export class AuthModal extends React.Component {
         }
         
         const fee = {
-            gas: process.env.REACT_APP_SWAP_GAS || 60000,
+            gas: 150_000,
         };
 
         const transferMsg = {

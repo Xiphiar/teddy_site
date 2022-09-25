@@ -12,7 +12,7 @@ let myStorage = window.sessionStorage;
 const customFees = {
     exec: {
         amount: [{ amount: "50000", denom: "uscrt" }],
-        gas: process.env.REACT_APP_MINT_GAS || "300000",
+        gas: "300000",
     }
 }
 

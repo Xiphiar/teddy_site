@@ -60,7 +60,12 @@ function Factory(props){
               <h1 className="homeTitle">Midnight Teddy Factory</h1>
             </Row>
             <Padding size={30}/>
+            { process.env.REACT_APP_FACTORY_ENABLED === "true" ? 
             <FactorySelector selectedTeddies={selectedTeddies} />
+            
+            :
+              <Row><h2>Factory Maintenance</h2><h5>The factory is currently disabled for maintenance, please try again later.</h5></Row>
+            }
 
           </Container>
         </Layout>
