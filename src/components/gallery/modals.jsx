@@ -38,7 +38,7 @@ export class SwapModal extends React.Component {
         }
         
         const fee = {
-            gas: 150_000,
+            gas: 250_000,
         };
 
         const swapMsg = {
@@ -89,7 +89,7 @@ export class SwapModal extends React.Component {
     
         //show processing toast
         await toast.promise(
-            this.state.secretJs.checkTx(asyncResponse.transactionHash, 3000, 100),
+            this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 10),
             {
               pending: {
                 render(){
@@ -118,43 +118,6 @@ export class SwapModal extends React.Component {
             }
         )
         this.setState({loading: false})
-        /*
-        const fuck = toast("Transaction Processing...",
-            {
-                position: "top-right",
-                hideProgressBar: true,
-                closeOnClick: false,
-                draggable: true,
-                autoClose: false,
-                
-            }
-        );
-        
-        //poll endpoint for TX to know when it processes 10 times 1000ms delay 
-        const fullResponse = await this.state.secretJs.checkTx(asyncResponse.transactionHash, 3000, 100);
-    
-        //if tx failed show error
-        if (fullResponse.code){
-          this.setState({
-            loading: false
-          })
-          toast.dismiss(fuck);
-          return;
-        }
-    
-        //show success toast
-        this.setState({
-          loading: false
-        })
-        toast.success("Transaction Processed", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        });
-        */
     }
 
     render = () => {
@@ -306,7 +269,7 @@ export class AuthModal extends React.Component {
         }
         
         const fee = {
-            gas: 150_000,
+            gas: 250_000,
         };
 
         const authMsg = {
@@ -359,7 +322,7 @@ export class AuthModal extends React.Component {
     
         //show processing toast
         await toast.promise(
-            this.state.secretJs.checkTx(asyncResponse.transactionHash, 3000, 100),
+            this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 10),
             {
               pending: {
                 render(){
@@ -391,95 +354,100 @@ export class AuthModal extends React.Component {
     }
 
     handleTransfer = async() => {
-        //show spinner and disable button
-        this.setState({ loading: true });
+        try {
+            //show spinner and disable button
+            this.setState({ loading: true });
 
-        if (!this.props.secretJs || !this.props.address){
-            const secretJs = await getSigningClient();
-            this.setState({secretJs: secretJs.client, address: secretJs.address});
-        }
-        
-        const fee = {
-            gas: 150_000,
-        };
-
-        const transferMsg = {
-            transfer_nft : {
-                recipient: this.state.input2,
-                token_id: this.props.teddyId,
+            if (!this.props.secretJs || !this.props.address){
+                const secretJs = await getSigningClient();
+                this.setState({secretJs: secretJs.client, address: secretJs.address});
             }
-        }  
+            
+            const fee = {
+                gas: 250_000,
+            };
 
-
-        let asyncResponse;
-        try{
-            console.log(this.state);
-        
-            //returns tx hash only
-            asyncResponse = await this.state.secretJs.execute(
-                process.env.REACT_APP_CONTRACT_ADDRESS,
-                transferMsg,
-                null,
-                [],
-                fee,
-                process.env.REACT_APP_CONTRACT_CODE_HASH
-            );
-            console.log(asyncResponse)
-                
-        //catch and show error while posting TX
-        } catch(error){
-            toast.error(error.toString(), {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            this.setState({ loading: false })
-            return;
-        }
-    
-        //show error if async execute returned an error code (rare)
-        if (asyncResponse.code){
-          this.setState({
-            show: true,
-            error: true,
-            tx: asyncResponse
-          })
-          return;
-        }
-    
-        //show processing toast
-        await toast.promise(
-            this.state.secretJs.checkTx(asyncResponse.transactionHash, 3000, 100),
-            {
-              pending: {
-                render(){
-                    return "Transaction Processing"
-                },
-                icon: true,
-              },
-              success: {
-                render({data}){
-                    console.log(data);
-                    if (data.code){
-                        throw(data.raw_log)
-                    }
-                    return `Teddy transferred.`
-                },
-                // other options
-                //icon: "🟢",
-              },
-              error: {
-                render({data}){
-                    console.error(data);
-                    // When the promise reject, data will contains the error
-                    return data
+            const transferMsg = {
+                transfer_nft : {
+                    recipient: this.state.input2,
+                    token_id: this.props.teddyId,
                 }
-              }
+            }  
+
+
+            let asyncResponse;
+            try{
+                console.log(this.state);
+            
+                //returns tx hash only
+                asyncResponse = await this.state.secretJs.execute(
+                    process.env.REACT_APP_CONTRACT_ADDRESS,
+                    transferMsg,
+                    null,
+                    [],
+                    fee,
+                    process.env.REACT_APP_CONTRACT_CODE_HASH
+                );
+                console.log(asyncResponse)
+                    
+            //catch and show error while posting TX
+            } catch(error){
+                toast.error(error.toString(), {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                this.setState({ loading: false })
+                return;
             }
-        )
+    
+            //show error if async execute returned an error code (rare)
+            if (asyncResponse.code){
+                this.setState({
+                    show: true,
+                    error: true,
+                    tx: asyncResponse
+                })
+                return;
+            }
+    
+            //show processing toast
+            await toast.promise(
+                this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 10),
+                {
+                pending: {
+                    render(){
+                        return "Transaction Processing"
+                    },
+                    icon: true,
+                },
+                success: {
+                    render({data}){
+                        console.log(data);
+                        if (data.code){
+                            throw(data.raw_log)
+                        }
+                        return `Teddy transferred.`
+                    },
+                    // other options
+                    //icon: "🟢",
+                },
+                error: {
+                    render({data}){
+                        console.error(data);
+                        // When the promise reject, data will contains the error
+                        return data.toString();
+                    }
+                }
+                }
+            )
+        } catch(error){
+            console.error(error);
+            toast.error(error);
+        }
         this.setState({loading: false})
     }
 

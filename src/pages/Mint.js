@@ -171,7 +171,7 @@ class MintPage extends React.Component {
     
     try {
       //poll endpoint for TX to know when it processes 10 times 1000ms delay 
-      const fullResponse = await this.state.secretJs.checkTx(asyncResponse.transactionHash, 10000, 400);
+      const fullResponse = await this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 20);
       console.log("*TX*", fullResponse)
       //if tx failed show error in modal
       if (fullResponse.code){

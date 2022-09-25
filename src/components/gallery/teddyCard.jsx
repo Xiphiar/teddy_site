@@ -135,37 +135,15 @@ class TeddyCard extends React.Component {
     }
 
     getPubData = async() => {
-        //const data = await queryTokenMetadata(this.state.secretJs, this.state.id)
         const data = await getPublicTeddyData(this.state.id)
-        //const total = await getTotalTokens();
-        /*let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
-        let attributes = {};
-        for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
-            attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = data.nft_dossier.public_metadata.extension.attributes[i].value + "?";
-            }
-        */
+
         console.log('Backend Data', data)
-        this.setState({
-            teddyRank: data.teddyrank,
-            teddyDaoValue: data.dao_value
-        })
-
-        /*
-        const rarity = {total:total};
-        const minimal_metadata = {
-            public_metadata: {
-                extension: {
-                    image: data.pub_url
-                }
-            } 
+        if (data){
+            this.setState({
+                teddyRank: data.teddyrank,
+                teddyDaoValue: data.dao_value
+            })
         }
-
-        this.setState({
-            nft_dossier: minimal_metadata, //data.nft_dossier,
-            attributes: { "Base Design": `${data.base_design}?` },
-            rarityData: rarity
-        });
-        */
     }
 
     unlockData = async() => {

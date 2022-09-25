@@ -78,10 +78,12 @@ export class ExtendedSender extends SigningCosmWasmClient {
             );
 
             if (res.code){
-                return {
-                    ...res,
-                    transactionHash: txHash,
-                }; 
+                // return {
+                //     ...res,
+                //     transactionHash: txHash,
+                // }; 
+                console.error(res.raw_log)
+                throw res.raw_log;
             }
 
             let data=this.decodeResponse(res);
@@ -93,11 +95,14 @@ export class ExtendedSender extends SigningCosmWasmClient {
             };
 
         } catch (e) {
-            console.error(`Timed out while waiting for transaction: ${e}`);
-            throw(`Timed out while waiting for transaction. Your transaction is probably processed, check the gallery.`)
-            //let error = new CustomError(`Timed out while waiting for transaction`);
-            //error.txHash = tx.transactionHash;
-            //throw e;
+            console.error(e);
+            if (e.toString().includes('not found')) {
+              console.error(`Timed out while waiting for transaction: ${e}`);
+              throw('Timed out while waiting for transaction. Your transaction is probably processed, check the gallery.')
+            } else {
+              console.error(e)
+              throw(e);
+            }
         }
     }
 

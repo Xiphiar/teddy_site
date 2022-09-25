@@ -64,10 +64,11 @@ const getKnownImage = async(id, fetch = true) => {
   if (fetch) {
     const data = await getPublicTeddyData(id);
     
-    //cache in IDB
-    cachePublicImage(id, data.pub_url)
+    if (data) {    //cache in IDB
+      cachePublicImage(id, data.pub_url)
+  
+      return data.pub_url;}
 
-    return data.pub_url;
   }
   
   //else
@@ -120,8 +121,12 @@ const getRarityData = async(traitValue) => {
 }
 
 const getPublicTeddyData = async(id) => {
+  try {
     const data = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/teddy/${id}`);
     return data.data;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 const getTotalTokens = async(traitValue) => {
