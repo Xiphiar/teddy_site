@@ -5,8 +5,8 @@ import { getSigningClient, getPermit } from "../../utils/keplrHelper";
 import {
   queryOwnedTokens,
   queryTokenMetadata,
-  verifydiscord,
-} from "../../utils/dataHelper";
+} from "../../utils/queryHelper";
+import { verifydiscord } from "../../utils/dataHelper";
 import { signMessage } from "curve25519-js";
 import { toast } from "react-toastify";
 import "./SecretSocietyCard.css";
@@ -68,14 +68,12 @@ class SecretSocietyCard extends React.Component {
       //if permit is received query owned tokens and try to verify discord
       if (this.state.queryPermit && Object.keys(this.state.queryPermit).length > 0) {
         const owned = await queryOwnedTokens(
-          this.state.secretJs,
           this.state.address,
           this.state.queryPermit
         );
 
         if (owned.length > 0) {
           const nftMetaData = await queryTokenMetadata(
-            this.state.secretJs,
             owned[0],
             this.state.queryPermit
           );

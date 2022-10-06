@@ -4,8 +4,6 @@ const textEncoding = require('text-encoding');
 const TextDecoder = textEncoding.TextDecoder;
 //const encoding_1 = require("@iov/encoding");
 
-export const sleep = duration => new Promise(res => setTimeout(res, duration));
-
 export class ExtendedSender extends SigningCosmWasmClient {
 
     AsyncTxById = async(txHash) => {

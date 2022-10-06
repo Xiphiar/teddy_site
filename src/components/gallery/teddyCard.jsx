@@ -1,19 +1,15 @@
 import React from 'react';
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import { getPermit, getSigningClient, getQueryClient, getChainId, getAddress } from "../../utils/keplrHelper";
+import { getPermit, getSigningClient, getAddress } from "../../utils/keplrHelper";
+import { queryTokenMetadata } from '../../utils/queryHelper';
 import './teddyCard.css';
-//import styles from './dark.min.module.css';
-import axios from "axios";
 import { toast } from 'react-toastify';
-import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../utils/dataHelper'
+import { decryptFile, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../utils/dataHelper'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faUnlockKeyhole, faLink, faArrowRightArrowLeft, faKey, faArrowLeft, faLockOpen, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faLink, faArrowRightArrowLeft, faKey, faArrowLeft, faLockOpen, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import {  SwapModal, AuthModal, AlterModal } from './modals';
-import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
+import { ensureQueryClient, queryJs } from '../../utils/queryHelper';
 
 
 //modal
@@ -182,9 +178,9 @@ class TeddyCard extends React.Component {
         try {
             if (!this.state.secretJs) {
                 console.log("using query client");
-                const client = await getQueryClient();
+                await ensureQueryClient();
                 this.setState({
-                  secretJs: client,
+                  secretJs: queryJs,
                   signer: false
                 })
               }
@@ -198,7 +194,7 @@ class TeddyCard extends React.Component {
 
         let data;
         try {
-            data = await queryTokenMetadata(this.state.secretJs, this.state.id, this.state.queryPermit)
+            data = await queryTokenMetadata(this.state.id, this.state.queryPermit)
             console.log("*NFT*", data.nft_dossier);
 
             let owned = false;

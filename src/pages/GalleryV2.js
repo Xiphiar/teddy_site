@@ -6,7 +6,7 @@ import { Nav, Container, Col, Row, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
-import { queryOwnedTokens } from "../utils/dataHelper";
+import { queryOwnedTokens } from "../utils/queryHelper";
 import TeddyCard from '../components/gallery/teddyCard';
 import { getPublicTeddyData, truncate } from '../utils/dataHelper'
 import { useParams } from 'react-router-dom';
@@ -288,7 +288,7 @@ class Gallery extends React.Component {
       return;
     }
 
-    const data = await queryOwnedTokens(this.state.secretJs, this.state.address, this.state.queryPermit)
+    const data = await queryOwnedTokens(this.state.address, this.state.queryPermit)
     if (data.length){
       this.setState({
         loadingOwned: false,

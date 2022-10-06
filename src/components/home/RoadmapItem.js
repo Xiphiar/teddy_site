@@ -1,40 +1,27 @@
 import ellipse from '../../assets/ellipse.png'
 import React from 'react';
 
-class Number extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
-  render() {
-    const id = `roadmap-num-${this.props.number}`
-    return (
-      <div className="roadmapEllipse" id={id} key={id} >
-        <img src={ellipse} style={{width:"100px"}}/>
-        <div className="roadmapNumber poppins">{this.props.number}.</div>
-      </div>
-    )
-  }
+function Number({number}) {
+  const id = `roadmap-num-${number}`
+  return (
+    <div className="roadmapEllipse" key={id} >
+      <img src={ellipse} style={{width:"100px"}} alt={`Roadmap Item ${number}`}/>
+      <div className="roadmapNumber poppins">{number}.</div>
+    </div>
+  )
 }
 
-class Item extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const id = `roadmap-item-${this.props.number}`
-    return (
-      <div className="roadmapItem" id={id}>
-      <Number number={this.props.number}/>
-      <div key={id}>
-        <span>
-          {this.props.text}
-        </span>
+function Item({number, text}){
+  const id = `roadmap-item-${number}`
+  return (
+    <div className="roadmapItem" key={id}>
+      <Number number={number}/>
+      <div>
+        {text}
       </div>
     </div>
-    )
-  }
+  )
 }
 
 export default Item

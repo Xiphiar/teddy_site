@@ -39,7 +39,6 @@ class Home extends React.Component {
   }
 
   componentDidMount = () => {
-    console.log("mounted", this.props)
     if (this.props.jumpto) {
       scroller.scrollTo(this.props.jumpto, {
         smooth: "easeInOutQuart",

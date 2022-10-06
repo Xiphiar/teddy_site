@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal'
+import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
-import { getPermit, getSigningClient, getQueryClient, getChainId, getAddress } from "../../../utils/keplrHelper";
+import { getPermit, getSigningClient } from "../../../utils/keplrHelper";
 //import styles from './dark.min.module.css';
-import axios from "axios";
 import { toast } from 'react-toastify';
-import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../../utils/dataHelper'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faUnlockKeyhole, faLink, faArrowRightArrowLeft, faKey, faArrowLeft, faLockOpen, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import FactoryTeddyCard from '../FactoryTeddyCard';
 import TraitSelect from '../TraitSelect';
+import { queryTokenMetadata } from '../../../utils/queryHelper';
 
-import styles from './styles.module.css';
 import ConfirmModal from '../ConfirmModal';
 
 import { useGoldTokens } from '../../../contexts/GoldTokenContext';
@@ -163,9 +159,9 @@ function FactorySelector({selectedTeddies}){
         
             //query all metadata
             const data = await Promise.all([
-                queryTokenMetadata(returned.client, selectedTeddies[0].toString(), signature),
-                queryTokenMetadata(returned.client, selectedTeddies[1].toString(), signature),
-                queryTokenMetadata(returned.client, selectedTeddies[2].toString(), signature)
+                queryTokenMetadata(selectedTeddies[0].toString(), signature),
+                queryTokenMetadata(selectedTeddies[1].toString(), signature),
+                queryTokenMetadata(selectedTeddies[2].toString(), signature)
             ])
             console.log(data[0], data[1], data[2]);
             setTeddyData(data)

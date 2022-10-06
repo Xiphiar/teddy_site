@@ -6,10 +6,9 @@ import Image from 'react-bootstrap/Image'
 import { Nav, Container, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TeddyInfo from '../components/gallery/teddyCardModal'
-import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
+import { getSigningClient, getPermit } from "../utils/keplrHelper";
 import TeddyCard from '../components/gallery/teddyCard'
-
-import axios from "axios";
+import { PermitQuery } from '../utils/queryHelper';
 
 // Layout
 import Layout from "../layout/Layout";
@@ -170,21 +169,23 @@ class TeddyInfoPage extends React.Component {
         limit: 300
       }
     }
+
+    const permitQuery = new permitQuery(query, this.state.queryPermit, process.env.REACT_APP_CHAIN_ID)
     
-    const permitQuery = {
-      with_permit: {
-        query: query,
-        permit: {
-          params: {
-            permit_name: permitName,
-            allowed_tokens: allowedTokens,
-            chain_id: chainId,
-            permissions: permissions,
-          },
-          signature: this.state.queryPermit,
-        },
-      },
-    };
+    // const permitQuery = {
+    //   with_permit: {
+    //     query: query,
+    //     permit: {
+    //       params: {
+    //         permit_name: permitName,
+    //         allowed_tokens: allowedTokens,
+    //         chain_id: chainId,
+    //         permissions: permissions,
+    //       },
+    //       signature: this.state.queryPermit,
+    //     },
+    //   },
+    // };
     console.log(permitQuery)
     let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, permitQuery, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
     console.log(data);
@@ -206,20 +207,21 @@ class TeddyInfoPage extends React.Component {
         }
       }
       
-      const permitQuery = {
-        with_permit: {
-          query: query,
-          permit: {
-            params: {
-              permit_name: permitName,
-              allowed_tokens: allowedTokens,
-              chain_id: chainId,
-              permissions: permissions,
-            },
-            signature: this.state.queryPermit,
-          },
-        },
-      };
+      const permitQuery = new permitQuery(query, this.state.queryPermit, process.env.REACT_APP_CHAIN_ID)
+      // const permitQuery = {
+      //   with_permit: {
+      //     query: query,
+      //     permit: {
+      //       params: {
+      //         permit_name: permitName,
+      //         allowed_tokens: allowedTokens,
+      //         chain_id: chainId,
+      //         permissions: permissions,
+      //       },
+      //       signature: this.state.queryPermit,
+      //     },
+      //   },
+      // };
       console.log(permitQuery)
       let res = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
       console.log(res);

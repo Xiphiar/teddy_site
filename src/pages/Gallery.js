@@ -210,7 +210,7 @@ class Gallery extends React.Component {
 
     await this.getPermit();
 
-    const data = await queryOwnedTokens(this.state.secretJs, this.state.address, this.state.queryPermit)
+    const data = await queryOwnedTokens(this.state.address, this.state.queryPermit)
 
     this.setState({
       loadingOwned: false,
@@ -257,7 +257,7 @@ class Gallery extends React.Component {
                     </div>
                 </Col>
                 <Col xs={"auto"}>
-                  <TicketCounter permit={this.state.queryPermit} address={this.state.address} />
+                  {/* <TicketCounter permit={this.state.queryPermit} address={this.state.address} /> */}
                 </Col>
               </Row>
 

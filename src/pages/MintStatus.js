@@ -1,12 +1,10 @@
 import React from 'react';
-import { getApiURL } from "../utils/keplrHelper";
-import { CosmWasmClient } from 'secretjs';
+import { queryWrapper } from '../utils/queryHelper';
 
 export class MintStatus extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      queryJS: new CosmWasmClient(getApiURL()),
       loading: true
     };
   }
@@ -22,7 +20,8 @@ export class MintStatus extends React.Component {
       num_tokens: {}
     };
 
-    const data = await this.state.queryJS.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, minted_query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+    //const data = await this.state.queryJS.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, minted_query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+    const data = await queryWrapper(minted_query, process.env.REACT_APP_CONTRACT_ADDRESS, process.env.REACT_APP_CONTRACT_CODE_HASH)
     console.log(data);
     this.setState({ minted: parseInt(data.num_tokens.count), loading: false });
     this.props.updater(parseInt(data.num_tokens.count));

@@ -1,9 +1,5 @@
 import { createContext, useState, useContext, ReactElement, ReactNode } from 'react';
-import { CosmWasmClient } from 'secretjs';
-import { getApiURL } from '../utils/keplrHelper';
-import { queryOwnedTickets } from '../utils/dataHelper';
-
-const queryJs = new CosmWasmClient(getApiURL())
+import { queryOwnedTickets } from '../utils/queryHelper';
 
 // set default values for initializing
 const contextDefaultValues = {
@@ -27,7 +23,7 @@ export const GoldTokenProvider = ({ children }) => {
   ) => {
     console.log('Loading Gold Tokens')
     setLoading(true);
-    const data = await queryOwnedTickets(queryJs, address, permit);
+    const data = await queryOwnedTickets(address, permit);
     console.log(2)
     setTokens(data);
     setLoading(false);
