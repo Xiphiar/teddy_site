@@ -1,7 +1,7 @@
 import React from 'react';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import { getPermit, getSigningClient, getAddress } from "../../utils/keplrHelper";
+import { getPermit, getAddress } from "../../utils/keplrHelper";
 import { queryTokenMetadata } from '../../utils/queryHelper';
 import './teddyCard.css';
 import { toast } from 'react-toastify';
@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink, faArrowRightArrowLeft, faKey, faArrowLeft, faLockOpen, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import {  SwapModal, AuthModal, AlterModal } from './modals';
 import { ensureQueryClient, queryJs } from '../../utils/queryHelper';
+
+import { getSigningClient } from '../../utils/txHelper';
 
 
 //modal

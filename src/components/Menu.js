@@ -113,7 +113,7 @@ const Menu = (home) => {
             </div>
         </Col>
       </Row>    
-      { process.env.REACT_APP_USE_TESTNET === 'true' ?
+      { process.env.REACT_APP_CHAIN_ID.includes('pulsar') ?
       <>
         <span>Testnet Mode!</span>
         <span style={{fontSize: '12px'}}>

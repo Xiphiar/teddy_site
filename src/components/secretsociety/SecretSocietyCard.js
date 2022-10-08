@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { Row, Col } from "react-bootstrap";
-import { getSigningClient, getPermit } from "../../utils/keplrHelper";
+import { getPermit } from "../../utils/keplrHelper";
 import {
   queryOwnedTokens,
   queryTokenMetadata,
@@ -10,6 +10,8 @@ import { verifydiscord } from "../../utils/dataHelper";
 import { signMessage } from "curve25519-js";
 import { toast } from "react-toastify";
 import "./SecretSocietyCard.css";
+
+import { getSigningClient } from "../../utils/txHelper";
 
 class SecretSocietyCard extends React.Component {
   constructor(props) {

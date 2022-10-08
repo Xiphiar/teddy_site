@@ -104,7 +104,7 @@ export const getAddress = async() => {
     return accounts[0].address;
 }
 
-export async function getSigningClient() {
+export async function getKeplrClient() {
     if (!window.keplr) throw "Keplr not found";
     console.log(process.env.REACT_APP_GRPC_URL, process.env.REACT_APP_CHAIN_ID)
 

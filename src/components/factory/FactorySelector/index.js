@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
-import { getPermit, getSigningClient } from "../../../utils/keplrHelper";
+import { getPermit } from "../../../utils/keplrHelper";
 //import styles from './dark.min.module.css';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,6 +13,8 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import FactoryTeddyCard from '../FactoryTeddyCard';
 import TraitSelect from '../TraitSelect';
 import { queryTokenMetadata } from '../../../utils/queryHelper';
+
+import { getSigningClient } from '../../../utils/txHelper';
 
 import ConfirmModal from '../ConfirmModal';
 

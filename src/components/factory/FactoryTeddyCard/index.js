@@ -4,7 +4,6 @@ import Spinner from 'react-bootstrap/Spinner'
 import Image from 'react-bootstrap/Image'
 import { getPermit, getSigningClient, getQueryClient, getChainId, getAddress } from "../../../utils/keplrHelper";
 import { decryptFile, getRarityData, queryTokenMetadata, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../../utils/dataHelper'
-import { CosmWasmClient } from "secretjs";
 import {toast} from 'react-toastify';
 
 import './FactoryTeddyCard.css'
@@ -12,8 +11,6 @@ import './FactoryTeddyCard.css'
 export default function FactoryTeddyCard({teddyId, nft_dossier}){
     const [decryptedImage, setDecryptedImage] = useState();
     const [loading, setLoading] = useState(true);
-    const [secretJs, setSecretJs] = useState(new CosmWasmClient(process.env.REACT_APP_REST_URL))
-    const [signerAddress, setSignerAddress] = useState();
     const [attributes, setAttributes] = useState();
 
     const init = async() => {

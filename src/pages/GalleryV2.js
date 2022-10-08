@@ -5,7 +5,7 @@ import Image from 'react-bootstrap/Image'
 import { Nav, Container, Col, Row, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TeddyInfo from '../components/gallery/teddyCardModal'
-import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
+import { getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
 import { queryOwnedTokens } from "../utils/queryHelper";
 import TeddyCard from '../components/gallery/teddyCard';
 import { getPublicTeddyData, truncate } from '../utils/dataHelper'
@@ -14,6 +14,8 @@ import { toast } from 'react-toastify';
 import axios from "axios";
 import clubBanner from '../assets/club_banner.jpg'
 import TicketCounter from '../components/gallery/TicketCounter';
+
+import { getSigningClient } from '../utils/txHelper';
 
 
 // Layout

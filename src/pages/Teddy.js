@@ -6,9 +6,10 @@ import Image from 'react-bootstrap/Image'
 import { Nav, Container, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TeddyInfo from '../components/gallery/teddyCardModal'
-import { getSigningClient, getPermit } from "../utils/keplrHelper";
+import { getPermit } from "../utils/keplrHelper";
 import TeddyCard from '../components/gallery/teddyCard'
-import { PermitQuery } from '../utils/queryHelper';
+import { PermitQuery, queryOwnedTokens } from '../utils/queryHelper';
+import { getSigningClient } from '../utils/txHelper';
 
 // Layout
 import Layout from "../layout/Layout";
@@ -187,9 +188,10 @@ class TeddyInfoPage extends React.Component {
     //   },
     // };
     console.log(permitQuery)
-    let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, permitQuery, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+    //let data = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, permitQuery, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+    let data = await queryOwnedTokens(this.state.address, this.state.queryPermit)
     console.log(data);
-    this.setState({tokenList: data.token_list.tokens});
+    this.setState({tokenList: data});
   }
 
   queryData = async(id) => {
@@ -223,8 +225,8 @@ class TeddyInfoPage extends React.Component {
       //   },
       // };
       console.log(permitQuery)
-      let res = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
-      console.log(res);
+      //let res = await this.state.secretJs.queryContractSmart(process.env.REACT_APP_CONTRACT_ADDRESS, query, {}, process.env.REACT_APP_CONTRACT_CODE_HASH);
+      //console.log(res);
   } 
 
   render () {

@@ -4,17 +4,37 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import { getSigningClient, getChainId } from "../../../utils/keplrHelper";
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
 import { useGoldTokens } from '../../../contexts/GoldTokenContext';
+import { getSigningClient, factoryAdmin, sendFactorySSCRT, sendFactoryGT } from '../../../utils/txHelper';
+import { SecretNetworkClient } from 'secretjs';
 
-const factoryAdmin = process.env.REACT_APP_FACTORY_ADMIN || 'secret1s7hqr22y5unhsc9r4ddnj049ltn9sa9pt55nzz';
 const permitName = "MTC-Factory-Order";
 const allowedDestinations = ["teddyapi.xiphiar.com", "localhost:9176", 'teddyapi-testnet.xiphiar.com'];
 
-export default function ConfirmModal(props) {
+interface props {
+    ids: string[];
+    base: string;
+    face: string;
+    color: string;
+    background: string;
+    hand: string;
+    head: string;
+    body: string;
+    eyewear: string;
+    notes: string;
+    name: string;
+    returner: () => void;
+    permit: any;
+    hide: () => void;
+    show: boolean;
+    secretJs: SecretNetworkClient;
+    address: string;
+}
+
+export default function ConfirmModal(props: props) {
     const [show, setShow] = useState(props.show)
     const [secretJs, setSecretJs] = useState(props.secretJs)
     const [address, setAddress] = useState(props.address)
@@ -32,7 +52,7 @@ export default function ConfirmModal(props) {
         setAddress(props.address);
     },[props])
 
-    const sendOrder = async(txHash, goldToken = undefined) => {
+    const sendOrder = async(txHash: string, goldToken = undefined) => {
         // //show loading toast for permit and post
         // const finalToast = toast.loading("Awaiting permit signature...");
 
@@ -147,6 +167,7 @@ export default function ConfirmModal(props) {
             console.log(response.data);
             toast.update(finalToast, { render: "Sent to Factory!", type: "success", isLoading: false, autoClose: 5000 });
         } catch (error) {
+            //@ts-ignore
             const message = error.response?.data?.message || error.response?.data || error.toString();
             console.error("abc", message)
             toast.update(finalToast, { render: (<>Failed to send order to Factory:<br/>{message}<br/><br/>Please contact a moderator on Discord.</>), type: "error", isLoading: false, autoClose: 5000 });
@@ -170,310 +191,134 @@ export default function ConfirmModal(props) {
     }
 
     const handleSendGT = async() => {
-        //show spinner and disable button
-        setLoading(true);
-        setLoadingGT(true);
+        try {
+            //show spinner and disable button
+            setLoading(true);
+            setLoadingGT(true);
 
-        const {address: acctAddress} = await ensureSigner();
+            const {address: acctAddress} = await ensureSigner();
+            //@ts-ignore
+            const result = await sendFactoryGT(props.ids, tokens[0]);
         
-        const fee = {
-            gas: 500_000,
-        };
+            // const fee = {
+            //     gas: 500_000,
+            // };
 
-        //messages for the NFT contracts
-        const bulkTransferMsg = {
-            batch_transfer_nft: {
-                transfers: [{
-                    recipient: factoryAdmin,
-                    token_ids: [props.ids[0].toString(), props.ids[1].toString(), props.ids[2].toString()]
-                }]
-            }
-        };
+            // //messages for the NFT contracts
+            // const bulkTransferMsg = {
+            //     batch_transfer_nft: {
+            //         transfers: [{
+            //             recipient: factoryAdmin,
+            //             token_ids: [props.ids[0].toString(), props.ids[1].toString(), props.ids[2].toString()]
+            //         }]
+            //     }
+            // };
 
-        const tokenTransferMsg = {
-            transfer_nft: {
-                recipient: factoryAdmin,
-                token_id: tokens[0]
-            }
-        };
+            // const tokenTransferMsg = {
+            //     transfer_nft: {
+            //         recipient: factoryAdmin,
+            //         token_id: tokens[0]
+            //     }
+            // };
 
-        // transfer teddies and token
-        let asyncResponse;
-        try{
-            asyncResponse = await secretJs.multiExecute(
-              [
-                {
-                    contractAddress: process.env.REACT_APP_CONTRACT_ADDRESS,
-                    contractCodeHash: process.env.REACT_APP_CONTRACT_CODE_HASH,
-                    handleMsg: bulkTransferMsg
-                },
-                {
-                    contractAddress: process.env.REACT_APP_TICKET_ADDRESS,
-                    contractCodeHash: process.env.REACT_APP_TICKET_CODE_HASH,
-                    handleMsg: tokenTransferMsg
-                }
-              ],
-              "",
-              fee
-            );
-            console.log(asyncResponse) 
+            // // transfer teddies and token
+            // let asyncResponse;
+            // try{
+            //     asyncResponse = await secretJs.multiExecute(
+            //       [
+            //         {
+            //             contractAddress: process.env.REACT_APP_CONTRACT_ADDRESS,
+            //             contractCodeHash: process.env.REACT_APP_CONTRACT_CODE_HASH,
+            //             handleMsg: bulkTransferMsg
+            //         },
+            //         {
+            //             contractAddress: process.env.REACT_APP_TICKET_ADDRESS,
+            //             contractCodeHash: process.env.REACT_APP_TICKET_CODE_HASH,
+            //             handleMsg: tokenTransferMsg
+            //         }
+            //       ],
+            //       "",
+            //       fee
+            //     );
+            //     console.log(asyncResponse) 
 
-        } catch(error){
-            toast.error(error.toString(), {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            // } catch(error){
+            //     toast.error(error.toString(), {
+            //         position: "top-right",
+            //         autoClose: 5000,
+            //         hideProgressBar: false,
+            //         closeOnClick: true,
+            //         pauseOnHover: true,
+            //         draggable: true,
+            //     });
+            //     setLoading(false);
+            //     setLoadingGT(false);
+            //     return;
+            // }
+    
+            // //show error if async execute returned an error code (rare)
+            // if (asyncResponse.code){
+            //   setShow(true);
+            //   setError(true);
+            //   setTx(asyncResponse);
+
+            //   return;
+            // }
+        
+            // // get full tx response
+            // let fullResponse;
+            // try {
+            //     //show loading toast
+            //     const txToast = toast.loading("Transaction Processing...")
+
+            //     // check if tx was processed every 3s up to 100 times
+            //     fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 3000, 100);
+            //     console.log('Full Response:', fullResponse);
+
+            //     //check for errors
+            //     if (fullResponse.code){
+            //         toast.update(txToast, { render: fullResponse.raw_log, type: "error", isLoading: false, autoClose: 5000 });
+            //         throw new Error(fullResponse.raw_log)
+            //     }
+
+            //     // display success toast
+            //     toast.update(txToast, { render: "Transaction Processed", type: "success", isLoading: false, autoClose: 5000 });
+
+            // } catch(error) {
+            //     setLoading(false);
+            //     setLoadingGT(false);
+            //     return;
+            // }
+
+            await sendOrder(result.transactionHash, tokens[0]);
+            //@ts-ignore
+            refreshTokens(acctAddress, props.permit);
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.toString())
+
             setLoading(false);
             setLoadingGT(false);
-            return;
         }
-    
-        //show error if async execute returned an error code (rare)
-        if (asyncResponse.code){
-          setShow(true);
-          setError(true);
-          setTx(asyncResponse);
-
-          return;
-        }
-    
-        // get full tx response
-        let fullResponse;
-        try {
-            //show loading toast
-            const txToast = toast.loading("Transaction Processing...")
-
-            // check if tx was processed every 3s up to 100 times
-            fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 3000, 100);
-            console.log('Full Response:', fullResponse);
-
-            //check for errors
-            if (fullResponse.code){
-                toast.update(txToast, { render: fullResponse.raw_log, type: "error", isLoading: false, autoClose: 5000 });
-                throw new Error(fullResponse.raw_log)
-            }
-
-            // display success toast
-            toast.update(txToast, { render: "Transaction Processed", type: "success", isLoading: false, autoClose: 5000 });
-
-        } catch(error) {
-            setLoading(false);
-            setLoadingGT(false);
-            return;
-        }
-
-        await sendOrder(fullResponse.transactionHash, tokens[0]);
-        refreshTokens(acctAddress, props.permit);
-    }
-
-    const handleSendSCRT2 = async() => {
-        //show spinner and disable button
-        setLoading(true);
-        setLoadingSCRT(true);
-
-        const {address: acctAddress} = await ensureSigner();
-        
-        const fee = {
-            gas: 500_000,
-        };
-
-        //messages for the NFT contracts
-        const bulkTransferMsg = {
-            batch_transfer_nft: {
-                transfers: [{
-                    recipient: factoryAdmin,
-                    token_ids: [props.ids[0].toString(), props.ids[1].toString(), props.ids[2].toString()]
-                }]
-            }
-        };
-
-        const tokenTransferMsg = {
-            transfer: {
-                recipient: factoryAdmin,
-                amount: process.env.REACT_APP_FACTORY_PRICE
-            }
-        };
-
-        // transfer teddies and token
-        let asyncResponse;
-        try{
-            asyncResponse = await secretJs.multiExecute(
-              [
-                {
-                    contractAddress: process.env.REACT_APP_CONTRACT_ADDRESS,
-                    contractCodeHash: process.env.REACT_APP_CONTRACT_CODE_HASH,
-                    handleMsg: bulkTransferMsg
-                },
-                {
-                    contractAddress: process.env.REACT_APP_TOKEN_ADDRESS,
-                    contractCodeHash: process.env.REACT_APP_TOKEN_CODE_HASH,
-                    handleMsg: tokenTransferMsg
-                }
-              ],
-              "",
-              fee
-            );
-            console.log(asyncResponse) 
-
-        } catch(error){
-            toast.error(error.toString(), {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setLoading(false);
-            setLoadingSCRT(false);
-            return;
-        }
-    
-        //show error if async execute returned an error code (rare)
-        if (asyncResponse.code){
-          setShow(true);
-          setError(true);
-          setTx(asyncResponse);
-
-          return;
-        }
-    
-        // get full tx response
-        let fullResponse;
-        try {
-            //show loading toast
-            const txToast = toast.loading("Transaction Processing...")
-
-            // check if tx was processed every 6s up to 100 times
-            fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 5000, 100);
-            console.log('Full Response:', fullResponse);
-
-            //check for errors
-            if (fullResponse.code){
-                toast.update(txToast, { render: fullResponse.raw_log, type: "error", isLoading: false, autoClose: 5000 });
-                throw new Error(fullResponse.raw_log)
-            }
-
-            // display success toast
-            toast.update(txToast, { render: "Transaction Processed", type: "success", isLoading: false, autoClose: 5000 });
-
-        } catch(error) {
-            setLoading(false);
-            setLoadingSCRT(false);
-            return;
-        }
-
-        await sendOrder(fullResponse.transactionHash);
-
     }
 
     const handleSendSCRT = async() => {
-        //show spinner and disable button
-        setLoading(true);
-        setLoadingSCRT(true);
-
-        await ensureSigner();
-        
-        const fee = {
-            gas: 500_000,
-        };
-
-        //message for the NFT contract
-        const factoryMsg = {
-            send_to_factory: {
-                transfers: [{
-                    recipient: factoryAdmin,
-                    token_ids: [props.ids[0].toString()]
-                },{
-                    recipient: factoryAdmin,
-                    token_ids: [props.ids[1].toString()]
-                },{
-                    recipient: factoryAdmin,
-                    token_ids: [props.ids[2].toString()]
-                },]
-            }
-        };  
-
-        //message to send the SNIP20 token to the NFT contract
-        const sendMsg = {
-            send: {
-                amount: (process.env.REACT_APP_FACTORY_PRICE || 5000000).toString(),
-                recipient: process.env.REACT_APP_CONTRACT_ADDRESS,
-                msg: Buffer.from(JSON.stringify(factoryMsg)).toString('base64')
-            }
-        }
-
-        // transfer teddies and collect fee
-        let asyncResponse;
-        try{
-
-            // submit to mempool and get tx hash
-            asyncResponse = await secretJs.execute(
-                process.env.REACT_APP_TOKEN_ADDRESS,
-                sendMsg,
-                null,
-                [],
-                fee,
-                process.env.REACT_APP_TOKEN_CODE_HASH
-            );
-            console.log(asyncResponse)
-
-        } catch(error){
-
-            toast.error(error.toString(), {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setLoading(false);
-            setLoadingSCRT(false);
-            return;
-
-        }
-    
-        //show error if async execute returned an error code (rare)
-        if (asyncResponse.code){
-          setShow(true);
-          setError(true);
-          setTx(asyncResponse);
-
-          return;
-        }
-    
-        // get full tx response
-        let fullResponse;
         try {
-            //show loading toast
-            const txToast = toast.loading("Transaction Processing...")
+            //show spinner and disable button
+            setLoading(true);
+            setLoadingSCRT(true);
 
-            // check if tx was processed every 3s up to 100 times
-            fullResponse = await secretJs.checkTx(asyncResponse.transactionHash, 3000, 100);
-            console.log('Full Response:', fullResponse);
+            const result = await sendFactorySSCRT(props.ids);
 
-            //check for errors
-            if (fullResponse.code){
-                toast.update(txToast, { render: fullResponse.raw_log, type: "error", isLoading: false, autoClose: 5000 });
-                throw new Error(fullResponse.raw_log)
-            }
+            await sendOrder(result.transactionHash);
 
-            // display success toast
-            toast.update(txToast, { render: "Transaction Processed", type: "success", isLoading: false, autoClose: 5000 });
+        } catch(error: any) {
+            console.error(error);
+            toast.error(error.toString())
 
-        } catch(error) {
             setLoading(false);
             setLoadingSCRT(false);
-            return;
         }
-
-        await sendOrder(fullResponse.transactionHash)
-            
     }
 
     return (
@@ -567,7 +412,7 @@ export default function ConfirmModal(props) {
                             { loadingSCRT ? 
                                 <button className="modalButton" disabled={true}><i className="c-inline-spinner c-inline-spinner-white" /></button>
                             :
-                                <button className="modalButton" onClick={() => handleSendSCRT2()} disabled={loading}>Send ( 5 sSCRT )</button>
+                                <button className="modalButton" onClick={() => handleSendSCRT()} disabled={loading}>Send ( 5 sSCRT )</button>
                             }
                             </Col>
 

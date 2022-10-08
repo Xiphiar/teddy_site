@@ -4,23 +4,38 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import { getSigningClient, getPermit, permitName, allowedTokens, permissions } from "../../utils/keplrHelper";
 import './teddyCard.css';
 import { toast } from 'react-toastify';
+import { addViewer, swapMetadata, transferNft } from '../../utils/txHelper';
+
+import { getSigningClient } from '../../utils/txHelper';
+import { NftDossier } from '../../utils/queryHelper';
 //import styles from './dark.min.module.css';
 
-export class SwapModal extends React.Component {
-    constructor(props) {
+interface SwapProps {
+    address: string;
+    show?: boolean;
+    teddyId: string;
+    hide: () => void;
+}
+
+interface SwapState {
+    show: boolean;
+    address: string;
+    loading: boolean;
+}
+
+export class SwapModal extends React.Component<SwapProps, SwapState> {
+    constructor(props: SwapProps) {
       super(props);
       this.state = {
         show: this.props.show || false,
-        secretJs: this.props.secretJs,
         address: this.props.address,
         loading: false
       };
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps: SwapProps){
         if (this.props !== prevProps) {
             this.setState({
                 show: this.props.show || false
@@ -31,65 +46,10 @@ export class SwapModal extends React.Component {
     handleSwap = async() => {
         //show spinner and disable button
         this.setState({ loading: true });
-
-        if (!this.props.secretJs || !this.props.address){
-            const secretJs = await getSigningClient();
-            this.setState({secretJs: secretJs.client, address: secretJs.address});
-        }
-        
-        const fee = {
-            gas: 250_000,
-        };
-
-        const swapMsg = {
-            to_pub: {
-                token_id: this.props.teddyId
-            }
-        }  
-
-
-        let asyncResponse;
-        try{
-            console.log(this.state);
-        
-            //returns tx hash only
-            asyncResponse = await this.state.secretJs.execute(
-                process.env.REACT_APP_CONTRACT_ADDRESS,
-                swapMsg,
-                null,
-                [],
-                fee,
-                process.env.REACT_APP_CONTRACT_CODE_HASH
-            );
-            console.log(asyncResponse)
-                
-        //catch and show error while posting TX
-        } catch(error){
-            toast.error(error.toString(), {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            this.setState({ loading: false })
-            return;
-        }
-    
-        //show error if async execute returned an error code (rare)
-        if (asyncResponse.code){
-          this.setState({
-            show: true,
-            error: true,
-            tx: asyncResponse
-          })
-          return;
-        }
     
         //show processing toast
         await toast.promise(
-            this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 10),
+            swapMetadata(this.props.teddyId),
             {
               pending: {
                 render(){
@@ -98,21 +58,17 @@ export class SwapModal extends React.Component {
                 icon: true,
               },
               success: {
-                render({data}){
-                    console.log(data);
-                    if (data.code){
-                        throw(data.raw_log)
-                    }
+                render({ data }){
                     return `Metadata Swapped`
                 },
                 // other options
                 //icon: "🟢",
               },
               error: {
-                render({data}){
+                render({ data }){
                     console.error(data);
                     // When the promise reject, data will contains the error
-                    return data
+                    return data?.toString();
                 }
               }
             }
@@ -161,18 +117,30 @@ export class SwapModal extends React.Component {
     }
 }
 
-export class AlterModal extends React.Component {
-    constructor(props) {
+interface AlterProps {
+    address: string;
+    show?: boolean;
+    nft: NftDossier;
+    hide: () => void;
+}
+
+interface AlterState {
+    show: boolean;
+    address: string;
+    loading: boolean;
+}
+
+export class AlterModal extends React.Component<AlterProps, AlterState> {
+    constructor(props: AlterProps) {
       super(props);
       this.state = {
         show: this.props.show || false,
-        secretJs: this.props.secretJs,
         address: this.props.address,
         loading: false
       };
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps: AlterProps){
         if (this.props !== prevProps) {
             this.setState({
                 show: this.props.show || false
@@ -180,7 +148,7 @@ export class AlterModal extends React.Component {
         }
     }
 
-    copyText(input, type){
+    copyText(input: string, type: string){
 
         const el = document.createElement('textarea');
         el.value = input;
@@ -219,11 +187,33 @@ export class AlterModal extends React.Component {
 
                         <div>
                             <h4>Username:&nbsp;</h4>
-                            <span className="pointer" onClick={() => this.copyText(this.props.nft?.private_metadata?.extension?.alter_username, "username")}>{this.props.nft?.private_metadata?.extension?.alter_username}</span>
+                            <span
+                                className="pointer"
+                                onClick={() => {
+                                    //@ts-ignore
+                                    this.copyText(this.props.nft?.private_metadata?.extension?.alter_username, "username")
+                                }
+                            }>
+                                {
+                                    //@ts-ignore
+                                    this.props.nft?.private_metadata?.extension?.alter_username
+                                }
+                            </span>
                         </div>
                         <div style={{paddingTop: "20px"}}>
                             <h4>Password:&nbsp;</h4>
-                            <span className="pointer" onClick={() => this.copyText(this.props.nft?.private_metadata?.extension?.alter_password, "password")}>{this.props.nft?.private_metadata?.extension?.alter_password}</span>
+                            <span
+                                className="pointer"
+                                onClick={() => {
+                                    //@ts-ignore
+                                    this.copyText(this.props.nft?.private_metadata?.extension?.alter_password, "password")
+                                }}
+                            >
+                                {
+                                    //@ts-ignore
+                                    this.props.nft?.private_metadata?.extension?.alter_password
+                                }
+                            </span>
                         </div>
                     </Row>
                 </Container>
@@ -238,12 +228,26 @@ export class AlterModal extends React.Component {
     }
 }
 
-export class AuthModal extends React.Component {
-    constructor(props) {
+interface AuthProps {
+    address: string;
+    show?: boolean;
+    teddyId: string;
+    hide: () => void;
+}
+
+interface AuthState {
+    show: boolean;
+    address: string;
+    loading: boolean;
+    input: string;
+    input2: string;
+}
+
+export class AuthModal extends React.Component<AuthProps, AuthState> {
+    constructor(props: AuthProps) {
       super(props);
       this.state = {
         show: this.props.show || false,
-        secretJs: this.props.secretJs,
         address: this.props.address,
         loading: false,
         input: "",
@@ -251,7 +255,7 @@ export class AuthModal extends React.Component {
       };
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps: AuthProps){
         if (this.props !== prevProps) {
             this.setState({
                 show: this.props.show || false
@@ -260,163 +264,13 @@ export class AuthModal extends React.Component {
     }
 
     handleAuthorize = async() => {
-        //show spinner and disable button
-        this.setState({ loading: true });
-
-        if (!this.props.secretJs || !this.props.address){
-            const secretJs = await getSigningClient();
-            this.setState({secretJs: secretJs.client, address: secretJs.address});
-        }
-        
-        const fee = {
-            gas: 250_000,
-        };
-
-        const authMsg = {
-            set_whitelisted_approval : {
-                address: this.state.input,
-                token_id: this.props.teddyId,
-                view_private_metadata: "approve_token"
-            }
-        }  
-
-
-        let asyncResponse;
-        try{
-            console.log(this.state);
-        
-            //returns tx hash only
-            asyncResponse = await this.state.secretJs.execute(
-                process.env.REACT_APP_CONTRACT_ADDRESS,
-                authMsg,
-                null,
-                [],
-                fee,
-                process.env.REACT_APP_CONTRACT_CODE_HASH
-            );
-            console.log(asyncResponse)
-                
-        //catch and show error while posting TX
-        } catch(error){
-            toast.error(error.toString(), {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            this.setState({ loading: false })
-            return;
-        }
-    
-        //show error if async execute returned an error code (rare)
-        if (asyncResponse.code){
-          this.setState({
-            show: true,
-            error: true,
-            tx: asyncResponse
-          })
-          return;
-        }
-    
-        //show processing toast
-        await toast.promise(
-            this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 10),
-            {
-              pending: {
-                render(){
-                    return "Transaction Processing"
-                },
-                icon: true,
-              },
-              success: {
-                render({data}){
-                    console.log(data);
-                    if (data.code){
-                        throw(data.raw_log)
-                    }
-                    return `Address Authorized`
-                },
-                // other options
-                //icon: "🟢",
-              },
-              error: {
-                render({data}){
-                    console.error(data);
-                    // When the promise reject, data will contains the error
-                    return data
-                }
-              }
-            }
-        )
-        this.setState({loading: false})
-    }
-
-    handleTransfer = async() => {
         try {
             //show spinner and disable button
             this.setState({ loading: true });
-
-            if (!this.props.secretJs || !this.props.address){
-                const secretJs = await getSigningClient();
-                this.setState({secretJs: secretJs.client, address: secretJs.address});
-            }
-            
-            const fee = {
-                gas: 250_000,
-            };
-
-            const transferMsg = {
-                transfer_nft : {
-                    recipient: this.state.input2,
-                    token_id: this.props.teddyId,
-                }
-            }  
-
-
-            let asyncResponse;
-            try{
-                console.log(this.state);
-            
-                //returns tx hash only
-                asyncResponse = await this.state.secretJs.execute(
-                    process.env.REACT_APP_CONTRACT_ADDRESS,
-                    transferMsg,
-                    null,
-                    [],
-                    fee,
-                    process.env.REACT_APP_CONTRACT_CODE_HASH
-                );
-                console.log(asyncResponse)
-                    
-            //catch and show error while posting TX
-            } catch(error){
-                toast.error(error.toString(), {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
-                this.setState({ loading: false })
-                return;
-            }
-    
-            //show error if async execute returned an error code (rare)
-            if (asyncResponse.code){
-                this.setState({
-                    show: true,
-                    error: true,
-                    tx: asyncResponse
-                })
-                return;
-            }
     
             //show processing toast
             await toast.promise(
-                this.state.secretJs.checkTx(asyncResponse.transactionHash, 5000, 10),
+                addViewer(this.props.teddyId, this.state.input),
                 {
                 pending: {
                     render(){
@@ -425,28 +279,62 @@ export class AuthModal extends React.Component {
                     icon: true,
                 },
                 success: {
-                    render({data}){
-                        console.log(data);
-                        if (data.code){
-                            throw(data.raw_log)
-                        }
+                    render({ data }){
+                        return `Address Authorized`
+                    },
+                    // other options
+                    //icon: "🟢",
+                },
+                error: {
+                    render({ data }){
+                        console.error(data);
+                        // When the promise reject, data will contains the error
+                        return data?.toString();
+                    }
+                }
+                }
+            )
+        } catch(error: any){
+            console.error(error);
+            toast.error(error.toString());
+        }
+        this.setState({loading: false})
+    }
+
+    handleTransfer = async() => {
+        try {
+            //show spinner and disable button
+            this.setState({ loading: true });
+    
+            //show processing toast
+            await toast.promise(
+                transferNft(this.props.teddyId, this.state.input2),
+                {
+                pending: {
+                    render(){
+                        return "Transaction Processing"
+                    },
+                    icon: true,
+                },
+                success: {
+                    render({ data }){
                         return `Teddy transferred.`
                     },
                     // other options
                     //icon: "🟢",
                 },
                 error: {
-                    render({data}){
+                    render({ data }){
                         console.error(data);
                         // When the promise reject, data will contains the error
-                        return data.toString();
+                        return data?.toString();
                     }
                 }
                 }
             )
-        } catch(error){
+        } catch(error: any){
             console.error(error);
-            toast.error(error);
+            toast.error(error.toString());
         }
         this.setState({loading: false})
     }
@@ -475,7 +363,7 @@ export class AuthModal extends React.Component {
                         <Col xs={"auto"}>
                             Address
                         <input className="addressBox" value={this.state.input} style={{marginLeft:"10px"}} onChange={(event) => this.setState({input: event.target.value})} />
-                        <button className="modalButton"  style={{marginLeft:"20px"}} onClick={() => this.handleAuthorize()}> Authorize </button>
+                        <button className="modalButton"  style={{marginLeft:"20px"}} onClick={() => this.handleAuthorize()} disabled={this.state.loading}> Authorize </button>
                         </Col>
                     </Row>
                     <Row style={{paddingTop:"50px"}}>
@@ -485,7 +373,7 @@ export class AuthModal extends React.Component {
                         <Col xs={"auto"}>
                             Recipient
                         <input className="addressBox" value={this.state.input2} style={{marginLeft:"10px"}} onChange={(event) => this.setState({input2: event.target.value})} />
-                        <button className="modalButton"  style={{marginLeft:"20px"}} onClick={() => this.handleTransfer()}> Transfer </button>
+                        <button className="modalButton"  style={{marginLeft:"20px"}} onClick={() => this.handleTransfer()} disabled={this.state.loading}> Transfer </button>
                         </Col>
                     </Row>
                 </Container>

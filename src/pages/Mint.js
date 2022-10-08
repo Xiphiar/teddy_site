@@ -10,13 +10,13 @@ import InputSpinner from 'react-bootstrap-input-spinner'
 import ProcessingModal from '../components/mint/ProcessingModal'
 // Layout
 import Layout from "../layout/Layout";
-
-import { getSigningClient } from "../utils/keplrHelper";
 import Feedback from 'react-bootstrap/esm/Feedback';
 
 import { toast } from 'react-toastify';
 import clubBanner from '../assets/club_banner.jpg'
 import { MintStatus } from './MintStatus';
+
+import { getSigningClient } from '../utils/txHelper';
 
 
 class Padding extends React.Component {
