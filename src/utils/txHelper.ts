@@ -176,7 +176,7 @@ export const sendFactorySSCRT = async(ids: string[]) => {
       codeHash: process.env.REACT_APP_TOKEN_CODE_HASH,
     })
 
-    const response = await secretJs.tx.broadcast([teddyXfer, tokenXfer], { gasLimit: 1_000_000 })
+    const response = await secretJs.tx.broadcast([teddyXfer, tokenXfer], { gasLimit: 1_000_000, broadcastTimeoutMs: 90_000 })
     console.log('Message:', JSON.stringify([teddyXfer, tokenXfer], undefined, 2));
     console.log('Response:', response);
 
@@ -231,7 +231,7 @@ export const sendFactoryGT = async(ids: string[], token_id: string) => {
       codeHash: process.env.REACT_APP_TICKET_HASH,
     })
 
-    const response = await secretJs.tx.broadcast([teddyXfer, gtXfer], { gasLimit: 1_000_000 })
+    const response = await secretJs.tx.broadcast([teddyXfer, gtXfer], { gasLimit: 1_000_000, broadcastTimeoutMs: 90_000 })
     console.log('Message:', JSON.stringify([teddyXfer, gtXfer], undefined, 2));
     console.log('Response:', response);
 
