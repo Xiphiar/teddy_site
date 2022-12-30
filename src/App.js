@@ -18,6 +18,7 @@ import SecretSociety from './pages/SecretSociety';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoldTokenProvider } from "./contexts/GoldTokenContext";
+import { BurnGallery, WrappedBurnGallery } from "./pages/BurnGallery";
 
 const App = () => {
   return (
@@ -34,6 +35,9 @@ const App = () => {
             <Route path="/mint" element={<MintPage />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/:lookupID" element={<WrappedGallery />} />
+            
+            <Route path="/crispy" element={<BurnGallery />} />
+            <Route path="/crispy/:lookupID" element={<WrappedBurnGallery />} />
             <Route path="/showcase" element={<Gallery />} />
             <Route path="/factory" element={<Factory />} />
             <Route path="/secretsociety" element={<SecretSociety />} />

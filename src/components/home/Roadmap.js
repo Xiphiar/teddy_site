@@ -3,11 +3,11 @@ import Image from 'react-bootstrap/Image'
 import RoadmapItem from './RoadmapItem'
 
 const item1 = [<s>3030 Midnight Teddy’s Minted.</s>,<br/>,<s>AlterDapp Lifetime membership accounts distributed.</s>]
-const item2 = ['“The Factory” Is opened and evolutionary reconstruction begins.',<br/>,'Midnight Teddys retired to “The Club” are viewable in our “Burn Gallery”.']
+const item2 = [<s>“The Factory” Is opened and evolutionary reconstruction begins.</s>,<br/>,<s>Midnight Teddys retired to “The Club” are viewable in our “Burn Gallery”.</s>]
 const item3 = [<s>Dynamic trait rarity tracker</s>,<br/>,<s>Stashh used as secondary market place</s>]
 const item4 = ["First NFT airdrop to all MTC holders - Secret Society Emblems"]
 const item5 = <s>1/1 Traits auctioned on Stashh to be used in “The factory”</s>
-const item6 = "Midnight Teddy Club DAO"
+const item6 = <s>Midnight Teddy Club DAO</s>
 
 const Roadmap = () => {
   return (

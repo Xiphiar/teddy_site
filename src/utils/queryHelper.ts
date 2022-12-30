@@ -153,6 +153,20 @@ export const queryOwnedTokens = async(address: string, permit: any) => {
     return data.token_list.tokens;
 }
 
+export const queryBurntTokens = async() => {
+  const query = {
+    tokens: {
+      owner: 'secret177e9pz4heqx3jtrxav3cqrq7jvp7uthhayk8uq',
+      viewing_key: 'DoTheRightThing.',
+      limit: 300,
+    }
+}
+
+const data = await queryWrapper(query, process.env.REACT_APP_CONTRACT_ADDRESS, process.env.REACT_APP_CONTRACT_CODE_HASH) as Snip721GetTokensResponse
+
+return data.token_list.tokens;
+}
+
 export const queryOwnedTickets = async(address: string, permit: any) => {
   const query = {
       tokens: {
@@ -173,7 +187,7 @@ export const queryTokenMetadata = async(id: string, permit: any) => {
         }
     }
 
-    if (permit.signature){
+    if (permit && permit.signature){
 
         const query2 = new PermitQuery(query, permit, chainId);
         const data = await queryWrapper(query2, process.env.REACT_APP_CONTRACT_ADDRESS, process.env.REACT_APP_CONTRACT_CODE_HASH) as DossierResponse;
@@ -218,4 +232,40 @@ export const queryTokenMetadata = async(id: string, permit: any) => {
             pub_attributes: attributes
         });
     }
+}
+
+export const queryMtDoomMetadata = async(id: string) => {
+  const query = {
+      nft_dossier: {
+        token_id: id,
+        viewer: {
+          address: "secret177e9pz4heqx3jtrxav3cqrq7jvp7uthhayk8uq",
+          viewing_key: "DoTheRightThing."
+        },
+      }
+  }
+
+  console.log("Querying Mt Doom with Key")
+  const data = await queryWrapper(query, process.env.REACT_APP_CONTRACT_ADDRESS, process.env.REACT_APP_CONTRACT_CODE_HASH) as DossierResponse;
+
+  let priv_attributes = {};
+  if (data.nft_dossier.private_metadata.extension?.attributes){
+    for (let i = 0; i < data.nft_dossier.private_metadata.extension.attributes.length; i++) {
+      //@ts-ignore
+      priv_attributes[data.nft_dossier.private_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.private_metadata.extension.attributes[i].value);
+    };
+  }
+
+  let pub_attributes = {};
+  if (data.nft_dossier.public_metadata.extension?.attributes){
+      for (let i = 0; i < data.nft_dossier.public_metadata.extension.attributes.length; i++) {
+      //@ts-ignore
+      pub_attributes[data.nft_dossier.public_metadata.extension.attributes[i].trait_type] = correctTrait(data.nft_dossier.public_metadata.extension.attributes[i].value);
+      }
+  }
+  return({
+      nft_dossier: data.nft_dossier,
+      priv_attributes: priv_attributes,
+      pub_attributes: pub_attributes
+  });
 }

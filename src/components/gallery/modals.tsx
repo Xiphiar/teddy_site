@@ -13,7 +13,7 @@ import { NftDossier } from '../../utils/queryHelper';
 //import styles from './dark.min.module.css';
 
 interface SwapProps {
-    address: string;
+    address?: string;
     show?: boolean;
     teddyId: string;
     hide: () => void;
@@ -21,7 +21,7 @@ interface SwapProps {
 
 interface SwapState {
     show: boolean;
-    address: string;
+    address?: string;
     loading: boolean;
 }
 
@@ -118,7 +118,7 @@ export class SwapModal extends React.Component<SwapProps, SwapState> {
 }
 
 interface AlterProps {
-    address: string;
+    address?: string;
     show?: boolean;
     nft: NftDossier;
     hide: () => void;
@@ -126,7 +126,7 @@ interface AlterProps {
 
 interface AlterState {
     show: boolean;
-    address: string;
+    address?: string;
     loading: boolean;
 }
 
@@ -229,7 +229,7 @@ export class AlterModal extends React.Component<AlterProps, AlterState> {
 }
 
 interface AuthProps {
-    address: string;
+    address?: string;
     show?: boolean;
     teddyId: string;
     hide: () => void;
@@ -237,7 +237,7 @@ interface AuthProps {
 
 interface AuthState {
     show: boolean;
-    address: string;
+    address?: string;
     loading: boolean;
     input: string;
     input2: string;

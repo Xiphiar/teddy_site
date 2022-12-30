@@ -2,7 +2,11 @@
 import Menu from "../components/Menu";
 import Footer from "../components/Footer";
 
-const Layout = ({ children, home }) => {
+interface Props {
+  children: any;
+  home?: boolean;
+}
+const Layout = ({ children, home }: Props) => {
   return (
     <>
       <Menu home={home}/>

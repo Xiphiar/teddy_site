@@ -128,7 +128,7 @@ const getPublicTeddyData = async(id: string) => {
   }
 }
 
-const getTotalTokens = async(traitValue: string) => {
+const getTotalTokens = async() => {
     const data = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/rarity/total`);
     return data.data;
 }

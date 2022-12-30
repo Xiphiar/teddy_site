@@ -39,6 +39,11 @@ const renderer2 = ({ days, hours, minutes, seconds, completed }) => {
           </Link>
         </Col>
         <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
+          <Link to="/crispy" className="nav-link px-2 teddyNavLink">
+            BURN GALLERY
+          </Link>
+        </Col>
+        <Col className="text-center" sm="auto" style={{paddingRight: "30px"}}>
           <Link to="/secretsociety" className="nav-link px-2 teddyNavLink">
             SECRET SOCIETY
           </Link>

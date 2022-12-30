@@ -2,7 +2,7 @@ import React from 'react';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { getPermit, getAddress } from "../../utils/keplrHelper";
-import { queryTokenMetadata } from '../../utils/queryHelper';
+import { queryMtDoomMetadata, queryTokenMetadata } from '../../utils/queryHelper';
 import './teddyCard.css';
 import { toast } from 'react-toastify';
 import { decryptFile, processRarity, getTotalTokens, getPublicTeddyData, cachePublicImage, cachePrivateImage, getPrivateImage, blobToBase64 } from '../../utils/dataHelper'
@@ -12,29 +12,64 @@ import {  SwapModal, AuthModal, AlterModal } from './modals';
 import { ensureQueryClient, queryJs } from '../../utils/queryHelper';
 
 import { getSigningClient } from '../../utils/txHelper';
+import { SecretNetworkClient } from 'secretjs';
 
+interface Props {
+    owned: boolean;
+    handleBack: ()=>void;
+    id: string;
+    queryPermit?: any;
+    mt_doom?: boolean;
+    secretJs?: SecretNetworkClient;
+}
+
+interface State {
+    loading: boolean;
+    showTransferModal: boolean;
+    showSwapModal: boolean;
+    showAuthModal: boolean;
+    showAlterModal: boolean;
+    id: string;
+    queryPermit: any;
+    secretJs?: SecretNetworkClient;
+    address?: string;
+    signer: boolean;
+    nft_dossier?: any;
+    owned: boolean;
+    unlocked: boolean;
+    swapped: boolean;
+    rarityData?: any;
+    attributes: any;
+    encryptedImage: any;
+    decryptedImage?: string;
+    loadingUnlock: boolean;
+    teddyRank?: any;
+    teddyDaoValue?: undefined,
+    error?: string,
+    pubImage?: string;
+}
 
 //modal
-class TeddyCard extends React.Component {
-    constructor(props) {
+class TeddyCard extends React.Component<Props, State> {
+    constructor(props: Props) {
       super(props);
       this.state = {
+        loading: false,
         showTransferModal: false,
         showSwapModal: false,
         showAuthModal: false,
         showAlterModal: false,
-        id: this.props.id,
-        queryPermit: this.props.queryPermit,
-        secretJs: this.props.secretJs,
+        id: props.id,
+        queryPermit: props.queryPermit,
+        secretJs: props.secretJs,
         signer: false,
         nft_dossier: null,
-        owned: this.props.owned || false,
+        owned: props.owned || false,
         unlocked: false,
         swapped: false,
         rarityData: null,
         attributes: [],
         encryptedImage: {},
-        decryptedImage: null,
         loadingUnlock: false,
         teddyRank: null,
         teddyDaoValue: undefined,
@@ -45,13 +80,13 @@ class TeddyCard extends React.Component {
         this.queryChainData();
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps: Props){
         if (this.props !== prevProps) {
             this.setState({
-                id: this.props.id || null,
+                id: this.props.id || '',
                 queryPermit: this.props.queryPermit || {},
-                secretJs: this.props.secretJs || null,
-                owned: this.props.owned || false
+                secretJs: this.props.secretJs,
+                owned: this.props.owned
             })
         }
     }
@@ -86,9 +121,9 @@ class TeddyCard extends React.Component {
                 this.setState({rarityData: rarityTotal})
             }
 
-        } catch (e){
+        } catch (e: any){
             console.error("Error processing rarity:",e);
-            toast.error(e, {
+            toast.error(e.toString(), {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -102,26 +137,33 @@ class TeddyCard extends React.Component {
     getPermit = async() => {
         try {
             if (this.state.queryPermit.signature) {
-            return;
+                return;
             }
 
-            let returned = {client: null, address: null}
-            if (!this.state.secretJs || !this.state.address) {
+            let js = this.state.secretJs
+            let addr = this.state.address
+            let setClient = {};
+            if (!js || !addr) {
                 //get SigningCosmWasmClient and store in state
-                returned = await getSigningClient();
+                const data = await getSigningClient();
+                js = data.client;
+                addr = data.address;
+                setClient = {
+                    secretJs: js,
+                    address: addr,
+                }
             }
         
-            const signature = await getPermit(returned.address);
+            const signature = await getPermit(addr);
             this.setState({
-                secretJs: returned.client,
-                address: returned.address,
+                ...setClient,
                 queryPermit: signature
             })
         
             return;
-        } catch(e) {
+        } catch(e: any) {
             console.error("Error getting permit:",e);
-            toast.error(e, {
+            toast.error(e.toString(), {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -154,9 +196,9 @@ class TeddyCard extends React.Component {
             this.setState({
                 loadingUnlock: false
             })
-        } catch(e) {
+        } catch(e: any) {
             console.error("Error unlocking data:",e);
-            toast.error(e, {
+            toast.error(e.toString(), {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -196,7 +238,8 @@ class TeddyCard extends React.Component {
 
         let data;
         try {
-            data = await queryTokenMetadata(this.state.id, this.state.queryPermit)
+            if (this.props.mt_doom) data = await queryMtDoomMetadata(this.state.id);
+            else data = await queryTokenMetadata(this.state.id, this.state.queryPermit)
             console.log("*NFT*", data.nft_dossier);
 
             let owned = false;
@@ -224,14 +267,18 @@ class TeddyCard extends React.Component {
             if (unlocked && !swapped) {
                 console.log("Valid permit was provided. Private data is not swapped.");
                 attributes = data.priv_attributes;
+                //@ts-ignore
                 pubImage = data.nft_dossier.public_metadata.extension.image;
+                //@ts-ignore
                 privImage = data.nft_dossier.private_metadata.extension.media[0];
             }
 
             else if (unlocked && swapped) {
                 console.log("Valid permit was provided. Private data IS swapped.");
                 attributes = data.pub_attributes;
+                //@ts-ignore
                 pubImage = data.nft_dossier.private_metadata.extension.image;
+                //@ts-ignore
                 privImage = data.nft_dossier.public_metadata.extension.media[0];
             }
 
@@ -239,12 +286,14 @@ class TeddyCard extends React.Component {
                 console.log("Valid permit was NOT provided. Private data IS swapped.");
                 attributes = data.pub_attributes;
                 //pubImage = data.nft_dossier.private_metadata.extension.image; //we dont have this, its in the private data
+                //@ts-ignore
                 privImage = data.nft_dossier.public_metadata.extension.media[0];
             }
 
             else if (!unlocked && !swapped) {
                 console.log("Valid permit was NOT provided. Private data is not swapped.");
                 attributes = data.pub_attributes;
+                //@ts-ignore
                 pubImage = data.nft_dossier.public_metadata.extension.image;
                 //privImage = data.nft_dossier.public_metadata.extension.media[0]; //we dont have this, its in the private data
             }
@@ -258,11 +307,13 @@ class TeddyCard extends React.Component {
                 owned: owned,
                 swapped: swapped,
                 unlocked: unlocked,
+                //@ts-ignore
                 attributes: attributes,
                 pubImage: pubImage,
                 encryptedImage: privImage
             })
 
+                //@ts-ignore
             cachePublicImage(this.state.id, pubImage)
        
         } catch (e) {
@@ -307,10 +358,10 @@ class TeddyCard extends React.Component {
 
                         this.setState({
                             //decryptedImage: `data:image/png;base64,${privImage}`
-                            decryptedImage: base64
+                            decryptedImage: base64 as string
                         })
                         //cachePrivateImage(this.state.id, `data:image/png;base64,${privImage.data}`)
-                        cachePrivateImage(this.state.id, base64)
+                        cachePrivateImage(this.state.id, base64 as string)
                     }
 
                 }
@@ -336,19 +387,19 @@ class TeddyCard extends React.Component {
 
     }
 
-    swapModal = (newValue) => {
+    swapModal = (newValue: boolean) => {
         this.setState({
             showSwapModal: newValue
         })
     }
 
-    authModal = (newValue) => {
+    authModal = (newValue: boolean) => {
         this.setState({
             showAuthModal: newValue
         })
     }
 
-    alterModal = (newValue) => {
+    alterModal = (newValue: boolean) => {
         this.setState({
             showAlterModal: newValue
         })
@@ -360,19 +411,19 @@ class TeddyCard extends React.Component {
             <div>
                 { this.state.signer ?
                 <>
-                    <SwapModal teddyId={this.state.id} show={this.state.showSwapModal} hide={() => this.swapModal(false)} secretJs={this.state.secretJs} address={this.state.address}/>
-                    <AuthModal teddyId={this.state.id} show={this.state.showAuthModal} hide={() => this.authModal(false)} secretJs={this.state.secretJs} address={this.state.address}/>
+                    <SwapModal teddyId={this.state.id} show={this.state.showSwapModal} hide={() => this.swapModal(false)} address={this.state.address}/>
+                    <AuthModal teddyId={this.state.id} show={this.state.showAuthModal} hide={() => this.authModal(false)} address={this.state.address}/>
                 </>
                 :
                 <>
-                    <SwapModal teddyId={this.state.id} show={this.state.showSwapModal} hide={() => this.swapModal(false)}/>
-                    <AuthModal teddyId={this.state.id} show={this.state.showAuthModal} hide={() => this.authModal(false)}/>
+                    <SwapModal teddyId={this.state.id} show={this.state.showSwapModal} hide={() => this.swapModal(false)} address={this.state.address}/>
+                    <AuthModal teddyId={this.state.id} show={this.state.showAuthModal} hide={() => this.authModal(false)} address={this.state.address}/>
                 </>
                 }
-                <AlterModal nft={this.state.nft_dossier} show={this.state.showAlterModal} hide={() => this.alterModal(false)}/>
+                <AlterModal nft={this.state.nft_dossier} show={this.state.showAlterModal} hide={() => this.alterModal(false)} address={this.state.address}/>
                 <div className="pointer backLink" style={{width:"fit-content"}} onClick={() => this.props.handleBack()} >
                     <h1 style={{display: "inline"}}>
-                        <FontAwesomeIcon style={{paddingLeft: "10px"}} icon={faArrowLeft} className="pointer" title="Copy Link" onClick={() => this.setUriHash(this.state.id)} />
+                        <FontAwesomeIcon style={{paddingLeft: "10px"}} icon={faArrowLeft} className="pointer" title="Copy Link" onClick={() => this.setUriHash()} />
                     </h1>
                     <h3 style={{display: "inline"}}>&nbsp;Back to Gallery</h3>
                 </div>
@@ -419,7 +470,7 @@ class TeddyCard extends React.Component {
                                     
                                 </h2>
                                 <h2 style={{display: "inline", marginBottom: '0px'}}>
-                                    <FontAwesomeIcon style={{paddingLeft: "5px"}} icon={faLink} className="pointer backLink" title="Copy Link" onClick={() => this.setUriHash(this.state.id)} />
+                                    <FontAwesomeIcon style={{paddingLeft: "5px"}} icon={faLink} className="pointer backLink" title="Copy Link" onClick={() => this.setUriHash()} />
                                 </h2>
                                 { !isNaN(parseInt(this.state.id)) || !this.state.nft_dossier ?
                                         null
@@ -478,9 +529,11 @@ class TeddyCard extends React.Component {
                         <th>
                             Trait
                         </th>
-                        <th className="text-right">Trait Count</th>
-                        <th className="text-right">Trait %</th>
-                        <th className="text-right">Score</th>
+                        <th className="text-right">{!!this.props.mt_doom && 'Remaining '}Trait Count</th>
+                        <th className="text-right">{!!this.props.mt_doom && 'Remaining '}Trait %</th>
+                        { !!!this.props.mt_doom && 
+                            <th className="text-right">Score</th>
+                        }
                     </tr>
                     </thead>
                 {this.state.nft_dossier ?
@@ -493,7 +546,9 @@ class TeddyCard extends React.Component {
                                         <td>{ this.state.attributes["Base Design"] }</td>
                                         <td className="text-right">{ this.state.rarityData[this.state.attributes["Base Design"]].count } / { this.state.rarityData[this.state.attributes["Base Design"]].total }</td>
                                         <td className="text-right">{ (this.state.rarityData[this.state.attributes["Base Design"]].percent*100).toFixed(3) } %</td>
-                                        <td className="text-right">{ this.state.rarityData[this.state.attributes["Base Design"]].score.toFixed(3) }</td>
+                                        { !!!this.props.mt_doom && 
+                                            <td className="text-right">{ this.state.rarityData[this.state.attributes["Base Design"]].score.toFixed(3) }</td>
+                                        }
                                     </tr>
                                 :
                                     <tr>
@@ -501,7 +556,9 @@ class TeddyCard extends React.Component {
                                         <td>{ this.state.attributes["Base Design"] }</td>
                                         <td className="text-right">??? / { this.state.rarityData.total }</td>
                                         <td className="text-right">??? %</td>
+                                        { !!!this.props.mt_doom && 
                                         <td className="text-right">???</td>
+    }
                                     </tr>
                                 }
 
@@ -512,7 +569,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Color }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Color].count } / { this.state.rarityData[this.state.attributes.Color].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Color].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Color].score.toFixed(3) }</td>
+                                }
                                 </tr>
                             : null }
 
@@ -522,7 +581,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Background }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Background].count } / { this.state.rarityData[this.state.attributes.Background].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Background].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Background].score.toFixed(3) }</td>
+                                }
                                 </tr>
                             : null }
 
@@ -532,7 +593,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Face }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Face].count } / { this.state.rarityData[this.state.attributes.Face].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Face].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Face].score.toFixed(3) }</td>
+                                }
                                 </tr>
                             : null }
 
@@ -542,7 +605,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Hand }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Hand].count } / { this.state.rarityData[this.state.attributes.Hand].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Hand].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Hand].score.toFixed(3) }</td>
+                                }
                                 </tr>
                             : null }
 
@@ -552,7 +617,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Head }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Head].count } / { this.state.rarityData[this.state.attributes.Head].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Head].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Head].score.toFixed(3) }</td>
+                                }
                                 </tr>
                             : null }
 
@@ -562,7 +629,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Body }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Body].count } / { this.state.rarityData[this.state.attributes.Body].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Body].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Body].score.toFixed(3) }</td>
+                                }
                                 </tr>
                             : null }
 
@@ -572,7 +641,9 @@ class TeddyCard extends React.Component {
                                     <td>{ this.state.attributes.Eyewear }</td>
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Eyewear].count } / { this.state.rarityData[this.state.attributes.Eyewear].total }</td>
                                     <td className="text-right">{ (this.state.rarityData[this.state.attributes.Eyewear].percent*100).toFixed(3) } %</td>
+                                        { !!!this.props.mt_doom && 
                                     <td className="text-right">{ this.state.rarityData[this.state.attributes.Eyewear].score.toFixed(3) }</td>
+                                    }
                                 </tr>
                             : null }
                         </tbody>
@@ -663,7 +734,7 @@ class TeddyCard extends React.Component {
                     </tbody>
                 }
                 </table>
-                <div style={{display: "flex", justifyContent: "space-between", flexGrow: "2", alignItems: 'flex-end'}}>
+                <div style={{display: "flex", justifyContent: "space-between", flexGrow: 2, alignItems: 'flex-end'}}>
                 { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
                         <h3 style={{display: "inline"}}>
                             DAO Value: { this.state.teddyDaoValue ?
@@ -675,7 +746,7 @@ class TeddyCard extends React.Component {
                     : null }
                 </div>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
-                { this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media ?
+                { !this.props.mt_doom && (this.state.owned || this.state.nft_dossier?.public_metadata?.extension?.media) ?
                         <h3 style={{display: "inline"}}>
                             Total Rarity Score: { this.state.rarityData ?
                                 this.state.rarityData.total.toFixed(3)
@@ -684,7 +755,7 @@ class TeddyCard extends React.Component {
                             }
                         </h3>
                     : null }
-                    { this.state.unlocked || this.state.swapped ?
+                    { (this.state.unlocked || this.state.swapped) && !this.props.mt_doom ?
                         <h3 style={{display: "inline"}}>
                             Rank: { this.state.teddyRank ?
                                 this.state.teddyRank
