@@ -3,6 +3,8 @@ import { get, set } from 'idb-keyval';
 import retry from 'async-await-retry';
 import { download, decrypt } from './decryptHelper'
 
+export const oneOfOnes = process.env.REACT_APP_TRAIT_IDS?.split(',') || []
+
 const decryptFile = async (url: string, key: string) => {
     try {
         console.log('Downloading...');

@@ -250,3 +250,45 @@ export const sendFactoryGT = async(ids: string[], token_id: string) => {
     }
 }
 }
+
+export const sendFactoryTrait = async(ids: string[]) => {
+  try {
+    await ensureSigningClient()
+
+    //messages for the NFT contracts
+    const bulkTransferMsg = {
+      batch_transfer_nft: {
+          transfers: [{
+              recipient: factoryAdmin,
+              token_ids: [ids[0], ids[1]]
+          }]
+      }
+    };
+
+    // Execute messages to broadcast
+    const teddyXfer = new MsgExecuteContract({
+      sender: walletAddr,
+      msg: bulkTransferMsg,
+      contractAddress: process.env.REACT_APP_CONTRACT_ADDRESS,
+      codeHash: process.env.REACT_APP_CONTRACT_CODE_HASH,
+    })
+
+    const response = await secretJs.tx.broadcast([teddyXfer], { gasLimit: 500_000, broadcastTimeoutMs: 90_000 })
+    console.log('Message:', JSON.stringify([teddyXfer], undefined, 2));
+    console.log('Response:', response);
+
+    parseTxError(response);
+    return response;
+  } catch (error: any) {
+    console.error(error);
+    if (
+      error.toString().includes('Network Error') ||
+      error.toString().includes('503') ||
+      error.toString().includes('Response closed without headers')
+    ) {
+      throw 'Failed to access network. The node may be experiencing issues.';
+    } else {
+      throw error;
+    }
+}
+}

@@ -8,7 +8,7 @@ import TeddyInfo from '../components/gallery/teddyCardModal'
 import { getPermit, permitName, allowedTokens, permissions } from "../utils/keplrHelper";
 import { queryOwnedTokens } from "../utils/queryHelper";
 import TeddyCard from '../components/gallery/teddyCard';
-import { getPublicTeddyData, truncate } from '../utils/dataHelper'
+import { getPublicTeddyData, oneOfOnes, truncate } from '../utils/dataHelper'
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios";
@@ -23,36 +23,6 @@ import Layout from "../layout/Layout";
 import TeddyTile from '../components/gallery/teddyTile';
 
 const factoryAdmin = process.env.REACT_APP_FACTORY_ADMIN || 'secret1s7hqr22y5unhsc9r4ddnj049ltn9sa9pt55nzz';
-
-
-
-
-const style = {
-  height: 50,
-  border: "1px solid green",
-  margin: 6,
-  padding: 8
-};
-
-const baseOptions = [
-  { value: 'standard', label: 'Standard' },
-  { value: 'headless', label: 'Headless' },
-  { value: 'alien', label: 'Alien' },
-  { value: 'zombie', label: 'Zombie' },
-  { value: 'robot', label: 'Robot' },
-];
-
-const burntOptions = [
-  { value: true, label: 'Only Burnt' },
-  { value: false, label: 'Only Unburnt' }
-];
-
-const sortOptions = [
-  { value: 'numberasc', label: 'Number (Asc)' },
-  { value: 'numberdesc', label: 'Number (Desc)' },
-  { value: 'rarityasc', label: 'Rarity (Asc)' },
-  { value: 'raritydesc', label: 'Rarity (Desc)' },
-];
 
 class Padding extends React.Component {
   constructor(props) {
@@ -137,101 +107,127 @@ class Gallery extends React.Component {
         }
         */
     }
-}
+  }
 
-    updateFactoryToast = () => {
-        const selected = this.state.factoryTeddies.length;
+  updateFactoryToast = () => {
+      const selected = this.state.factoryTeddies.length;
+      let render = (<div style={{textAlign: "center"}}>{`${selected} ${selected === 1 ? "Teddy" : "Teddies"} Selected`}</div>)
+      console.log('oneOfOnes', oneOfOnes, this.state.factoryTeddies)
+      if (selected === 1 && oneOfOnes.includes(this.state.factoryTeddies[0])) {
+        render = (<div style={{textAlign: "center"}}>{`Trait Selected`}</div>)
+        toast.update(this.state.factoryToast, {
+          render: render,
+          type: toast.TYPE.DEFAULT,
+          style: {cursor: 'default'}
+      });
+      }
+      else if (selected === 2 && (oneOfOnes.includes(this.state.factoryTeddies[0]) || oneOfOnes.includes(this.state.factoryTeddies[1]))) {
+        render = (<div style={{textAlign: "center"}}>
+          <Link onClick={() => toast.dismiss(this.state.factoryToast)} to="/traitfactory" state={{ selectedTeddies: this.state.factoryTeddies }}
+          style={{
+            color: "#fff",
+            textDecoration: "none"
+          }}>
+            Combine 🌋  ➡
+          </Link>
+        </div>)
+        toast.update(this.state.factoryToast, {
+            render: render,
+            type: toast.TYPE.SUCCESS,
+            icon: false,
+            closeButton: false,
+            style: {cursor: 'pointer'}
+        });
+      }
+      else if (selected === 3) {
+        render = (<div style={{textAlign: "center"}}>
+          <Link onClick={() => toast.dismiss(this.state.factoryToast)} to="/factory" state={{ selectedTeddies: this.state.factoryTeddies }}
+          style={{
+            color: "#fff",
+            textDecoration: "none"
+          }}>
+            Send to Factory 🌋  ➡
+          </Link>
+        </div>)
+        toast.update(this.state.factoryToast, {
+            render: render,
+            type: toast.TYPE.SUCCESS,
+            icon: false,
+            closeButton: false,
+            style: {cursor: 'pointer'}
+        });
+      }
+      else if (selected) {
+        toast.update(this.state.factoryToast, {
+            render: render,
+            type: toast.TYPE.DEFAULT,
+            style: {cursor: 'default'}
+        });
+      } else {
+        toast.dismiss(this.state.factoryToast)
+      }
+  }
 
-        let render = (<div style={{textAlign: "center"}}>{`${selected} ${selected === 1 ? "Teddy" : "Teddies"} Selected`}</div>)
-        if (selected === 3) {
-            render = (<div style={{textAlign: "center"}}>
-              <Link onClick={() => toast.dismiss(this.state.factoryToast)} to="/factory" state={{ selectedTeddies: this.state.factoryTeddies }}
-              style={{
-                color: "#fff",
-                textDecoration: "none"
-              }}>
-                Send to Factory 🌋  ➡
-              </Link>
-            </div>)
-            toast.update(this.state.factoryToast, {
-                render: render,
-                type: toast.TYPE.SUCCESS,
-                icon: false,
-                closeButton: false,
-                style: {cursor: 'pointer'}
-            });
-        }
-        else if (selected) {
-            toast.update(this.state.factoryToast, {
-                render: render,
-                type: toast.TYPE.DEFAULT,
-                style: {cursor: 'default'}
-            });
-        } else {
-            toast.dismiss(this.state.factoryToast)
-        }
-    }
-
-    changeFactoryList = (id, checkStatus) => {
-        const currentLength = this.state.factoryTeddies.length;
-        
-        // if checking a box
-        if (checkStatus) {
-            const newLength = currentLength + 1;
-            console.log(`Checked. Old Length:`,currentLength,`New Length`,newLength)
-
-
-            //if there is already one checked (toast should be created), add to list and update toast
-            if (currentLength) {
-                this.setState(
-                    { factoryTeddies: [...this.state.factoryTeddies, id]},
-                    () => {
-                        console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies);
-                        this.updateFactoryToast(newLength);
-                }) 
-            }
-
-            //else create new toast
-            else {
-                this.setState({
-                    factoryTeddies: [...this.state.factoryTeddies, id],
-                    factoryToast: toast((<div style={{textAlign: "center"}}>{`${newLength} ${newLength === 1 ? "Teddy" : "Teddies"} Selected`}</div>), {
-                        position: "bottom-center",
-                        draggable: false,
-                        autoClose: false,
-                        closeOnClick: false
-                    })
-                },
-                () => {
-                    console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies)
-                })
-            }
-        } 
-
-        // if UNchecking a box
-        else {
-            const newLength = currentLength - 1;
-            console.log(`UNChecked. Old Length:`,currentLength,`New Length`,newLength)
-
-            // remove from list
-            const index = this.state.factoryTeddies.indexOf(id);
-            const newAry = this.state.factoryTeddies.filter(element => element !== id);
-            console.log("index", index, newAry)
-
-            this.setState(
-                { factoryTeddies: newAry },
-                () => {
-                    console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies)
-
-                    // if now empty, dismiss toast
-                    if (!newLength) toast.dismiss(this.state.factoryToast)
-                    else this.updateFactoryToast(newLength);
-            });
+  changeFactoryList = (id, checkStatus) => {
+      const currentLength = this.state.factoryTeddies.length;
+      
+      // if checking a box
+      if (checkStatus) {
+          const newLength = currentLength + 1;
+          console.log(`Checked. Old Length:`,currentLength,`New Length`,newLength)
 
 
-            
-        }
-    }
+          //if there is already one checked (toast should be created), add to list and update toast
+          if (currentLength) {
+              this.setState(
+                  { factoryTeddies: [...this.state.factoryTeddies, id]},
+                  () => {
+                      console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies);
+                      this.updateFactoryToast(newLength);
+              }) 
+          }
+
+          //else create new toast
+          else {
+              this.setState({
+                  factoryTeddies: [...this.state.factoryTeddies, id],
+                  factoryToast: toast((<div style={{textAlign: "center"}}>{`${newLength} ${newLength === 1 ? "Teddy" : "Teddies"} Selected`}</div>), {
+                      position: "bottom-center",
+                      draggable: false,
+                      autoClose: false,
+                      closeOnClick: false
+                  })
+              },
+              () => {
+                  console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies)
+              })
+          }
+      } 
+
+      // if UNchecking a box
+      else {
+          const newLength = currentLength - 1;
+          console.log(`UNChecked. Old Length:`,currentLength,`New Length`,newLength)
+
+          // remove from list
+          const index = this.state.factoryTeddies.indexOf(id);
+          const newAry = this.state.factoryTeddies.filter(element => element !== id);
+          console.log("index", index, newAry)
+
+          this.setState(
+              { factoryTeddies: newAry },
+              () => {
+                  console.log('Length after change:', this.state.factoryTeddies.length, this.state.factoryTeddies)
+
+                  // if now empty, dismiss toast
+                  if (!newLength) toast.dismiss(this.state.factoryToast)
+                  else this.updateFactoryToast(newLength);
+          });
+
+
+          
+      }
+  }
 
   handleClickTile = (data) => {
     this.setState({

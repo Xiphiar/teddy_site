@@ -19,6 +19,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoldTokenProvider } from "./contexts/GoldTokenContext";
 import { BurnGallery, WrappedBurnGallery } from "./pages/BurnGallery";
+import TraitFactory from "./pages/TraitFactory";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
             <Route path="/crispy/:lookupID" element={<WrappedBurnGallery />} />
             <Route path="/showcase" element={<Gallery />} />
             <Route path="/factory" element={<Factory />} />
+            <Route path="/traitfactory" element={<TraitFactory />} />
             <Route path="/secretsociety" element={<SecretSociety />} />
             <Route path="*" element={<NotFound />} />
 

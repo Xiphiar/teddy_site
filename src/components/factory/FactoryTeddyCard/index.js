@@ -61,7 +61,7 @@ export default function FactoryTeddyCard({teddyId, nft_dossier}){
 
 
     return(
-        <Col md="4" className="d-flex justify-content-center" style={{ flexDirection: "column" }}>
+        <Col md="4" className="d-flex mt-4" style={{ flexDirection: "column" }}>
             <h5>Teddy {teddyId}</h5>
             { loading ?
                 <div>
@@ -83,7 +83,7 @@ export default function FactoryTeddyCard({teddyId, nft_dossier}){
                     }
                     <br/>
                     <div style={{width: '75%', lineHeight: "120%"}}>
-                    { attributes.map(item => <div style={{lineHeight: "110%", paddingBottom: "15px"}}>
+                    { attributes.map(item => <div style={{lineHeight: "110%", paddingBottom: "15px"}} key={item.value}>
                             <span style={{fontWeight: "bold"}}>{item.trait_type}</span><br/>
                             <span style={{fontSize: "12px"}}>{item.value}</span><br/>
                         </div>
