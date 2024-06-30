@@ -12,7 +12,7 @@ import { getSigningClient, factoryAdmin, sendFactorySSCRT, sendFactoryGT } from 
 import { SecretNetworkClient } from 'secretjs';
 
 const permitName = "MTC-Factory-Order";
-const allowedDestinations = ["teddyapi.xiphiar.com", "localhost:9176", 'teddyapi-testnet.xiphiar.com'];
+const allowedDestinations = ["api.midnightteddyclub.art", "localhost:9176", 'teddyapi-testnet.xiphiar.com'];
 
 interface props {
     ids: string[];
